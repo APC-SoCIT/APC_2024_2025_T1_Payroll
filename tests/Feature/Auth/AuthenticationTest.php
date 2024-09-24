@@ -4,7 +4,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Mockery;
 
 test('login screen can be rendered', function () {
     $response = $this->call('GET', URL::to('/auth/redirect'));
