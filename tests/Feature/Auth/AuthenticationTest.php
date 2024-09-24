@@ -1,34 +1,25 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+use Mockery;
 
 test('login screen can be rendered', function () {
-    $response = $this->get('/login');
+    $response = $this->call('GET', URL::to('/auth/redirect'));
 
-    $response->assertStatus(200);
+    $response->assertRedirect();
 });
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+test('users can authenticate using socialite', function () {
+    $abstractUser = Mockery::mock('Laravel\Socialite\Two\User');
+    $abstractUser->name = Str::random(10);
+    $abstractUser->mail = Str::random(10) . "@apc.edu.ph";
 
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
-
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
-});
-
-test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
-
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
-
-    $this->assertGuest();
+    Socialite::shouldReceive('driver->user')->andReturn($abstractUser);
+    $response = $this->get('/auth/callback');
+    $response->assertRedirect(route('dashboard'));
 });
 
 test('users can logout', function () {
