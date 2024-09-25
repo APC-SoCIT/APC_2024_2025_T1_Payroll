@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\AccountsMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +29,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts');
+    Route::get('/accounts', [AccountController::class, 'index'])
+        ->middleware(AccountsMiddleware::class)
+        ->name('accounts');
 });
 
 require __DIR__ . '/auth.php';
