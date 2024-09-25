@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AccountsMiddleware;
 use Illuminate\Foundation\Application;
@@ -22,16 +21,21 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/account', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/account', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/account', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/accounts', [AccountController::class, 'index'])
-        ->middleware(AccountsMiddleware::class)
+Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
+    Route::get('/accounts', [ProfileController::class, 'index'])
         ->name('accounts');
+    Route::post('/accounts/new', [ProfileController::class, 'store'])
+        ->name('profile.store');
+
+    Route::get('/account/{id}', [ProfileController::class, 'edit'])
+        ->whereNumber('id')
+        ->name('profile.edit');
+    Route::patch('/account/{id}', [ProfileController::class, 'update'])
+        ->whereNumber('id')
+        ->name('profile.update');
+    Route::delete('/account/{id}', [ProfileController::class, 'destroy'])
+        ->whereNumber('id')
+        ->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';
