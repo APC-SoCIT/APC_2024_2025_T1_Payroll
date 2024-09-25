@@ -33,6 +33,12 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                             </div>
+                            <div v-if="$page.props.auth.isHr || $page.props.auth.isPayroll"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('accounts')" :active="route().current('accounts')">
+                                    Accounts
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
