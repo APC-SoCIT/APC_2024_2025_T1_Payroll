@@ -31,25 +31,21 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request, int $id): Response
+    public function edit(User $user): Response
     {
-        $targetAccount = User::findOrFail($id);
-
         return Inertia::render('Profile/Edit', [
-            'targetAccount' => $targetAccount,
+            'targetAccount' => $user,
         ]);
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
-        $targetAccount = User::findOrFail($id);
-
-        $targetAccount->update($request->validate([
+        $user->update($request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($targetAccount->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
         ]));
 
         return Redirect::route('accounts');

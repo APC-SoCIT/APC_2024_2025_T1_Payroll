@@ -27,14 +27,11 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
     Route::post('/accounts/new', [ProfileController::class, 'store'])
         ->name('profile.store');
 
-    Route::get('/account/{id}', [ProfileController::class, 'edit'])
-        ->whereNumber('id')
+    Route::get('/account/{user}', [ProfileController::class, 'edit'])
         ->name('profile.edit');
-    Route::patch('/account/{id}', [ProfileController::class, 'update'])
-        ->whereNumber('id')
+    Route::patch('/account/{user}', [ProfileController::class, 'update'])
         ->name('profile.update');
-    Route::delete('/account/{id}', [ProfileController::class, 'destroy'])
-        ->whereNumber('id')
+    Route::delete('/account/{user}', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 });
 
