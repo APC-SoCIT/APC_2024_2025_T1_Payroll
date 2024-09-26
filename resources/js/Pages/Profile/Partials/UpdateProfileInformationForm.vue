@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -10,6 +11,8 @@ const props = defineProps([ 'targetAccount' ]);
 const form = useForm({
     name: props.targetAccount.name,
     email: props.targetAccount.email,
+    // checkbox component needs an explicit boolean value
+    active: props.targetAccount.active == true,
 });
 </script>
 
@@ -53,6 +56,13 @@ const form = useForm({
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="block mt-4">
+                <label class="flex items-center">
+                    <Checkbox name="active" v-model:checked="form.active" />
+                    <span class="ms-2 text-sm text-gray-600">Active</span>
+                </label>
             </div>
 
             <div class="flex items-center gap-4">
