@@ -21,4 +21,8 @@ class User extends Authenticatable
         'email',
         'active',
     ];
+
+    protected $attributes = [
+        'active' => true,
+    ];
 }
