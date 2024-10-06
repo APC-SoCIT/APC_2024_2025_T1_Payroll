@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Addition;
 use App\Models\AdditionItem;
-use App\Models\DeductionItem;
 use App\Models\PayrollItem;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,21 +24,22 @@ class PayrollController extends Controller
             'payroll_period_id' => 1,
         ]);
 
-        AdditionItem::firstOrCreate([
-            'payroll_item_id' => 1,
-            'addition_id' => 1,
-            'amount' => 100,
-        ]);
-
-        DeductionItem::firstOrCreate([
-            'payroll_item_id' => 1,
-            'deduction_id' => 1,
-            'amount' => 100,
-        ]);
-
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
             'payrollItem' => $payrollItem,
+            'additions' => Addition::all(),
         ]);
+    }
+
+    public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
+    {
+        AdditionItem::firstOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => $addition->id,
+        ], [
+            'amount' => 0
+        ]);
+
+        return redirect(route('payroll.getItem', Auth::user()->id));
     }
 }

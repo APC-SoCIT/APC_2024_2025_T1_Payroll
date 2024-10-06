@@ -3,6 +3,7 @@
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AccountsMiddleware;
+use App\Http\Middleware\PayrollMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -34,9 +35,14 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
         ->name('profile.update');
     Route::delete('/account/{user}', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+});
 
+Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
     Route::get('/payroll/{user}', [PayrollController::class, 'getItem'])
-        ->name('payrollItem.get');
+        ->name('payroll.getItem');
+
+    Route::post('/payroll/addition/{payrollItem}/{addition}', [PayrollController::class, 'addAdditionItem'])
+        ->name('payroll.addAdditionItem');
 });
 
 require __DIR__ . '/auth.php';
