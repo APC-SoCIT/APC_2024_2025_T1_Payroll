@@ -1,7 +1,9 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -66,6 +68,21 @@ return new class extends Migration
             $table->decimal('amount', 8, 2);
             $table->timestamps();
         });
+
+        DB::table('payroll_periods')->insert([
+            'start_date' => Carbon::now(),
+            'end_date' => Carbon::now(),
+        ]);
+
+        DB::table('additions')->insert([
+            'name' => 'Rate',
+            'description' => 'Base hourly rate',
+        ]);
+
+        DB::table('deductions')->insert([
+            'name' => 'Taxes',
+            'description' => 'Income taxes',
+        ]);
     }
 
     /**

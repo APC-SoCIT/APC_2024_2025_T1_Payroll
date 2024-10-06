@@ -13,7 +13,11 @@ class DeductionItem extends Model
 {
     use HasFactory;
 
+    protected $table = 'deduction_items';
+
     protected $fillable = [
+        'payroll_item_id',
+        'deduction_id',
         'amount',
     ];
 

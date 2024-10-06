@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AccountsMiddleware;
 use Illuminate\Foundation\Application;
@@ -33,6 +34,9 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
         ->name('profile.update');
     Route::delete('/account/{user}', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/payroll/{user}', [PayrollController::class, 'getItem'])
+        ->name('payrollItem.get');
 });
 
 require __DIR__ . '/auth.php';

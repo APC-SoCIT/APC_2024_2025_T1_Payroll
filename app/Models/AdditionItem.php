@@ -14,6 +14,8 @@ class AdditionItem extends Model
     use HasFactory;
 
     protected $fillable = [
+        'payroll_item_id',
+        'addition_id',
         'amount',
     ];
 
