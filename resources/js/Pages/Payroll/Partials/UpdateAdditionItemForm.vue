@@ -12,7 +12,7 @@ const props = defineProps([
 ]);
 
 const form = useForm({
-    amount: "0",
+    amount: props.additionItem.amount,
 });
 </script>
 
@@ -26,22 +26,21 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update', {id: targetAccount.id}))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('payroll.updateAdditionItem', { id: additionItem.id }))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="amount" value="Amount" />
 
                 <TextInput
-                    id="name"
+                    id="amount"
                     type="number"
                     class="mt-1 block w-full"
                     v-model="form.amount"
                     required
                     autofocus
-                    autocomplete="name"
-                    min="0"
+                    autocomplete="amount"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>

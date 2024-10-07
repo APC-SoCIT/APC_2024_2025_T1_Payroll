@@ -7,6 +7,7 @@ use App\Models\AdditionItem;
 use App\Models\PayrollItem;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,6 +40,15 @@ class PayrollController extends Controller
         ], [
             'amount' => 0
         ]);
+
+        return redirect(route('payroll.getItem', Auth::user()->id));
+    }
+
+    public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
+    {
+        $additionItem->update($request->validate([
+            'amount' => ['required', 'numeric', 'min:0'],
+        ]));
 
         return redirect(route('payroll.getItem', Auth::user()->id));
     }
