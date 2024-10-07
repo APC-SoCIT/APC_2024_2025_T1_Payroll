@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Addition;
 use App\Models\AdditionItem;
+use App\Models\Deduction;
+use App\Models\DeductionItem;
 use App\Models\PayrollItem;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -29,6 +31,7 @@ class PayrollController extends Controller
             'targetAccount' => $user,
             'payrollItem' => $payrollItem,
             'additions' => Addition::all(),
+            'deductions' => Deduction::all(),
         ]);
     }
 
@@ -47,6 +50,27 @@ class PayrollController extends Controller
     public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
     {
         $additionItem->update($request->validate([
+            'amount' => ['required', 'numeric', 'min:0'],
+        ]));
+
+        return redirect(route('payroll.getItem', Auth::user()->id));
+    }
+
+    public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
+    {
+        DeductionItem::firstOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => $deduction->id,
+        ], [
+            'amount' => 0
+        ]);
+
+        return redirect(route('payroll.getItem', Auth::user()->id));
+    }
+
+    public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
+    {
+        $deductionItem->update($request->validate([
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 

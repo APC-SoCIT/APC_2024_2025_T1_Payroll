@@ -40,10 +40,16 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
     Route::get('/payroll/{user}', [PayrollController::class, 'getItem'])
         ->name('payroll.getItem');
+
     Route::post('/payroll/addition/{payrollItem}/{addition}', [PayrollController::class, 'addAdditionItem'])
         ->name('payroll.addAdditionItem');
     Route::patch('/payroll/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
         ->name('payroll.updateAdditionItem');
+
+    Route::post('/payroll/deduction/{payrollItem}/{deduction}', [PayrollController::class, 'addDeductionItem'])
+        ->name('payroll.addDeductionItem');
+    Route::patch('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
+        ->name('payroll.updateDeductionItem');
 });
 
 require __DIR__ . '/auth.php';
