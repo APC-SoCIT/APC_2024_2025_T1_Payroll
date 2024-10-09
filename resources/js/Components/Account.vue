@@ -8,7 +8,7 @@ const props = defineProps([
 
 <template>
     <div>
-        <Link :href="route('payroll.getItem', {id: account.id})"> {{ account.name }} </Link>
+        <Link :href="route('payroll.getCurrentItemFromUser', {id: account.id})"> {{ account.name }} </Link>
         <p>({{ account.email }})</p>
 
         <Link :href="route('profile.edit', { id: account.id })"> Edit Account </Link>

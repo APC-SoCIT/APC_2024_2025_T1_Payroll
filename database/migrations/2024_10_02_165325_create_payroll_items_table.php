@@ -69,11 +69,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::table('payroll_periods')->insert([
-            'start_date' => Carbon::now(),
-            'end_date' => Carbon::now(),
-        ]);
-
         DB::table('additions')->insert([
             'name' => 'Rate',
             'description' => 'Base hourly rate',

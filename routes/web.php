@@ -38,17 +38,17 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
 });
 
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
-    Route::get('/payroll/{user}', [PayrollController::class, 'getItem'])
-        ->name('payroll.getItem');
+    Route::get('/payroll/user/{user}', [PayrollController::class, 'getCurrentItemFromUser'])
+        ->name('payroll.getCurrentItemFromUser');
 
-    Route::post('/payroll/addition/{payrollItem}/{addition}', [PayrollController::class, 'addAdditionItem'])
+    Route::post('/payroll/additionItem/{payrollItem}/{addition}', [PayrollController::class, 'addAdditionItem'])
         ->name('payroll.addAdditionItem');
     Route::patch('/payroll/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
         ->name('payroll.updateAdditionItem');
     Route::delete('/payroll/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
         ->name('payroll.deleteAdditionItem');
 
-    Route::post('/payroll/deduction/{payrollItem}/{deduction}', [PayrollController::class, 'addDeductionItem'])
+    Route::post('/payroll/deductionItem/{payrollItem}/{deduction}', [PayrollController::class, 'addDeductionItem'])
         ->name('payroll.addDeductionItem');
     Route::patch('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
         ->name('payroll.updateDeductionItem');
