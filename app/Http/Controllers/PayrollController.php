@@ -10,7 +10,6 @@ use App\Models\PayrollItem;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,14 +36,14 @@ class PayrollController extends Controller
 
     public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
     {
-        AdditionItem::firstOrCreate([
+        $additionItem = AdditionItem::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => $addition->id,
         ], [
             'amount' => 0
         ]);
 
-        return redirect(route('payroll.getItem', Auth::user()->id));
+        return redirect(route('payroll.getItem', $additionItem->payrollItem->user->id));
     }
 
     public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
@@ -53,19 +52,19 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getItem', Auth::user()->id));
+        return redirect(route('payroll.getItem', $additionItem->payrollItem->user->id));
     }
 
     public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
     {
-        DeductionItem::firstOrCreate([
+        $deductionItem = DeductionItem::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => $deduction->id,
         ], [
             'amount' => 0
         ]);
 
-        return redirect(route('payroll.getItem', Auth::user()->id));
+        return redirect(route('payroll.getItem', $deductionItem->payrollItem->user->id));
     }
 
     public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
@@ -74,6 +73,6 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getItem', Auth::user()->id));
+        return redirect(route('payroll.getItem', $deductionItem->payrollItem->user->id));
     }
 }
