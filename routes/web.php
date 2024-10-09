@@ -45,11 +45,15 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
         ->name('payroll.addAdditionItem');
     Route::patch('/payroll/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
         ->name('payroll.updateAdditionItem');
+    Route::delete('/payroll/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
+        ->name('payroll.deleteAdditionItem');
 
     Route::post('/payroll/deduction/{payrollItem}/{deduction}', [PayrollController::class, 'addDeductionItem'])
         ->name('payroll.addDeductionItem');
     Route::patch('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
         ->name('payroll.updateDeductionItem');
+    Route::delete('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'deleteDeductionItem'])
+        ->name('payroll.deleteDeductionItem');
 });
 
 require __DIR__ . '/auth.php';

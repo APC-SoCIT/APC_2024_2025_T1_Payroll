@@ -55,6 +55,14 @@ class PayrollController extends Controller
         return redirect(route('payroll.getItem', $additionItem->payrollItem->user->id));
     }
 
+    public function deleteAdditionItem(AdditionItem $additionItem): RedirectResponse
+    {
+        $id = $additionItem->payrollItem->user->id;
+        $additionItem->delete();
+
+        return redirect(route('payroll.getItem', $id));
+    }
+
     public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
     {
         $deductionItem = DeductionItem::firstOrCreate([
@@ -74,5 +82,13 @@ class PayrollController extends Controller
         ]));
 
         return redirect(route('payroll.getItem', $deductionItem->payrollItem->user->id));
+    }
+
+    public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
+    {
+        $id = $deductionItem->payrollItem->user->id;
+        $deductionItem->delete();
+
+        return redirect(route('payroll.getItem', $id));
     }
 }
