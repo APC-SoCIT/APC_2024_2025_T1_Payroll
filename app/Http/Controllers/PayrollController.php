@@ -126,7 +126,7 @@ class PayrollController extends Controller
      * Get the current period.
      * If the latest period in the database is outdated, generate a new one.
      */
-    private static function currentPeriod(): PayrollPeriod
+    public static function currentPeriod(): PayrollPeriod
     {
         $now = Carbon::now();
 
