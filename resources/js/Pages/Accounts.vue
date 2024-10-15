@@ -39,10 +39,23 @@ const form = useForm({
                 <PrimaryButton class="mt-4">Add Account</PrimaryButton>
             </form>
         </div>
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <Account v-for="account in accounts" :account="account"/>
+                    <div class="border p-5 table-responsive">
+                        <table class="table table-hover table-responsive table-auto m-3">
+                            <thead class="text-start">
+                                <tr class="bg-light">
+                                    <th scope="col" width="30%">Name</th>
+                                    <th scope="col" width="20%">Email</th>
+                                    <th scope="col" width="20%">Status</th>
+                                    <th scope="col" width="30%">Action</th>
+                                </tr>
+                            </thead>
+                            <Account v-for="account in accounts" :account="account"/>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
