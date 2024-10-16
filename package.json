@@ -18,5 +18,10 @@
         "vite": "^5.0",
         "vue": "^3.4.0",
         "vue-tsc": "^2.0.24"
+    },
+    "dependencies": {
+        "@primevue/themes": "^4.1.0",
+        "primeicons": "^7.0.0",
+        "primevue": "^4.1.0"
     }
 }

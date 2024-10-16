@@ -10,10 +10,10 @@ const props = defineProps([
 <template>
     <tbody>
         <tr>
-            <td>{{ account.name }}</td>
-            <td>{{ account.email }}</td>
-            <td class="text-center">{{ account.active ? "Active": "Inactive" }}</td>
-            <td class="text-center">
+            <td class="p-4 border-b border-blue-gray-50">{{ account.name }}</td>
+            <td class="p-4 border-b border-blue-gray-50">{{ account.email }}</td>
+            <td class="p-4 border-b border-blue-gray-50 text-center">{{ account.active ? "Active": "Inactive" }}</td>
+            <td class="p-4 border-b border-blue-gray-50 text-center">
                 <PrimaryButton><Link :href="route('profile.edit', { id: account.id })">Edit Account</Link></PrimaryButton>
             </td>
         </tr>

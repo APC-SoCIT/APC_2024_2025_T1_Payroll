@@ -33,6 +33,8 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
         ->name('profile.update');
     Route::delete('/account/{user}', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+    Route::get('/accounts/new', [ProfileController::class, 'add'])
+        ->name('profile.add');
 });
 
 require __DIR__ . '/auth.php';
