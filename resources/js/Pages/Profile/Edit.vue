@@ -4,8 +4,7 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import { Head } from '@inertiajs/vue3';
 
 defineProps([
-    'targetAccount',
-    'payrollItem',
+    'targetAccount'
 ]);
 </script>
 

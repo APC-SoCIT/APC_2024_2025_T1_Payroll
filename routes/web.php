@@ -26,6 +26,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
     Route::get('/accounts', [ProfileController::class, 'index'])
         ->name('accounts');
+    Route::get('/accounts/new', [ProfileController::class, 'add'])
+        ->name('profile.add');
     Route::post('/accounts/new', [ProfileController::class, 'store'])
         ->name('profile.store');
 
