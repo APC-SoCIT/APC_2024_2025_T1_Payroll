@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -37,6 +38,7 @@ class HandleInertiaRequests extends Middleware
                 'isHr' => $this->isRole('hr'),
                 'isPayroll' => $this->isRole('payroll'),
             ],
+            'date' => Carbon::now()->toDateString(),
         ];
     }
 

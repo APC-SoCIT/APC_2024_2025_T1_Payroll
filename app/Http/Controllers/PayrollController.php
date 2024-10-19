@@ -136,46 +136,30 @@ class PayrollController extends Controller
         if ($now->day < 11) {
             $start = $now->copy()
                 ->subMonth()
-                ->setDay(26)
-                ->setHour(0)
-                ->setMinute(0)
-                ->setSecond(0);
+                ->setDay(26);
 
             $end = $now->copy()
-                ->setDay(10)
-                ->setHour(23)
-                ->setMinute(59)
-                ->setSecond(59);
+                ->setDay(10);
         } else if ($now->day > 25) {
             $start = $now->copy()
-                ->setDay(26)
-                ->setHour(0)
-                ->setMinute(0)
-                ->setSecond(0);
+                ->setDay(26);
 
             $end = $now->copy()
                 ->addMonth()
-                ->setDay(10)
-                ->setHour(23)
-                ->setMinute(59)
-                ->setSecond(59);
+                ->setDay(10);
         } else {
             $start = $now->copy()
-                ->setDay(11)
-                ->setHour(0)
-                ->setMinute(0)
-                ->setSecond(0);
+                ->setDay(11);
 
             $end = $now->copy()
-                ->setDay(25)
-                ->setHour(23)
-                ->setMinute(59)
-                ->setSecond(59);
+                ->setDay(25);
         }
 
+
         return PayrollPeriod::firstOrCreate([
-            'start_date' => $start,
-            'end_date' => $end,
+            'start_date' => $start->toDateString(),
+            'cutoff_date' => $end->toDateString(),
+            'end_date' => $end->toDateString(),
         ]);
     }
 

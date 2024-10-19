@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\PayrollPeriodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AccountsMiddleware;
 use App\Http\Middleware\PayrollMiddleware;
@@ -37,6 +38,13 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
         ->name('profile.update');
     Route::delete('/account/{user}', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
+        ->name('cutoffs');
+    Route::get('/cutoff/{cutoff}', [PayrollPeriodController::class, 'get'])
+        ->name('cutoff.get');
+    Route::patch('/cutoff/{cutoff}', [PayrollPeriodController::class, 'update'])
+        ->name('cutoff.update');
 });
 
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
