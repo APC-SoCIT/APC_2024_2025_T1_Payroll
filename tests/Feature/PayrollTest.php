@@ -95,8 +95,8 @@ test('previous payroll items updates are restricted', function() {
         ->authorized()
         ->create();
 
-    $start = Carbon::now()->subMonth(2);
-    $cutoff = Carbon::now()->subMonth(1);
+    $start = Carbon::now()->subMonth(2)->toDateString();
+    $cutoff = Carbon::now()->subMonth(1)->toDateString();
     $end = $cutoff;
 
     PayrollPeriod::create([
