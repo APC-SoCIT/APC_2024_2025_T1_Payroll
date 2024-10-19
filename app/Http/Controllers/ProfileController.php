@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\PayrollPeriod;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -13,11 +16,20 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-
     public function index(): Response
     {
         return Inertia::render('Accounts', [
             'accounts' => User::orderBy('name')->get(),
+        ]);
+    }
+
+    public function getFromCutoff(PayrollPeriod $cutoff): Response
+    {
+        return Inertia::render('Accounts', [
+            'accounts' => User::whereHas('payrollItems', function (Builder $query) use($cutoff) {
+                $query->where('payroll_period_id', $cutoff->id);
+            })->orderBy('name')->get(),
+            'cutoff' => $cutoff,
         ]);
     }
 
@@ -55,17 +67,5 @@ class ProfileController extends Controller
         ]));
 
         return Redirect::route('accounts');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request, int $id): RedirectResponse
-    {
-        $user = $request->user();
-
-        $user->delete();
-
-        return Redirect::to('/');
     }
 }

@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps([
     'cutoff',
+    'account',
 ]);
-
-function format(dateString) {
-    var options = {  year: 'numeric', month: 'long', day: 'numeric' };
-    var date  = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-}
 
 function confirm(prompt){
     return window.confirm(prompt);
@@ -21,13 +17,14 @@ function confirm(prompt){
 <template>
     <tr>
         <td class="p-4 border-b border-blue-gray-50">
-            {{ format(cutoff.start_date) }}
+            <Link v-if="account == null" :href="route('accounts.getFromCutoff', cutoff.id)">{{ useFormat(cutoff.end_date) }}</Link>
+            <Link v-if="account != null" :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
         </td>
         <td class="p-4 border-b border-blue-gray-50">
-            {{ format(cutoff.cutoff_date) }}
+            {{ useFormat(cutoff.start_date) }}
         </td>
         <td class="p-4 border-b border-blue-gray-50">
-            {{ format(cutoff.end_date) }}
+            {{ useFormat(cutoff.cutoff_date) }}
         </td>
         <td class="p-4 border-b border-blue-gray-50">
             <PrimaryButton
@@ -38,7 +35,7 @@ function confirm(prompt){
                     :href="route('cutoff.delete', cutoff.id)"
                     method="delete"
                     as="button"
-                    :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${format(new Date(cutoff.end_date))}?`)"
+                    :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}?`)"
                 >Delete</Link>
             </DangerButton>
         </td>

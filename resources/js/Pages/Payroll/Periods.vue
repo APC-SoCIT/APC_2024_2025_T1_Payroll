@@ -6,6 +6,7 @@ import { Head, Link } from '@inertiajs/vue3';
 
 const props = defineProps([
     'cutoffs',
+    'account',
 ]);
 </script>
 
@@ -13,7 +14,8 @@ const props = defineProps([
     <Head title="Payroll Cutoffs"/>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs</h2>
+            <h2 v-if="account == null" class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs</h2>
+            <h2 v-if="account != null" class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs for {{ account.name }}</h2>
         </template>
 
         <div class="py-12">
@@ -29,13 +31,13 @@ const props = defineProps([
                         <table class="ml-8 w-full text-left table-auto min-w-max">
                             <thead class="text-start">
                                 <tr class="bg-light">
+                                    <th scope="col" width="25%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
                                     <th scope="col" width="25%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Start</th>
                                     <th scope="col" width="25%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Cutoff</th>
-                                    <th scope="col" width="25%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">End</th>
                                     <th scope="col" width="25%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Actions</th>
                                 </tr>
                             </thead>
-                            <Period v-for="cutoff in cutoffs" :cutoff/>
+                            <Period v-for="cutoff in cutoffs" :cutoff :account/>
                         </table>
                     </div>
                 </div>

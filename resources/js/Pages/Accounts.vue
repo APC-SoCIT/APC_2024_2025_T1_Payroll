@@ -2,17 +2,13 @@
 import Account from '@/Components/Account.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import { useForm, Head, Link } from '@inertiajs/vue3';
 
-
 const props = defineProps([
-    'accounts'
+    'accounts',
+    'cutoff',
 ]);
-
-const form = useForm({
-    name: '',
-    email: '',
-});
 </script>
 
 <template>
@@ -20,7 +16,8 @@ const form = useForm({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Accounts</h2>
+            <h2 v-if="cutoff == null" class="font-semibold text-xl text-gray-800 leading-tight">Accounts</h2>
+            <h2 v-if="cutoff != null" class="font-semibold text-xl text-gray-800 leading-tight">Accounts in Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
         </template>
 
         <div class="py-12">
@@ -43,7 +40,7 @@ const form = useForm({
                                     <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
                                 </tr>
                             </thead>
-                            <Account v-for="account in accounts" :account="account"/>
+                            <Account v-for="account in accounts" :account :cutoff/>
                         </table>
                     </div>
                 </div>

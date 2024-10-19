@@ -13,7 +13,7 @@ test('payroll item is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/user/' . $user->id);
+        ->get('/payroll/account/' . $user->id);
 
     $response->assertRedirect('/dashboard');
 });
@@ -25,7 +25,7 @@ test('payroll item is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/user/1');
+        ->get('/payroll/account/1');
 
     $response->assertOk();
 });
@@ -37,7 +37,7 @@ test('payroll item additions can be updated', function() {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/user/1');
+        ->get('/payroll/account/1');
 
     $response->assertOk();
 
@@ -45,7 +45,7 @@ test('payroll item additions can be updated', function() {
         ->actingAs($user)
         ->post('/payroll/additionItem/1/1');
 
-    $response->assertRedirect('/payroll/user/1');
+    $response->assertRedirect('/payroll/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -53,7 +53,7 @@ test('payroll item additions can be updated', function() {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/user/1');
+    $response->assertRedirect('/payroll/account/1');
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -67,7 +67,7 @@ test('payroll item deductions can be updated', function() {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/user/1');
+        ->get('/payroll/account/1');
 
     $response->assertOk();
 
@@ -75,7 +75,7 @@ test('payroll item deductions can be updated', function() {
         ->actingAs($user)
         ->post('/payroll/deductionItem/1/1');
 
-    $response->assertRedirect('/payroll/user/1');
+    $response->assertRedirect('/payroll/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -83,7 +83,7 @@ test('payroll item deductions can be updated', function() {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/user/1');
+    $response->assertRedirect('/payroll/account/1');
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,

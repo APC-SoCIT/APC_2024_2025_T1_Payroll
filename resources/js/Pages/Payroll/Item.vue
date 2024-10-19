@@ -4,6 +4,7 @@ import DeductionItemSelector from '@/Components/DeductionItemSelector.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import UpdateAdditionItemForm from './Partials/UpdateAdditionItemForm.vue';
 import UpdateDeductionItemForm from './Partials/UpdateDeductionItemForm.vue';
 import { Head } from '@inertiajs/vue3';
@@ -14,12 +15,6 @@ defineProps([
     'additions',
     'deductions',
 ]);
-
-function format(dateString) {
-    var options = {  year: 'numeric', month: 'long', day: 'numeric' };
-    var date  = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-}
 </script>
 
 <template>
@@ -29,7 +24,7 @@ function format(dateString) {
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Payroll Item for {{ targetAccount.name }}
-                for {{ format(payrollItem.payroll_period.end_date) }}
+                for {{ useFormat(payrollItem.payroll_period.end_date) }}
             </h2>
         </template>
 

@@ -40,6 +40,24 @@ class PayrollController extends Controller
         ]);
     }
 
+    public function getItem(PayrollPeriod $cutoff, User $user): Response
+    {
+        $payrollItem = PayrollItem::with([
+            'additionItems.addition',
+            'deductionItems.deduction',
+            'payrollPeriod',
+        ])->where('payroll_period_id', $cutoff->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        return Inertia::render('Payroll/Item', [
+            'targetAccount' => $user,
+            'payrollItem' => $payrollItem,
+            'additions' => Addition::all(),
+            'deductions' => Deduction::all(),
+        ]);
+    }
+
     public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
     {
         if (!self::isCurrentPeriod($payrollItem->payrollPeriod)) {

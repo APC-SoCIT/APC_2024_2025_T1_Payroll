@@ -3,6 +3,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import { useForm, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([ 'cutoff' ]);
@@ -12,16 +13,10 @@ const form = useForm({
     cutoff_date: props.cutoff.cutoff_date,
     end_date: props.cutoff.end_date,
 });
-
-function format(dateString) {
-    var options = {  year: 'numeric', month: 'long', day: 'numeric' };
-    var date  = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-}
 </script>
 
 <template>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule Cutoff for {{ format(cutoff.end_date) }}</h2>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
 
     <section>
         <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id))" class="mt-6 space-y-6">

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PayrollPeriod;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +17,16 @@ class PayrollPeriodController extends Controller
     public function index(): Response {
         return Inertia::render('Payroll/Periods', [
             'cutoffs' => PayrollPeriod::orderBy('end_date')->get(),
+        ]);
+    }
+
+    public function getFromUser(User $user): Response
+    {
+        return Inertia::render('Payroll/Periods', [
+            'cutoffs' => PayrollPeriod::whereHas('payrollItems', function (Builder $query) use($user) {
+                $query->where('user_id', $user->id);
+            })->orderBy('name')->get(),
+            'account' => $user,
         ]);
     }
 

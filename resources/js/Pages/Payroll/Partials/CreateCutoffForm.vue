@@ -12,12 +12,6 @@ const form = useForm({
     cutoff_date: page.props.date,
     end_date: page.props.date,
 });
-
-function format(dateString) {
-    var options = {  year: 'numeric', month: 'long', day: 'numeric' };
-    var date  = new Date(dateString);
-    return date.toLocaleDateString("en-US", options);
-}
 </script>
 
 <template>
