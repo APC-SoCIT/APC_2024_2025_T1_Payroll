@@ -14,6 +14,12 @@ defineProps([
     'additions',
     'deductions',
 ]);
+
+function format(dateString) {
+    var options = {  year: 'numeric', month: 'long', day: 'numeric' };
+    var date  = new Date(dateString);
+    return date.toLocaleDateString("en-US", options);
+}
 </script>
 
 <template>
@@ -21,7 +27,10 @@ defineProps([
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Payroll Item for {{ targetAccount.name }} for {{ payrollItem.payroll_period.start_date }} to {{ payrollItem.payroll_period.end_date }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Payroll Item for {{ targetAccount.name }}
+                for {{ format(payrollItem.payroll_period.end_date) }}
+            </h2>
         </template>
 
         <div class="py-12">

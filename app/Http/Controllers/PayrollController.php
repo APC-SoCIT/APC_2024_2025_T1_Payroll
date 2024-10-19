@@ -129,38 +129,58 @@ class PayrollController extends Controller
     public static function currentPeriod(): PayrollPeriod
     {
         $now = Carbon::now();
+        $nowString = $now->toDateString();
 
-        $start = null;
-        $end = null;
+        $currentPeriod = PayrollPeriod::where('start_date', '<=', $nowString)
+            ->where('end_date', '>=', $nowString)
+            ->oldest('end_date')
+            ->first();
 
-        if ($now->day < 11) {
-            $start = $now->copy()
-                ->subMonth()
-                ->setDay(26);
+        if (is_null($currentPeriod)) {
+            $start = null;
+            $cutoff = null;
+            $end = null;
 
-            $end = $now->copy()
-                ->setDay(10);
-        } else if ($now->day > 25) {
-            $start = $now->copy()
-                ->setDay(26);
+            if ($now->day < 11) {
+                $start = $now->copy()
+                    ->startOfMonth();
 
-            $end = $now->copy()
-                ->addMonth()
-                ->setDay(10);
-        } else {
-            $start = $now->copy()
-                ->setDay(11);
+                $cutoff = $now->copy()
+                    ->setDay(10);
 
-            $end = $now->copy()
-                ->setDay(25);
+                $end = $now->copy()
+                    ->setDay(15);
+            } else if ($now->day > 25) {
+                $start = $now->copy()
+                    ->addMonth()
+                    ->startOfMonth();
+
+                $cutoff = $now->copy()
+                    ->addMonth()
+                    ->setDay(10);
+
+                $end = $now->copy()
+                    ->addMonth()
+                    ->setDay(15);
+            } else {
+                $start = $now->copy()
+                    ->setDay(16);
+
+                $cutoff = $now->copy()
+                    ->setDay(25);
+
+                $end = $now->copy()
+                    ->endOfMonth();
+            }
+
+            $currentPeriod = PayrollPeriod::create([
+                'start_date' => $start->toDateString(),
+                'cutoff_date' => $cutoff->toDateString(),
+                'end_date' => $end->toDateString(),
+            ]);
         }
 
-
-        return PayrollPeriod::firstOrCreate([
-            'start_date' => $start->toDateString(),
-            'cutoff_date' => $end->toDateString(),
-            'end_date' => $end->toDateString(),
-        ]);
+        return $currentPeriod;
     }
 
     public static function isCurrentPeriod(PayrollPeriod $payrollPeriod): bool
