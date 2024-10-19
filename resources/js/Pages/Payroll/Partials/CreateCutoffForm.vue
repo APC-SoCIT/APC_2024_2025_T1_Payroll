@@ -5,12 +5,12 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 
-const props = defineProps([ 'cutoff' ]);
+const page = usePage();
 
 const form = useForm({
-    start_date: props.cutoff.start_date,
-    cutoff_date: props.cutoff.cutoff_date,
-    end_date: props.cutoff.end_date,
+    start_date: page.props.date,
+    cutoff_date: page.props.date,
+    end_date: page.props.date,
 });
 
 function format(dateString) {
@@ -21,10 +21,10 @@ function format(dateString) {
 </script>
 
 <template>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule Cutoff for {{ format(cutoff.end_date) }}</h2>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule New Payroll Cutoff</h2>
 
     <section>
-        <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.post(route('cutoff.store'))" class="mt-6 space-y-6">
             <div>
                 <h3 class="font-semibold text-l text-gray-800 leading-tight">Start Date</h3>
                 <InputLabel for="start_date" value="First day of the cutoff" />

@@ -41,10 +41,16 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
 
     Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
         ->name('cutoffs');
+    Route::get('/cutoff/new', [PayrollPeriodController::class, 'add'])
+        ->name('cutoff.add');
+    Route::post('/cutoff/new', [PayrollPeriodController::class, 'store'])
+        ->name('cutoff.store');
     Route::get('/cutoff/{cutoff}', [PayrollPeriodController::class, 'get'])
         ->name('cutoff.get');
     Route::patch('/cutoff/{cutoff}', [PayrollPeriodController::class, 'update'])
         ->name('cutoff.update');
+    Route::delete('/cutoff/{cutoff}', [PayrollPeriodController::class, 'delete'])
+        ->name('cutoff.delete');
 });
 
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {

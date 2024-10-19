@@ -18,6 +18,17 @@ class PayrollPeriodController extends Controller
         ]);
     }
 
+    public function add(): Response {
+        return Inertia::render('Payroll/CreatePeriod');
+    }
+
+    public function store(Request $request): RedirectResponse {
+        $validator = self::makeCutoffValidator($request);
+
+        PayrollPeriod::create($validator->validate());
+        return redirect(route('cutoffs'));
+    }
+
     public function get(PayrollPeriod $cutoff): Response {
         return Inertia::render('Payroll/EditPeriod', [
             'cutoff' => $cutoff,
@@ -25,6 +36,22 @@ class PayrollPeriodController extends Controller
     }
 
     public function update(PayrollPeriod $cutoff, Request $request): RedirectResponse {
+        $validator = self::makeCutoffValidator($request);
+
+        $cutoff->update($validator->validate());
+        return redirect(route('cutoffs'));
+    }
+
+    public function delete(PayrollPeriod $cutoff): RedirectResponse {
+        if ($cutoff->end_date < Carbon::now()->toDateString()) {
+            abort(403);
+        }
+
+        $cutoff->delete();
+        return redirect(route('cutoffs'));
+    }
+
+    private static function makeCutoffValidator(Request $request): \Illuminate\Validation\Validator {
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
             'cutoff_date' => 'required|date',
@@ -40,7 +67,6 @@ class PayrollPeriodController extends Controller
             if ($end < $now) {
                 $validator->errors()->add('end_date', 'End date must be in the future');
             }
-
             if ($end < $start) {
                 $validator->errors()->add('end_date', 'End date must be after the start date');
             }
@@ -49,7 +75,6 @@ class PayrollPeriodController extends Controller
             }
         });
 
-        $cutoff->update($validator->validate());
-        return redirect(route('cutoffs'));
+        return $validator;
     }
 }
