@@ -22,7 +22,7 @@ test('accounts list page is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/account/1');
+        ->get('/accounts');
 
     $response->assertOk();
 });
