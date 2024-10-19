@@ -5,19 +5,11 @@ use App\Http\Controllers\PayrollPeriodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AccountsMiddleware;
 use App\Http\Middleware\PayrollMiddleware;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Auth::check()
-        ? redirect(route('dashboard'))
-        : Inertia::render('Welcome', [
-            'canLogin' => Route::has('auth.redirect'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-        ]);
+    return redirect(route('dashboard'));
 });
 
 Route::get('/dashboard', function () {
