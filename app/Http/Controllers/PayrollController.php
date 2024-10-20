@@ -34,11 +34,8 @@ class PayrollController extends Controller
             'payroll_period_id' => $currentPeriod->id,
         ]);
 
-        // need to have the period loaded if you create a new one
-        // invoke a method from it to load it
-        if (! $payrollItem->payrollPeriod->is($currentPeriod)) {
-            abort(403);
-        }
+        // upon first creation, it's not loaded
+        $payrollItem->load('payrollPeriod');
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -59,11 +56,8 @@ class PayrollController extends Controller
             'payroll_period_id' => $cutoff->id,
         ]);
 
-        // need to have the period loaded if you create a new one
-        // invoke a method from it to load it
-        if ($payrollItem->payrollPeriod->hasEnded()) {
-            //
-        }
+        // upon first creation, it's not loaded
+        $payrollItem->load('payrollPeriod');
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
