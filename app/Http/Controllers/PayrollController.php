@@ -73,14 +73,17 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $additionItem = AdditionItem::firstOrCreate([
+        AdditionItem::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => $addition->id,
         ], [
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.getCurrentItemFromUser', $additionItem->payrollItem->user->id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $payrollItem->payrollPeriod->id,
+            'user' => $payrollItem->user->id,
+        ]));
     }
 
     public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
@@ -93,7 +96,10 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getCurrentItemFromUser', $additionItem->payrollItem->user->id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $additionItem->payrollItem->payrollPeriod->id,
+            'user' => $additionItem->payrollItem->user->id,
+        ]));
     }
 
     public function deleteAdditionItem(AdditionItem $additionItem): RedirectResponse
@@ -102,10 +108,14 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $id = $additionItem->payrollItem->user->id;
+        $cutoff_id = $additionItem->payrollItem->id;
+        $user_id = $additionItem->payrollItem->user->id;
         $additionItem->delete();
 
-        return redirect(route('payroll.getCurrentItemFromUser', $id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $cutoff_id,
+            'user' => $user_id,
+        ]));
     }
 
     public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
@@ -114,14 +124,17 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $deductionItem = DeductionItem::firstOrCreate([
+        DeductionItem::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => $deduction->id,
         ], [
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.getCurrentItemFromUser', $deductionItem->payrollItem->user->id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $payrollItem->payrollPeriod->id,
+            'user' => $payrollItem->user->id,
+        ]));
     }
 
     public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
@@ -134,7 +147,10 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getCurrentItemFromUser', $deductionItem->payrollItem->user->id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $deductionItem->payrollItem->payrollPeriod->id,
+            'user' => $deductionItem->payrollItem->user->id,
+        ]));
     }
 
     public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
@@ -143,10 +159,14 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $id = $deductionItem->payrollItem->user->id;
+        $cutoff_id = $deductionItem->payrollItem->id;
+        $user_id = $deductionItem->payrollItem->user->id;
         $deductionItem->delete();
 
-        return redirect(route('payroll.getCurrentItemFromUser', $id));
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $cutoff_id,
+            'user' => $user_id,
+        ]));
     }
 
     /*
