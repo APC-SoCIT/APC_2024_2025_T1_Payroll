@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller for dealing with payroll cutoffs
+ * @see { App\Http\Controllers\PayrollController } for payroll entries
+ */
 class PayrollPeriodController extends Controller
 {
     public function index(): Response {

@@ -15,6 +15,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller for dealing with payroll entries
+ * @see { App\Http\Controllers\PayrollPeriodController } for cutoff scheduling
+ */
 class PayrollController extends Controller
 {
     public function getCurrentItemFromUser(User $user): Response
@@ -29,6 +33,8 @@ class PayrollController extends Controller
             'payroll_period_id' => $currentPeriod->id,
         ]);
 
+        // need to have the period loaded if you create a new one
+        // invoke a method from it to load it
         if (!$payrollItem->payrollPeriod->is($currentPeriod)) {
             abort(403);
         };
@@ -52,8 +58,10 @@ class PayrollController extends Controller
             'payroll_period_id' => $cutoff->id,
         ]);
 
+        // need to have the period loaded if you create a new one
+        // invoke a method from it to load it
         if ($payrollItem->payrollPeriod->hasEnded()) {
-            abort(403);
+            //
         };
 
         return Inertia::render('Payroll/Item', [
