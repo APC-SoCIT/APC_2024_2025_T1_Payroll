@@ -17,6 +17,7 @@ use Inertia\Response;
 
 /**
  * Controller for dealing with payroll entries
+ *
  * @see { App\Http\Controllers\PayrollPeriodController } for cutoff scheduling
  */
 class PayrollController extends Controller
@@ -35,9 +36,9 @@ class PayrollController extends Controller
 
         // need to have the period loaded if you create a new one
         // invoke a method from it to load it
-        if (!$payrollItem->payrollPeriod->is($currentPeriod)) {
+        if (! $payrollItem->payrollPeriod->is($currentPeriod)) {
             abort(403);
-        };
+        }
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -62,7 +63,7 @@ class PayrollController extends Controller
         // invoke a method from it to load it
         if ($payrollItem->payrollPeriod->hasEnded()) {
             //
-        };
+        }
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -82,7 +83,7 @@ class PayrollController extends Controller
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => $addition->id,
         ], [
-            'amount' => 0
+            'amount' => 0,
         ]);
 
         return redirect(route('payroll.getCurrentItemFromUser', $additionItem->payrollItem->user->id));
@@ -123,7 +124,7 @@ class PayrollController extends Controller
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => $deduction->id,
         ], [
-            'amount' => 0
+            'amount' => 0,
         ]);
 
         return redirect(route('payroll.getCurrentItemFromUser', $deductionItem->payrollItem->user->id));
@@ -182,7 +183,7 @@ class PayrollController extends Controller
 
                 $end = $now->copy()
                     ->setDay(15);
-            } else if ($now->day > 25) {
+            } elseif ($now->day > 25) {
                 $start = $now->copy()
                     ->addMonth()
                     ->startOfMonth();

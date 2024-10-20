@@ -14,11 +14,13 @@ use Inertia\Response;
 
 /**
  * Controller for dealing with payroll cutoffs
+ *
  * @see { App\Http\Controllers\PayrollController } for payroll entries
  */
 class PayrollPeriodController extends Controller
 {
-    public function index(): Response {
+    public function index(): Response
+    {
         return Inertia::render('Payroll/Periods', [
             'cutoffs' => PayrollPeriod::latest('end_date')->get(),
         ]);
@@ -29,58 +31,67 @@ class PayrollPeriodController extends Controller
         return Inertia::render('Payroll/Periods', [
             'cutoffs' => PayrollPeriod
                 // all the user is involved with (including past)
-                ::whereHas('payrollItems', function (Builder $query) use($user) {
+                ::whereHas('payrollItems', function (Builder $query) use ($user) {
                     $query->where('user_id', $user->id);
 
                 })
                 // all future
-                ->orWhere('end_date', '>=', Carbon::now()->toDateString())
-                ->latest('end_date')->get(),
-                'account' => $user,
+                    ->orWhere('end_date', '>=', Carbon::now()->toDateString())
+                    ->latest('end_date')->get(),
+            'account' => $user,
         ]);
     }
 
-    public function add(): Response {
+    public function add(): Response
+    {
         return Inertia::render('Payroll/CreatePeriod');
     }
 
-    public function store(Request $request): RedirectResponse {
+    public function store(Request $request): RedirectResponse
+    {
         $validator = self::makeCutoffValidator($request);
 
         PayrollPeriod::create($validator->validate());
+
         return redirect(route('cutoffs'));
     }
 
-    public function get(PayrollPeriod $cutoff): Response {
+    public function get(PayrollPeriod $cutoff): Response
+    {
         return Inertia::render('Payroll/EditPeriod', [
             'cutoff' => $cutoff,
         ]);
     }
 
-    public function update(PayrollPeriod $cutoff, Request $request): RedirectResponse {
+    public function update(PayrollPeriod $cutoff, Request $request): RedirectResponse
+    {
         $validator = self::makeCutoffValidator($request);
 
         $cutoff->update($validator->validate());
+
         return redirect(route('cutoffs'));
     }
 
-    public function delete(PayrollPeriod $cutoff): RedirectResponse {
+    public function delete(PayrollPeriod $cutoff): RedirectResponse
+    {
         if ($cutoff->end_date < Carbon::now()->toDateString()) {
             abort(403);
         }
 
         $cutoff->delete();
+
         return redirect(route('cutoffs'));
     }
 
-    private static function makeCutoffValidator(Request $request): \Illuminate\Validation\Validator {
+    private static function makeCutoffValidator(Request $request): \Illuminate\Validation\Validator
+    {
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
             'cutoff_date' => 'required|date',
             'end_date' => 'required|date',
         ]);
 
-        $validator->after(function($validator) {
+        $validator->after(function ($validator) {
             $start = $validator->getValue('start_date');
             $end = $validator->getValue('end_date');
             $cutoff = $validator->getValue('cutoff_date');

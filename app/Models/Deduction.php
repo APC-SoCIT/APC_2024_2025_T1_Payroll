@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A type/description of a deduction
-**/
+ **/
 class Deduction extends Model
 {
     use HasFactory;

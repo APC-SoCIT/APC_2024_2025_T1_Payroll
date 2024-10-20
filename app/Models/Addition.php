@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A type/description of an addition
-**/
+ **/
 class Addition extends Model
 {
     use HasFactory;

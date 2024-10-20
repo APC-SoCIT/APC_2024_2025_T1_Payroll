@@ -29,7 +29,7 @@ test('payroll cutoff list is displayed', function () {
     $response->assertOk();
 });
 
-test('payroll cutoff can be created', function() {
+test('payroll cutoff can be created', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -60,7 +60,7 @@ test('payroll cutoff can be created', function() {
     ]);
 });
 
-test('payroll cutoff creation validation', function() {
+test('payroll cutoff creation validation', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -117,7 +117,7 @@ test('payroll cutoff creation validation', function() {
     $response->assertInvalid(['cutoff_date']);
 });
 
-test('payroll cutoff update validation', function() {
+test('payroll cutoff update validation', function () {
     $user = User::factory()
         ->authorized()
         ->create();

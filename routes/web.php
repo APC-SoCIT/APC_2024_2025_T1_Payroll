@@ -80,4 +80,4 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
         ->name('payroll.deleteDeductionItem');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -19,7 +19,7 @@ class HandleInertiaRequests extends Middleware
     /**
      * Determine the current asset version.
      */
-    public function version(Request $request): string|null
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
@@ -44,6 +44,6 @@ class HandleInertiaRequests extends Middleware
 
     private function isRole(string $role): bool
     {
-        return Auth::check() ? in_array(Auth::user()->email, config('roles.' . $role . '_accounts')) : false;
+        return Auth::check() ? in_array(Auth::user()->email, config('roles.'.$role.'_accounts')) : false;
     }
 }

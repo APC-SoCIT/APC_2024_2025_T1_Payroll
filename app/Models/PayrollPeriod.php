@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Keeps track of the cutoff dates of a payroll period
-**/
+ **/
 class PayrollPeriod extends Model
 {
     use HasFactory;
@@ -25,7 +25,8 @@ class PayrollPeriod extends Model
         return $this->hasMany(PayrollItem::class);
     }
 
-    public function hasEnded(): bool {
+    public function hasEnded(): bool
+    {
         return $this->end_date < Carbon::now()->toDateString();
     }
 }

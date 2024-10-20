@@ -30,7 +30,7 @@ test('payroll item is displayed', function () {
     $response->assertOk();
 });
 
-test('current payroll item additions can be updated', function() {
+test('current payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -60,7 +60,7 @@ test('current payroll item additions can be updated', function() {
     ]);
 });
 
-test('future payroll item additions can be updated', function() {
+test('future payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -96,7 +96,7 @@ test('future payroll item additions can be updated', function() {
     ]);
 });
 
-test('payroll item deductions can be updated', function() {
+test('payroll item deductions can be updated', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -126,7 +126,7 @@ test('payroll item deductions can be updated', function() {
     ]);
 });
 
-test('future payroll item deductions can be updated', function() {
+test('future payroll item deductions can be updated', function () {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -162,7 +162,7 @@ test('future payroll item deductions can be updated', function() {
     ]);
 });
 
-test('previous payroll items updates are restricted', function() {
+test('previous payroll items updates are restricted', function () {
     $user = User::factory()
         ->authorized()
         ->create();

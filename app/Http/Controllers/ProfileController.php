@@ -38,6 +38,7 @@ class ProfileController extends Controller
     {
         $validated = $request->validated();
         User::create($validated);
+
         return redirect(route('accounts'));
     }
 

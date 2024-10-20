@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * A deduction within a payroll item
-**/
+ **/
 class DeductionItem extends Model
 {
     use HasFactory;
