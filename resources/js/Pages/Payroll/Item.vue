@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
+import UpdateBasePayForm from './Partials/UpdateBasePayForm.vue';
 import UpdateAdditionItemForm from './Partials/UpdateAdditionItemForm.vue';
 import UpdateDeductionItemForm from './Partials/UpdateDeductionItemForm.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
@@ -43,13 +44,22 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                         :payrollItem
                         :additions
                     />
-                    <UpdateAdditionItemForm v-for="additionItem in payrollItem.addition_items"
-                        :key="additionItem.id"
-                        :targetAccount
-                        :additionItem
-                        :payrollPeriod="payrollItem.payroll_period"
-                        class="max-w-xl"
-                    />
+                    <div v-for="additionItem in payrollItem.addition_items">
+                        <UpdateBasePayForm
+                            v-if="additionItem.addition.id == 1"
+                            :targetAccount
+                            :additionItem
+                            :payrollPeriod="payrollItem.payroll_period"
+                            class="max-w-xl"
+                        />
+                        <UpdateAdditionItemForm
+                            v-else
+                            :targetAccount
+                            :additionItem
+                            :payrollPeriod="payrollItem.payroll_period"
+                            class="max-w-xl"
+                        />
+                    </div>
                 </div>
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
@@ -59,13 +69,15 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                         :payrollItem
                         :deductions
                     />
-                    <UpdateDeductionItemForm v-for="deductionItem in payrollItem.deduction_items"
-                        :key="deductionItem.id"
-                        :targetAccount
-                        :deductionItem
-                        :payrollPeriod="payrollItem.payroll_period"
-                        class="max-w-xl"
-                    />
+                    <div v-for="deductionItem in payrollItem.deduction_items">
+                        <UpdateDeductionItemForm
+                            :key="deductionItem.id"
+                            :targetAccount
+                            :deductionItem
+                            :payrollPeriod="payrollItem.payroll_period"
+                            class="max-w-xl"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

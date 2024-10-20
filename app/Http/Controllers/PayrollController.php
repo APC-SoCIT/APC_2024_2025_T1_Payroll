@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Addition;
 use App\Models\AdditionItem;
+use App\Models\AdditionVariableItem;
 use App\Models\Deduction;
 use App\Models\DeductionItem;
 use App\Models\PayrollItem;
@@ -25,17 +26,61 @@ class PayrollController extends Controller
     public function getCurrentItemFromUser(User $user): Response
     {
         $currentPeriod = self::currentPeriod();
-        $payrollItem = PayrollItem::with([
-            'additionItems.addition',
-            'deductionItems.deduction',
-            'payrollPeriod',
-        ])->firstOrCreate([
+
+        return self::getItem($currentPeriod, $user);
+    }
+
+    public function getItem(PayrollPeriod $cutoff, User $user): Response
+    {
+        $payrollItem = PayrollItem::firstOrCreate([
             'user_id' => $user->id,
-            'payroll_period_id' => $currentPeriod->id,
+            'payroll_period_id' => $cutoff->id,
         ]);
 
+        $additionItem = AdditionItem::firstOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
+        ], [
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
+            'amount' => 0,
+        ]);
+
+        $user->load('userVariableItems');
+        $payRate = AdditionVariableItem::updateOrCreate([
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 1,
+        ], [
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 1, // base pay rate
+            'value' => $user
+                ->userVariableItems
+                ->where('user_variable_id', 1)
+                ->first()
+                ->value,
+        ]);
+
+        $hours = AdditionVariableItem::firstOrCreate([
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 2,
+        ], [
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 2, // regular hours rendered
+            'value' => 80,
+        ]);
+
+        $additionItem->amount = $payRate->value * $hours->value;
+        $additionItem->save();
+
         // upon first creation, it's not loaded
-        $payrollItem->load('payrollPeriod');
+        $payrollItem->load([
+            'payrollPeriod',
+            'additionItems' => [
+                'addition',
+                'additionVariableItems.additionVariable',
+            ],
+            'deductionItems.deduction',
+        ]);
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -45,26 +90,20 @@ class PayrollController extends Controller
         ]);
     }
 
-    public function getItem(PayrollPeriod $cutoff, User $user): Response
+    public function updateAdditionVariableItem(AdditionVariableItem $variableItem, Request $request): RedirectResponse
     {
-        $payrollItem = PayrollItem::with([
-            'additionItems.addition',
-            'deductionItems.deduction',
-            'payrollPeriod',
-        ])->firstOrCreate([
-            'user_id' => $user->id,
-            'payroll_period_id' => $cutoff->id,
-        ]);
+        if ($variableItem->additionItem->payrollItem->payrollPeriod->hasEnded()) {
+            abort(403);
+        }
 
-        // upon first creation, it's not loaded
-        $payrollItem->load('payrollPeriod');
+        $variableItem->update($request->validate([
+            'value' => ['required', 'numeric', 'min:0'],
+        ]));
 
-        return Inertia::render('Payroll/Item', [
-            'targetAccount' => $user,
-            'payrollItem' => $payrollItem,
-            'additions' => Addition::all(),
-            'deductions' => Deduction::all(),
-        ]);
+        return redirect(route('payroll.getItem', [
+            'cutoff' => $variableItem->additionItem->payrollItem->payrollPeriod->id,
+            'user' => $variableItem->additionItem->payrollItem->user->id,
+        ]));
     }
 
     public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
