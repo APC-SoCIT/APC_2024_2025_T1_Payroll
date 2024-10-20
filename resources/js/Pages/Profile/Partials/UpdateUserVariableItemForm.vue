@@ -19,7 +19,7 @@ const form = useForm({
 </script>
 
 <template>
-    <section>
+    <section v-if="userVariableItem.user_variable.id == 1 && $page.props.auth.isPayroll">
         <header>
             <h2 class="text-lg font-medium text-gray-900">{{ userVariableItem.user_variable.name }}</h2>
 
@@ -45,7 +45,9 @@ const form = useForm({
 
                 <InputError class="mt-2" :message="form.errors.value" />
             </div>
-            <Link :href="route('profile.deleteUserVariableItem', userVariableItem.id)"
+            <Link
+                v-if="userVariableItem.user_variable.id != 1"
+                :href="route('profile.deleteUserVariableItem', userVariableItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
                 as="button"

@@ -10,6 +10,7 @@ use App\Models\UserVariableItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -90,11 +91,17 @@ class ProfileController extends Controller
 
     public function updateVariable(UserVariableItem $variableItem, Request $request): RedirectResponse
     {
+        if ($variableItem->userVariable->id == 1
+            && ! in_array(Auth::user()->email, config('roles.payroll_accounts'))) {
+            abort(403);
+        }
+
         $variableItem->update(
             $request->validate([
-                'value' => ['required' , 'numeric', 'min:0'],
+                'value' => ['required', 'numeric', 'min:0'],
             ])
         );
+
         return Redirect::route('profile.edit', $variableItem->user->id);
     }
 
@@ -107,6 +114,7 @@ class ProfileController extends Controller
 
         $user = $variableItem->user;
         $variableItem->delete();
+
         return Redirect::route('profile.edit', $user->id);
     }
 }
