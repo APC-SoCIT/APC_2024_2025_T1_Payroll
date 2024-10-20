@@ -64,7 +64,7 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
         ->name('payroll.getItem');
 
     // addition actions
-    Route::post('/payroll/additionItem/{payrollItem}/{addition}', [PayrollController::class, 'addAdditionItem'])
+    Route::post('/payroll/{payrollItem}/additionItem/{addition}', [PayrollController::class, 'addAdditionItem'])
         ->name('payroll.addAdditionItem');
     Route::patch('/payroll/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
         ->name('payroll.updateAdditionItem');
@@ -72,7 +72,7 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
         ->name('payroll.deleteAdditionItem');
 
     // deduction actions
-    Route::post('/payroll/deductionItem/{payrollItem}/{deduction}', [PayrollController::class, 'addDeductionItem'])
+    Route::post('/payroll/{payrollItem}/deductionItem/{deduction}', [PayrollController::class, 'addDeductionItem'])
         ->name('payroll.addDeductionItem');
     Route::patch('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
         ->name('payroll.updateDeductionItem');

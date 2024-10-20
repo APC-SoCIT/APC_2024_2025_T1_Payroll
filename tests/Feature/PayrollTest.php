@@ -13,7 +13,7 @@ test('payroll item is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/' . $user->id);
+        ->get('/payroll/account/1');
 
     $response->assertRedirect('/dashboard');
 });
@@ -30,7 +30,7 @@ test('payroll item is displayed', function () {
     $response->assertOk();
 });
 
-test('payroll item additions can be updated', function() {
+test('current payroll item additions can be updated', function() {
     $user = User::factory()
         ->authorized()
         ->create();
@@ -43,7 +43,43 @@ test('payroll item additions can be updated', function() {
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/additionItem/1/1');
+        ->post('/payroll/1/additionItem/1');
+
+    $response->assertRedirect('/payroll/account/1');
+
+    $response = $this
+        ->actingAs($user)
+        ->patch('/payroll/additionItem/1', [
+            'amount' => 727,
+        ]);
+
+    $response->assertRedirect('/payroll/account/1');
+
+    $this->assertDatabaseHas('addition_items', [
+        'amount' => 727,
+    ]);
+});
+
+test('future payroll item additions can be updated', function() {
+    $user = User::factory()
+        ->authorized()
+        ->create();
+
+    PayrollPeriod::create([
+        'start_date' => Carbon::now()->addMonth(1)->toDateString(),
+        'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
+        'end_date' => Carbon::now()->addMonth(2)->toDateString(),
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/payroll/account/1');
+
+    $response->assertOk();
+
+    $response = $this
+        ->actingAs($user)
+        ->post('/payroll/1/additionItem/1');
 
     $response->assertRedirect('/payroll/account/1');
 
@@ -73,7 +109,43 @@ test('payroll item deductions can be updated', function() {
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/deductionItem/1/1');
+        ->post('/payroll/1/deductionItem/1');
+
+    $response->assertRedirect('/payroll/account/1');
+
+    $response = $this
+        ->actingAs($user)
+        ->patch('/payroll/deductionItem/1', [
+            'amount' => 727,
+        ]);
+
+    $response->assertRedirect('/payroll/account/1');
+
+    $this->assertDatabaseHas('deduction_items', [
+        'amount' => 727,
+    ]);
+});
+
+test('future payroll item deductions can be updated', function() {
+    $user = User::factory()
+        ->authorized()
+        ->create();
+
+    PayrollPeriod::create([
+        'start_date' => Carbon::now()->addMonth(1)->toDateString(),
+        'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
+        'end_date' => Carbon::now()->addMonth(2)->toDateString(),
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/payroll/account/1');
+
+    $response->assertOk();
+
+    $response = $this
+        ->actingAs($user)
+        ->post('/payroll/1/deductionItem/1');
 
     $response->assertRedirect('/payroll/account/1');
 
@@ -112,15 +184,19 @@ test('previous payroll items updates are restricted', function() {
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/additionItem/1/1');
+        ->post('/payroll/1/additionItem/1');
 
     $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/deductionItem/1/1');
+        ->post('/payroll/1/deductionItem/1');
+
+    $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/additionItem/1/1');
+        ->post('/payroll/1/additionItem/1');
+
+    $response->assertForbidden();
 });

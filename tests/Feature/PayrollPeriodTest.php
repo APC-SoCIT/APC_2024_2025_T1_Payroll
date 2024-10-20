@@ -1,12 +1,9 @@
 <?php
 
-use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
