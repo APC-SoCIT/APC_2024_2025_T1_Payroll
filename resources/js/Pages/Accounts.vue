@@ -17,7 +17,7 @@ const props = defineProps([
     <AuthenticatedLayout>
         <template #header>
             <h2 v-if="cutoff == null" class="font-semibold text-xl text-gray-800 leading-tight">Accounts</h2>
-            <h2 v-if="cutoff != null" class="font-semibold text-xl text-gray-800 leading-tight">Accounts in Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
+            <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">Accounts in Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
         </template>
 
         <div class="py-12">
@@ -39,7 +39,7 @@ const props = defineProps([
                                     <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                                     <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
                                 </tr>
-                                <tr v-if="cutoff != null" class="bg-light">
+                                <tr v-else class="bg-light">
                                     <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
                                     <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
                                     <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>

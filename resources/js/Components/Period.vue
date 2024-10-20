@@ -18,7 +18,7 @@ function confirm(prompt){
     <tr>
         <td class="p-4 border-b border-blue-gray-50">
             <Link v-if="account == null" :href="route('accounts.getFromCutoff', cutoff.id)">{{ useFormat(cutoff.end_date) }}</Link>
-            <Link v-if="account != null" :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
+            <Link v-else :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
         </td>
         <td class="p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.start_date) }}
@@ -39,7 +39,7 @@ function confirm(prompt){
                 >Delete</Link>
             </DangerButton>
         </td>
-        <td v-if="account != null" class="p-4 border-b border-blue-gray-50">
+        <td v-else class="p-4 border-b border-blue-gray-50">
             {{ cutoff.end_date < $page.props.date
                 ? "Completed"
                 : cutoff.start_date > $page.props.date

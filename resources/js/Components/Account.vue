@@ -21,7 +21,7 @@ const props = defineProps([
                 <PrimaryButton><Link :href="route('payroll.getCurrentItemFromUser', account.id)">Current Entry</Link></PrimaryButton>
             </td>
         </tr>
-        <tr v-if="cutoff != null">
+        <tr v-else>
             <td class="p-4 border-b border-blue-gray-50">
                 <Link :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ account.name }}</Link>
             </td>
