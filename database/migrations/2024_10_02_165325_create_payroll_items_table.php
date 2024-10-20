@@ -69,8 +69,8 @@ return new class extends Migration
         });
 
         DB::table('additions')->insert([
-            'name' => 'Rate',
-            'description' => 'Base hourly rate',
+            'name' => 'Base pay',
+            'description' => 'Base pay based on contract',
         ]);
 
         DB::table('deductions')->insert([
