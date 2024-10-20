@@ -11,8 +11,8 @@ class UserVariableItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'addition_item_id',
-        'addition_variable_id',
+        'user_id',
+        'user_variable_id',
         'value',
     ];
 
