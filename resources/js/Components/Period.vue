@@ -26,7 +26,7 @@ function confirm(prompt){
         <td class="p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.cutoff_date) }}
         </td>
-        <td class="p-4 border-b border-blue-gray-50">
+        <td v-if="account == null" class="p-4 border-b border-blue-gray-50">
             <PrimaryButton
                 v-if="cutoff.end_date > $page.props.date"
             ><Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link></PrimaryButton>
@@ -38,6 +38,13 @@ function confirm(prompt){
                     :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}?`)"
                 >Delete</Link>
             </DangerButton>
+        </td>
+        <td v-if="account != null" class="p-4 border-b border-blue-gray-50">
+            {{ cutoff.end_date < $page.props.date
+                ? "Completed"
+                : cutoff.start_date > $page.props.date
+                    ? "Not Started"
+                    : "In Progress" }}
         </td>
     </tr>
 </template>

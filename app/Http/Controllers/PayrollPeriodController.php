@@ -16,17 +16,23 @@ class PayrollPeriodController extends Controller
 {
     public function index(): Response {
         return Inertia::render('Payroll/Periods', [
-            'cutoffs' => PayrollPeriod::orderBy('end_date')->get(),
+            'cutoffs' => PayrollPeriod::latest('end_date')->get(),
         ]);
     }
 
     public function getFromUser(User $user): Response
     {
         return Inertia::render('Payroll/Periods', [
-            'cutoffs' => PayrollPeriod::whereHas('payrollItems', function (Builder $query) use($user) {
-                $query->where('user_id', $user->id);
-            })->orderBy('name')->get(),
-            'account' => $user,
+            'cutoffs' => PayrollPeriod
+                // all the user is involved with (including past)
+                ::whereHas('payrollItems', function (Builder $query) use($user) {
+                    $query->where('user_id', $user->id);
+
+                })
+                // all future
+                ->orWhere('end_date', '>=', Carbon::now()->toDateString())
+                ->latest('end_date')->get(),
+                'account' => $user,
         ]);
     }
 

@@ -19,18 +19,19 @@ class PayrollController extends Controller
 {
     public function getCurrentItemFromUser(User $user): Response
     {
+        $currentPeriod = self::currentPeriod();
         $payrollItem = PayrollItem::with([
             'additionItems.addition',
             'deductionItems.deduction',
             'payrollPeriod',
         ])->firstOrCreate([
             'user_id' => $user->id,
-            'payroll_period_id' => self::currentPeriod()->id,
+            'payroll_period_id' => $currentPeriod->id,
         ]);
 
-        if (!self::isCurrentPeriod($payrollItem->payrollPeriod)) {
+        if (!$payrollItem->payrollPeriod->is($currentPeriod)) {
             abort(403);
-        }
+        };
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -46,9 +47,14 @@ class PayrollController extends Controller
             'additionItems.addition',
             'deductionItems.deduction',
             'payrollPeriod',
-        ])->where('payroll_period_id', $cutoff->id)
-            ->where('user_id', $user->id)
-            ->first();
+        ])->firstOrCreate([
+            'user_id' => $user->id,
+            'payroll_period_id' => $cutoff->id,
+        ]);
+
+        if ($payrollItem->payrollPeriod->hasEnded()) {
+            abort(403);
+        };
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
@@ -60,7 +66,7 @@ class PayrollController extends Controller
 
     public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
     {
-        if (!self::isCurrentPeriod($payrollItem->payrollPeriod)) {
+        if ($payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -76,7 +82,7 @@ class PayrollController extends Controller
 
     public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
     {
-        if (!self::isCurrentPeriod($additionItem->payrollItem->payrollPeriod)) {
+        if ($additionItem->payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -89,7 +95,7 @@ class PayrollController extends Controller
 
     public function deleteAdditionItem(AdditionItem $additionItem): RedirectResponse
     {
-        if (!self::isCurrentPeriod($additionItem->payrollItem->payrollPeriod)) {
+        if ($additionItem->payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -101,7 +107,7 @@ class PayrollController extends Controller
 
     public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
     {
-        if (!self::isCurrentPeriod($payrollItem->payrollPeriod)) {
+        if ($payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -117,7 +123,7 @@ class PayrollController extends Controller
 
     public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
     {
-        if (!self::isCurrentPeriod($deductionItem->payrollItem->payrollPeriod)) {
+        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -130,7 +136,7 @@ class PayrollController extends Controller
 
     public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
     {
-        if (!self::isCurrentPeriod($deductionItem->payrollItem->payrollPeriod)) {
+        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
         }
 
@@ -199,10 +205,5 @@ class PayrollController extends Controller
         }
 
         return $currentPeriod;
-    }
-
-    public static function isCurrentPeriod(PayrollPeriod $payrollPeriod): bool
-    {
-        return self::currentPeriod()->is($payrollPeriod);
     }
 }

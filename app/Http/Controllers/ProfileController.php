@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -26,9 +25,11 @@ class ProfileController extends Controller
     public function getFromCutoff(PayrollPeriod $cutoff): Response
     {
         return Inertia::render('Accounts', [
-            'accounts' => User::whereHas('payrollItems', function (Builder $query) use($cutoff) {
-                $query->where('payroll_period_id', $cutoff->id);
-            })->orderBy('name')->get(),
+            'accounts' => $cutoff->hasEnded()
+                ? User::whereHas('payrollItems', function (Builder $query) use ($cutoff) {
+                    $query->where('payroll_period_id', $cutoff->id);
+                })->orderBy('name')->get()
+                : User::orderBy('name')->get(),
             'cutoff' => $cutoff,
         ]);
     }

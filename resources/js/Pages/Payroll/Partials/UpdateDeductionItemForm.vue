@@ -6,14 +6,19 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage, Link } from '@inertiajs/vue3';
 
+const page = usePage();
+
 const props = defineProps([
     'targetAccount',
     'deductionItem',
+    'payrollPeriod',
 ]);
 
 const form = useForm({
     amount: props.deductionItem.amount,
 });
+
+const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
 </script>
 
 <template>
@@ -37,19 +42,21 @@ const form = useForm({
                     v-model="form.amount"
                     required
                     autofocus
+                    :disabled="periodHasEnded"
                     autocomplete="amount"
                 />
 
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <Link
+                v-if="!periodHasEnded"
                 :href="route('payroll.deleteDeductionItem', deductionItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
             >
                 Remove
             </Link>
-            <div class="flex items-center gap-4">
+            <div v-if="!periodHasEnded" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition

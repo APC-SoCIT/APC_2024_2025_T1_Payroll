@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -45,6 +46,12 @@ const showingNavigationDropdown = ref(false);
                                     Cutoffs
                                 </NavLink>
                             </div>
+                        </div>
+
+                        <div class="space-x-8 sm:flex sm:items-right sm:ms-6">
+                            <p class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500">
+                                {{ useFormat($page.props.date) }}
+                            </p>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">

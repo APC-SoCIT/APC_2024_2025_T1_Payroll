@@ -10,10 +10,9 @@ const props = defineProps([
 
 <template>
     <tbody>
-        <tr>
+        <tr v-if="cutoff == null">
             <td class="p-4 border-b border-blue-gray-50">
-                <Link v-if="cutoff == null" :href="route('cutoffs.getFromUser', account.id)">{{ account.name }}</Link>
-                <Link v-if="cutoff != null" :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ account.name }}</Link>
+                <Link :href="route('cutoffs.getFromUser', account.id)">{{ account.name }}</Link>
             </td>
             <td class="p-4 border-b border-blue-gray-50">{{ account.email }}</td>
             <td class="p-4 border-b border-blue-gray-50 text-center">{{ account.active ? "Active": "Inactive" }}</td>
@@ -21,6 +20,13 @@ const props = defineProps([
                 <PrimaryButton><Link :href="route('profile.edit', account.id)">Edit Account</Link></PrimaryButton>
                 <PrimaryButton><Link :href="route('payroll.getCurrentItemFromUser', account.id)">Current Entry</Link></PrimaryButton>
             </td>
+        </tr>
+        <tr v-if="cutoff != null">
+            <td class="p-4 border-b border-blue-gray-50">
+                <Link :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ account.name }}</Link>
+            </td>
+            <td class="p-4 border-b border-blue-gray-50">{{ account.email }}</td>
+            <td class="p-4 border-b border-blue-gray-50 text-center">{{ account.active ? "Active": "Inactive" }}</td>
         </tr>
     </tbody>
 </template>

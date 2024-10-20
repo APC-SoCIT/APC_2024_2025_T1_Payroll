@@ -7,14 +7,18 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
 import UpdateAdditionItemForm from './Partials/UpdateAdditionItemForm.vue';
 import UpdateDeductionItemForm from './Partials/UpdateDeductionItemForm.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
-defineProps([
+const page = usePage();
+
+const props = defineProps([
     'targetAccount',
     'payrollItem',
     'additions',
     'deductions',
 ]);
+
+const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.date;
 </script>
 
 <template>
@@ -23,8 +27,9 @@ defineProps([
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Payroll Item for {{ targetAccount.name }}
-                for {{ useFormat(payrollItem.payroll_period.end_date) }}
+                Payroll Item for
+                for <Link :href="route('cutoffs.getFromUser', targetAccount.id)">{{ targetAccount.name }}</Link>
+                for <Link :href="route('accounts.getFromCutoff', payrollItem.payroll_period.id)">{{ useFormat(payrollItem.payroll_period.end_date) }}</Link>
             </h2>
         </template>
 
@@ -33,6 +38,7 @@ defineProps([
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
                     <AdditionItemSelector
+                        v-if="!periodHasEnded"
                         :targetAccount
                         :payrollItem
                         :additions
@@ -41,12 +47,14 @@ defineProps([
                         :key="additionItem.id"
                         :targetAccount
                         :additionItem
+                        :payrollPeriod="payrollItem.payroll_period"
                         class="max-w-xl"
                     />
                 </div>
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
                     <DeductionItemSelector
+                        v-if="!periodHasEnded"
                         :targetAccount
                         :payrollItem
                         :deductions
@@ -55,6 +63,7 @@ defineProps([
                         :key="deductionItem.id"
                         :targetAccount
                         :deductionItem
+                        :payrollPeriod="payrollItem.payroll_period"
                         class="max-w-xl"
                     />
                 </div>
