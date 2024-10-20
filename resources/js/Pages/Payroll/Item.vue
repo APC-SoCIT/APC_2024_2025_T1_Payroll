@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AdditionItemSelector from '@/Components/AdditionItemSelector.vue';
-import DeductionItemSelector from '@/Components/DeductionItemSelector.vue';
+import AdditionSelector from '@/Components/AdditionSelector.vue';
+import DeductionSelector from '@/Components/DeductionSelector.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -37,7 +37,7 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
-                    <AdditionItemSelector
+                    <AdditionSelector
                         v-if="!periodHasEnded"
                         :targetAccount
                         :payrollItem
@@ -53,7 +53,7 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                 </div>
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
-                    <DeductionItemSelector
+                    <DeductionSelector
                         v-if="!periodHasEnded"
                         :targetAccount
                         :payrollItem

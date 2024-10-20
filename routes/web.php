@@ -31,6 +31,14 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
     Route::patch('/account/{user}', [ProfileController::class, 'update'])
         ->name('profile.update');
 
+    // account variable actions
+    Route::post('/account/{user}/variable/{variable}', [ProfileController::class, 'addVariable'])
+        ->name('profile.addUserVariableItem');
+    Route::patch('/userVariableItem/{variableItem}', [ProfileController::class, 'updateVariable'])
+        ->name('profile.updateUserVariableItem');
+    Route::delete('/userVariableItem/{variableItem}', [ProfileController::class, 'deleteVariable'])
+        ->name('profile.deleteUserVariableItem');
+
     // cutoff index / creation
     Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
         ->name('cutoffs');

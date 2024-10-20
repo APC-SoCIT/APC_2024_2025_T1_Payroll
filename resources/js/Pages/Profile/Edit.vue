@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import UserVariableSelector from '@/Components/UserVariableSelector.vue'
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import UpdateUserVariableItemForm from './Partials/UpdateUserVariableItemForm.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps([
-    'targetAccount'
+    'targetAccount',
+    'userVariables',
 ]);
 </script>
 
@@ -21,6 +24,23 @@ defineProps([
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <UpdateProfileInformationForm
                         :targetAccount="targetAccount"
+                        class="max-w-xl"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-900">Account Variables</h3>
+                    <UserVariableSelector
+                        :targetAccount
+                        :userVariables
+                    />
+                    <UpdateUserVariableItemForm v-for="userVariableItem in targetAccount.user_variable_items"
+                        :key="userVariableItem.id"
+                        :targetAccount
+                        :userVariableItem
                         class="max-w-xl"
                     />
                 </div>

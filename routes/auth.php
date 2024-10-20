@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
+use App\Models\UserVariableItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +21,15 @@ Route::middleware('guest')->group(function () {
         ], [
             'name' => $azureUser->name,
             'email' => $azureUser->mail,
+        ]);
+
+        UserVariableItem::updateOrCreate([
+            'user_id' => $user->id,
+            'user_variable_id' => 1,
+        ], [
+            'user_id' => $user->id,
+            'user_variable_id' => 1,
+            'value' => 0,
         ]);
 
         Auth::login($user);

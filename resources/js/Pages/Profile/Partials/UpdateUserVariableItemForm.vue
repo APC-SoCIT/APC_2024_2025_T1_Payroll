@@ -10,54 +10,49 @@ const page = usePage();
 
 const props = defineProps([
     'targetAccount',
-    'deductionItem',
-    'payrollPeriod',
+    'userVariableItem'
 ]);
 
 const form = useForm({
-    amount: props.deductionItem.amount,
+    value: props.userVariableItem.value,
 });
-
-const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
 </script>
 
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">{{ deductionItem.deduction.name }}</h2>
+            <h2 class="text-lg font-medium text-gray-900">{{ userVariableItem.user_variable.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                {{ deductionItem.deduction.description }}
+                {{ userVariableItem.user_variable.description }}
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('payroll.updateDeductionItem', deductionItem.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('profile.updateUserVariableItem', userVariableItem.id))" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="amount" value="Amount" />
+                <InputLabel for="value" value="Value" />
 
                 <TextInput
-                    id="amount"
+                    id="value"
                     type="number"
                     class="mt-1 block w-full"
-                    v-model="form.amount"
+                    v-model="form.value"
+                    min="0"
                     required
                     autofocus
-                    :disabled="periodHasEnded"
-                    autocomplete="amount"
+                    autocomplete="value"
                 />
 
-                <InputError class="mt-2" :message="form.errors.amount" />
+                <InputError class="mt-2" :message="form.errors.value" />
             </div>
-            <Link
-                v-if="!periodHasEnded"
-                :href="route('payroll.deleteDeductionItem', deductionItem.id)"
+            <Link :href="route('profile.deleteUserVariableItem', userVariableItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
                 as="button"
             >
                 Remove
             </Link>
-            <div v-if="!periodHasEnded" class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition

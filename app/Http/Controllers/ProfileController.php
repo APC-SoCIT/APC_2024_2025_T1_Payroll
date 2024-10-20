@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\PayrollPeriod;
 use App\Models\User;
+use App\Models\UserVariable;
+use App\Models\UserVariableItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,7 +50,8 @@ class ProfileController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('Profile/Edit', [
-            'targetAccount' => $user,
+            'targetAccount' => $user->load('userVariableItems.userVariable'),
+            'userVariables' => UserVariable::all(),
         ]);
     }
 
@@ -69,5 +72,41 @@ class ProfileController extends Controller
         ]));
 
         return Redirect::route('accounts');
+    }
+
+    public function addVariable(User $user, UserVariable $variable): RedirectResponse
+    {
+        UserVariableItem::updateOrCreate([
+            'user_id' => $user->id,
+            'user_variable_id' => $variable->id,
+        ], [
+            'user_id' => $user->id,
+            'user_variable_id' => $variable->id,
+            'value' => 0,
+        ]);
+
+        return Redirect::route('profile.edit', $user->id);
+    }
+
+    public function updateVariable(UserVariableItem $variableItem, Request $request): RedirectResponse
+    {
+        $variableItem->update(
+            $request->validate([
+                'value' => ['required' , 'numeric', 'min:0'],
+            ])
+        );
+        return Redirect::route('profile.edit', $variableItem->user->id);
+    }
+
+    public function deleteVariable(UserVariableItem $variableItem): RedirectResponse
+    {
+        // base pay should be protected
+        if ($variableItem->userVariable->id == 1) {
+            abort(403);
+        }
+
+        $user = $variableItem->user;
+        $variableItem->delete();
+        return Redirect::route('profile.edit', $user->id);
     }
 }
