@@ -64,46 +64,6 @@ test('current payroll item additions can be updated', function () {
     ]);
 });
 
-test('current payroll item base pay can be updated', function () {
-    $user = User::factory()
-        ->authorized()
-        ->configure()
-        ->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->get(route('payroll.getCurrentFromUser', 1));
-
-    $response->assertOk();
-
-    $response = $this
-        ->actingAs($user)
-        ->patch(route('userVariableItem.update', 1), [
-            'value' => 500,
-        ]);
-
-    $response->assertRedirect('/account/1');
-
-    $this->assertDatabaseHas('user_variable_items', [
-        'value' => 500,
-    ]);
-
-    $response = $this
-        ->actingAs($user)
-        ->followingRedirects()
-        ->patch(route('additionVariableItem.update', 2), [
-            'value' => 75,
-        ]);
-
-    $this->assertDatabaseHas('addition_variable_items', [
-        'value' => 75,
-    ]);
-
-    $this->assertDatabaseHas('addition_items', [
-        'amount' => 37500,
-    ]);
-});
-
 test('future payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()

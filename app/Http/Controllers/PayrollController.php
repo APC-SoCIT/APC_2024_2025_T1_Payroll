@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Addition;
 use App\Models\AdditionItem;
-use App\Models\AdditionVariableItem;
 use App\Models\Deduction;
 use App\Models\DeductionItem;
 use App\Models\PayrollItem;
@@ -43,10 +42,7 @@ class PayrollController extends Controller
         // upon first creation, it's not loaded
         $payrollItem->load([
             'payrollPeriod',
-            'additionItems' => [
-                'addition',
-                'additionVariableItems.additionVariable',
-            ],
+            'additionItems.addition',
             'deductionItems.deduction',
         ]);
 
@@ -56,22 +52,6 @@ class PayrollController extends Controller
             'additions' => Addition::all(),
             'deductions' => Deduction::all(),
         ]);
-    }
-
-    public function updateAdditionVariableItem(AdditionVariableItem $variableItem, Request $request): RedirectResponse
-    {
-        if ($variableItem->additionItem->payrollItem->payrollPeriod->hasEnded()) {
-            abort(403);
-        }
-
-        $variableItem->update($request->validate([
-            'value' => ['required', 'numeric', 'min:0'],
-        ]));
-
-        return redirect(route('payroll.get', [
-            'cutoff' => $variableItem->additionItem->payrollItem->payrollPeriod->id,
-            'user' => $variableItem->additionItem->payrollItem->user->id,
-        ]));
     }
 
     public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
@@ -240,41 +220,20 @@ class PayrollController extends Controller
 
     private static function calculateBasePay(PayrollItem $payrollItem): PayrollItem
     {
-        $additionItem = AdditionItem::firstOrCreate([
-            'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
-        ], [
-            'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
-            'amount' => 0,
-        ]);
-
         $user = $payrollItem->user;
         $user->load('userVariableItems');
-        $payRate = AdditionVariableItem::updateOrCreate([
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 1,
+        AdditionItem::updateOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
         ], [
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 1, // base pay rate
-            'value' => $user
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
+            'amount' => $user
                 ->userVariableItems
                 ->where('user_variable_id', 1)
                 ->first()
                 ->value,
         ]);
-
-        $hours = AdditionVariableItem::firstOrCreate([
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 2,
-        ], [
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 2, // regular hours rendered
-            'value' => 80,
-        ]);
-
-        $additionItem->amount = $payRate->value * $hours->value;
-        $additionItem->save();
 
         return $payrollItem;
     }
@@ -330,7 +289,8 @@ class PayrollController extends Controller
 
         $bracket = $brackets->where('bracket', '<', $yearEstimate)
             ->sortByDesc('bracket')
-            ->first();
+            ->first()
+            ?? $brackets[0];
 
         $excess = $yearEstimate - $bracket['bracket'];
         $excessTax = $excess * $bracket['excessRate'];

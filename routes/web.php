@@ -79,10 +79,6 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
     Route::delete('/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
         ->name('additionItem.delete');
 
-    // addition variable actions
-    Route::patch('/additionVariableItem/{variableItem}', [PayrollController::class, 'updateAdditionVariableItem'])
-        ->name('additionVariableItem.update');
-
     // deduction actions
     Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addDeductionItem'])
         ->name('deductionItem.new');

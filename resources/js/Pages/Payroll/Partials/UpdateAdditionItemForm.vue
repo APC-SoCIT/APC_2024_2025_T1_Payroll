@@ -14,11 +14,16 @@ const props = defineProps([
     'payrollPeriod',
 ]);
 
+const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
+const calculatedVariables = [
+    1, // base pay
+];
+const calculated = calculatedVariables.includes(props.additionItem.addition.id);
+const disabled = periodHasEnded || calculated;
+
 const form = useForm({
     amount: props.additionItem.amount,
 });
-
-const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
 </script>
 
 <template>
@@ -42,14 +47,14 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
                     v-model="form.amount"
                     required
                     autofocus
-                    :disabled="periodHasEnded"
+                    :disabled
                     autocomplete="amount"
                 />
 
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <Link
-                v-if="!periodHasEnded"
+                v-if="!disabled"
                 :href="route('additionItem.delete', additionItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
@@ -57,7 +62,7 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
             >
                 Remove
             </Link>
-            <div v-if="!periodHasEnded"
+            <div v-if="!disabled"
                 class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 

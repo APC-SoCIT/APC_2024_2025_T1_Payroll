@@ -5,7 +5,6 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
-import UpdateBasePayForm from './Partials/UpdateBasePayForm.vue';
 import UpdateAdditionItemForm from './Partials/UpdateAdditionItemForm.vue';
 import UpdateDeductionItemForm from './Partials/UpdateDeductionItemForm.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
@@ -45,15 +44,7 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                         :additions
                     />
                     <div v-for="additionItem in payrollItem.addition_items">
-                        <UpdateBasePayForm
-                            v-if="additionItem.addition.id == 1"
-                            :targetAccount
-                            :additionItem
-                            :payrollPeriod="payrollItem.payroll_period"
-                            class="max-w-xl"
-                        />
                         <UpdateAdditionItemForm
-                            v-else
                             :targetAccount
                             :additionItem
                             :payrollPeriod="payrollItem.payroll_period"
