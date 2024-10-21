@@ -27,6 +27,7 @@ return new class extends Migration
             $table->foreignId('payroll_period_id')
                 ->constrained()
                 ->cascadeOnDelete();
+            $table->decimal('amount')->default(0);
             $table->timestamps();
         });
 
@@ -47,7 +48,7 @@ return new class extends Migration
             $table->foreignId('addition_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->decimal('amount');
+            $table->decimal('amount')->default(0);
             $table->timestamps();
         });
 
@@ -68,7 +69,7 @@ return new class extends Migration
             $table->foreignId('deduction_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->decimal('amount');
+            $table->decimal('amount')->default(0);
             $table->timestamps();
         });
 

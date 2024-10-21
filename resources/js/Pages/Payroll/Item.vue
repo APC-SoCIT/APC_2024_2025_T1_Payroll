@@ -42,6 +42,13 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                 </div>
             </div>
             <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        Payroll Entry Total: {{ payrollItem.amount }}
+                    </h2>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
                     <AdditionSelector

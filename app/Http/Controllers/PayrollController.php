@@ -229,6 +229,19 @@ class PayrollController extends Controller
          self::calculatePagibig($item);
          self::calculatePhilhealth($item);
          self::calculateTax($item);
+
+        $totalAdditions = $item->additionItems
+            ->reduce(function (?int $carry, ?AdditionItem $item) {
+                return $carry + $item->amount;
+            });
+
+        $totalDeductions = $item->deductionItems
+            ->reduce(function (?int $carry, ?deductionItem $item) {
+                return $carry + $item->amount;
+            });
+
+        $item->amount = $totalAdditions - $totalDeductions;
+        $item->save();
     }
 
     private static function calculateBasePay(PayrollItem $payrollItem): void
@@ -251,8 +264,8 @@ class PayrollController extends Controller
     {
         $totalAdditions = $payrollItem->additionItems
             ->whereIn('addition_id', [
-                1, // salaries
-                2, // adjustments
+                1,  // salary
+                10, // salary adjustment
             ])
             ->reduce(function (?int $carry, ?AdditionItem $item) {
                 return $carry + $item->amount;
@@ -263,6 +276,7 @@ class PayrollController extends Controller
                 2, // SSS
                 3, // PhilHealth
                 4, // Pag-IBIG
+                5, // salary adjustment
             ])
             ->reduce(function (?int $carry, ?DeductionItem $item) {
                 return $carry + $item->amount;

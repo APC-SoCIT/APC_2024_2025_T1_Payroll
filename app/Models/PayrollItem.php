@@ -17,6 +17,7 @@ class PayrollItem extends Model
     protected $fillable = [
         'user_id',
         'payroll_period_id',
+        'amount',
     ];
 
     public function user(): BelongsTo

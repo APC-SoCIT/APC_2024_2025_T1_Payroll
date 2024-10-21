@@ -67,7 +67,7 @@ const form = useForm({
         </form>
         <div class="py-2">
             <Link
-                v-if="deletable"
+                v-if="deleteable"
                 :href="route('additionItem.delete', additionItem.id)"
                 method="delete"
                 :onBefore="useConfirm(`Are you sure you want to delete ${additionItem.addition.name}? This action cannot be undone.`)"
