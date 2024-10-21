@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
+use App\Models\UserVariable;
 use App\Models\UserVariableItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,16 +21,20 @@ Route::middleware('guest')->group(function () {
             'email' => $azureUser->mail,
         ], [
             'name' => $azureUser->name,
-            'email' => $azureUser->mail,
         ]);
 
-        UserVariableItem::updateOrCreate([
+        UserVariableItem::firstOrCreate([
             'user_id' => $user->id,
             'user_variable_id' => 1,
         ], [
-            'user_id' => $user->id,
-            'user_variable_id' => 1,
             'value' => 0,
+        ]);
+
+        UserVariableItem::firstOrCreate([
+            'user_id' => $user->id,
+            'user_variable_id' => 2,
+        ], [
+            'value' => UserVariable::find(2)->min,
         ]);
 
         Auth::login($user);

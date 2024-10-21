@@ -10,6 +10,7 @@ use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -37,8 +38,9 @@ class PayrollController extends Controller
             'payroll_period_id' => $cutoff->id,
         ]);
 
-        $payrollItem = self::calculateBasePay($payrollItem);
-        $payrollItem = self::calculateTax($payrollItem);
+        if (!$payrollItem->payrollPeriod->hasEnded()) {
+            self::calculateAll($payrollItem);
+        }
 
         // upon first creation, it's not loaded
         $payrollItem->load([
@@ -76,7 +78,8 @@ class PayrollController extends Controller
 
     public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
     {
-        if ($additionItem->payrollItem->payrollPeriod->hasEnded()) {
+        if ($additionItem->payrollItem->payrollPeriod->hasEnded()
+            || $additionItem->addition->calculated) {
             abort(403);
         }
 
@@ -92,7 +95,8 @@ class PayrollController extends Controller
 
     public function deleteAdditionItem(AdditionItem $additionItem): RedirectResponse
     {
-        if ($additionItem->payrollItem->payrollPeriod->hasEnded()) {
+        if ($additionItem->payrollItem->payrollPeriod->hasEnded()
+            || $additionItem->addition->required) {
             abort(403);
         }
 
@@ -127,7 +131,8 @@ class PayrollController extends Controller
 
     public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
     {
-        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()) {
+        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
+            || $deductionItem->deduction->calculated) {
             abort(403);
         }
 
@@ -144,7 +149,7 @@ class PayrollController extends Controller
     public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
     {
         if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
-            || $deductionItem->deduction->id == 1) {
+            || $deductionItem->deduction->required) {
             abort(403);
         }
 
@@ -218,7 +223,15 @@ class PayrollController extends Controller
         return $currentPeriod;
     }
 
-    private static function calculateBasePay(PayrollItem $payrollItem): PayrollItem
+    private static function calculateAll(PayrollItem $item): void
+    {
+         self::calculateBasePay($item);
+         self::calculatePagibig($item);
+         self::calculatePhilhealth($item);
+         self::calculateTax($item);
+    }
+
+    private static function calculateBasePay(PayrollItem $payrollItem): void
     {
         $user = $payrollItem->user;
         $user->load('userVariableItems');
@@ -226,28 +239,32 @@ class PayrollController extends Controller
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => 1,
         ], [
-            'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
             'amount' => $user
                 ->userVariableItems
                 ->where('user_variable_id', 1)
                 ->first()
                 ->value,
         ]);
-
-        return $payrollItem;
     }
 
-    private static function calculateTax(PayrollItem $payrollItem): PayrollItem
+    private static function calculateTax(PayrollItem $payrollItem): void
     {
         $totalAdditions = $payrollItem->additionItems
+            ->whereIn('addition_id', [
+                1, // salaries
+                2, // adjustments
+            ])
             ->reduce(function (?int $carry, ?AdditionItem $item) {
                 return $carry + $item->amount;
             });
 
         $totalDeductionsBeforeTax = $payrollItem->deductionItems
-            ->where('deduction_id', '!=', 1)
-            ->reduce(function (?int $carry, ?AdditionItem $item) {
+            ->whereIn('deduction_id', [
+                2, // SSS
+                3, // PhilHealth
+                4, // Pag-IBIG
+            ])
+            ->reduce(function (?int $carry, ?DeductionItem $item) {
                 return $carry + $item->amount;
             });
 
@@ -302,12 +319,61 @@ class PayrollController extends Controller
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => 1,
         ], [
-            'payroll_item_id' => $payrollItem->id,
-            'deduction_id' => 1,
             'amount' => $tax,
         ]);
 
         $payrollItem->load('deductionItems');
-        return $payrollItem;
+    }
+
+    private static function calculatePagibig(PayrollItem $payrollItem): void
+    {
+        DeductionItem::updateOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => 4,
+        ], [
+            'amount' => $payrollItem->user
+                ->userVariableItems
+                ->where('user_variable_id', 2)
+                ->first()
+                ->value
+        ]);
+
+        $payrollItem->load('deductionItems');
+    }
+
+    private static function calculatePhilhealth(PayrollItem $payrollItem): void
+    {
+        $thisPay = $payrollItem->user
+            ->userVariableItems
+            ->where('user_variable_id', 1) // base pay
+            ->first()
+            ->value;
+
+        $lastPay = PayrollItem::where('user_id', $payrollItem->user_id)
+            ->whereHas('payrollPeriod', function (Builder $query) use ($payrollItem) {
+                $query->where('end_date', '<', $payrollItem->payrollPeriod->end_date)
+                    ->orderBy('end_date');
+            })
+            ->first();
+
+        $lastPay = is_null($lastPay)
+            ? $thisPay
+            : $lastPay->additionItems
+                ->where('addition_id', 1)
+                ->first()
+                ->amount;
+
+        error_log($lastPay);
+
+        $monthPay = $thisPay + $lastPay;
+
+        DeductionItem::updateOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => 3,
+        ], [
+            'amount' => $monthPay < 10000 ? 500 : ($monthPay > 100000 ? 5000 : $monthPay * 0.05)
+        ]);
+
+        $payrollItem->load('deductionItems');
     }
 }

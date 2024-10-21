@@ -18,6 +18,7 @@ const props = defineProps([
 
 const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
 const disabled = periodHasEnded || props.deductionItem.deduction.calculated;
+const deleteable = !periodHasEnded && !props.deductionItem.deduction.required;
 
 const form = useForm({
     amount: props.deductionItem.amount,
@@ -66,7 +67,7 @@ const form = useForm({
         </form>
         <div class="py-2">
             <Link
-                v-if="!disabled"
+                v-if="deleteable"
                 :href="route('deductionItem.delete', deductionItem.id)"
                 method="delete"
                 :onBefore="useConfirm(`Are you sure you want to delete ${deductionItem.deduction.name}? This action cannot be undone.`)"

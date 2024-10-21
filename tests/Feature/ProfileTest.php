@@ -37,7 +37,7 @@ test('account page is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get(route('account.updateForm', 1));
+        ->get(route('account.get', 1));
 
     $response->assertRedirect('/dashboard');
 });
@@ -50,7 +50,7 @@ test('account page is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get(route('account.updateForm', 1));
+        ->get(route('account.get', 1));
 
     $response->assertOk();
 });

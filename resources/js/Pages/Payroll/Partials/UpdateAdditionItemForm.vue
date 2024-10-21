@@ -17,6 +17,7 @@ const props = defineProps([
 
 const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
 const disabled = periodHasEnded || props.additionItem.addition.calculated;
+const deleteable = !periodHasEnded && !props.additionItem.addition.required;
 
 const form = useForm({
     amount: props.additionItem.amount,
@@ -66,7 +67,7 @@ const form = useForm({
         </form>
         <div class="py-2">
             <Link
-                v-if="!disabled"
+                v-if="deletable"
                 :href="route('additionItem.delete', additionItem.id)"
                 method="delete"
                 :onBefore="useConfirm(`Are you sure you want to delete ${additionItem.addition.name}? This action cannot be undone.`)"
