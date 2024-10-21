@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\UserVariableItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,6 +23,17 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'active' => true,
         ];
+    }
+
+    public function configure(): Factory
+    {
+        return $this->afterCreating(function (User $user) {
+            UserVariableItem::updateOrCreate([
+                'user_id' => $user->id,
+                'user_variable_id' => 1,
+                'value' => 0,
+            ]);
+        });
     }
 
     public function authorized(): Factory

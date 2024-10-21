@@ -9,7 +9,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('payroll item is restricted', function () {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->configure()
+        ->create();
 
     $response = $this
         ->actingAs($user)
@@ -21,6 +23,7 @@ test('payroll item is restricted', function () {
 test('payroll item is displayed', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
@@ -33,6 +36,7 @@ test('payroll item is displayed', function () {
 test('current payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
@@ -45,7 +49,7 @@ test('current payroll item additions can be updated', function () {
         ->actingAs($user)
         ->post('/payroll/1/additionItem/1');
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/1/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -53,16 +57,57 @@ test('current payroll item additions can be updated', function () {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/1/account/1');
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
     ]);
 });
 
+test('current payroll item base pay can be updated', function () {
+    $user = User::factory()
+        ->authorized()
+        ->configure()
+        ->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/payroll/account/1');
+
+    $response->assertOk();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch('/userVariableItem/1', [
+            'value' => 500,
+        ]);
+
+    $response->assertRedirect('/account/1');
+
+    $this->assertDatabaseHas('user_variable_items', [
+        'value' => 500,
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->followingRedirects()
+        ->patch('/payroll/additionVariableItem/2', [
+            'value' => 75,
+        ]);
+
+    $this->assertDatabaseHas('addition_variable_items', [
+        'value' => 75,
+    ]);
+
+    $this->assertDatabaseHas('addition_items', [
+        'amount' => 37500,
+    ]);
+});
+
 test('future payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     PayrollPeriod::create([
@@ -81,7 +126,7 @@ test('future payroll item additions can be updated', function () {
         ->actingAs($user)
         ->post('/payroll/1/additionItem/1');
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/2/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -89,7 +134,7 @@ test('future payroll item additions can be updated', function () {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/2/account/1');
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -99,6 +144,7 @@ test('future payroll item additions can be updated', function () {
 test('payroll item deductions can be updated', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
@@ -111,7 +157,7 @@ test('payroll item deductions can be updated', function () {
         ->actingAs($user)
         ->post('/payroll/1/deductionItem/1');
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/1/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -119,7 +165,7 @@ test('payroll item deductions can be updated', function () {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/1/account/1');
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,
@@ -129,6 +175,7 @@ test('payroll item deductions can be updated', function () {
 test('future payroll item deductions can be updated', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     PayrollPeriod::create([
@@ -147,7 +194,7 @@ test('future payroll item deductions can be updated', function () {
         ->actingAs($user)
         ->post('/payroll/1/deductionItem/1');
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/2/account/1');
 
     $response = $this
         ->actingAs($user)
@@ -155,7 +202,7 @@ test('future payroll item deductions can be updated', function () {
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/payroll/account/1');
+    $response->assertRedirect('/cutoff/2/account/1');
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,
@@ -165,6 +212,7 @@ test('future payroll item deductions can be updated', function () {
 test('previous payroll items updates are restricted', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $start = Carbon::now()->subMonth(2)->toDateString();

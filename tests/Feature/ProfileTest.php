@@ -6,7 +6,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('accounts list page is restricted', function () {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->configure()
+        ->create();
 
     $response = $this
         ->actingAs($user)
@@ -18,6 +20,7 @@ test('accounts list page is restricted', function () {
 test('accounts list page is displayed', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
@@ -29,6 +32,7 @@ test('accounts list page is displayed', function () {
 
 test('account page is restricted', function () {
     $user = User::factory()
+        ->configure()
         ->create();
 
     $response = $this
@@ -41,6 +45,7 @@ test('account page is restricted', function () {
 test('account page is displayed', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
@@ -51,7 +56,9 @@ test('account page is displayed', function () {
 });
 
 test('account update is restricted', function () {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->configure()
+        ->create();
 
     $response = $this
         ->actingAs($user)
@@ -72,6 +79,7 @@ test('account update is restricted', function () {
 test('account can be updated', function () {
     $user = User::factory()
         ->authorized()
+        ->configure()
         ->create();
 
     $response = $this
