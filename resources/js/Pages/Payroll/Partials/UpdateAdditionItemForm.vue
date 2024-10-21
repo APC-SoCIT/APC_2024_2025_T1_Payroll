@@ -31,7 +31,7 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('payroll.updateAdditionItem', additionItem.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('additionItem.update', additionItem.id))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="amount" value="Amount" />
 
@@ -50,7 +50,7 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
             </div>
             <Link
                 v-if="!periodHasEnded"
-                :href="route('payroll.deleteAdditionItem', additionItem.id)"
+                :href="route('additionItem.delete', additionItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
                 as="button"

@@ -15,7 +15,7 @@ test('payroll item is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertRedirect('/dashboard');
 });
@@ -28,7 +28,7 @@ test('payroll item is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 });
@@ -41,23 +41,23 @@ test('current payroll item additions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/additionItem/1');
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
 
-    $response->assertRedirect('/cutoff/1/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
 
     $response = $this
         ->actingAs($user)
-        ->patch('/payroll/additionItem/1', [
+        ->patch(route('additionItem.update', 1), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/cutoff/1/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -72,13 +72,13 @@ test('current payroll item base pay can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->patch('/userVariableItem/1', [
+        ->patch(route('userVariableItem.update', 1), [
             'value' => 500,
         ]);
 
@@ -91,7 +91,7 @@ test('current payroll item base pay can be updated', function () {
     $response = $this
         ->actingAs($user)
         ->followingRedirects()
-        ->patch('/payroll/additionVariableItem/2', [
+        ->patch(route('additionVariableItem.update', 2), [
             'value' => 75,
         ]);
 
@@ -118,23 +118,23 @@ test('future payroll item additions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/additionItem/1');
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
 
-    $response->assertRedirect('/cutoff/2/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
 
     $response = $this
         ->actingAs($user)
-        ->patch('/payroll/additionItem/1', [
+        ->patch(route('additionItem.update', 1), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/cutoff/2/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -149,23 +149,23 @@ test('payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/deductionItem/1');
+        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
 
-    $response->assertRedirect('/cutoff/1/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
 
     $response = $this
         ->actingAs($user)
-        ->patch('/payroll/deductionItem/1', [
+        ->patch(route('deductionItem.update', 1), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/cutoff/1/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,
@@ -186,23 +186,23 @@ test('future payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/payroll/account/1');
+        ->get(route('payroll.getCurrentFromUser', 1));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/deductionItem/1');
+        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
 
-    $response->assertRedirect('/cutoff/2/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
 
     $response = $this
         ->actingAs($user)
-        ->patch('/payroll/deductionItem/1', [
+        ->patch(route('deductionItem.update', 1), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect('/cutoff/2/account/1');
+    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,
@@ -232,19 +232,19 @@ test('previous payroll items updates are restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/additionItem/1');
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
 
     $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/deductionItem/1');
+        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
 
     $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post('/payroll/1/additionItem/1');
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
 
     $response->assertForbidden();
 });

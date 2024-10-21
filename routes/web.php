@@ -20,32 +20,32 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
     // account index / creation
     Route::get('/accounts', [ProfileController::class, 'index'])
         ->name('accounts');
-    Route::get('/accounts/new', [ProfileController::class, 'add'])
-        ->name('profile.add');
-    Route::post('/accounts/new', [ProfileController::class, 'store'])
-        ->name('profile.store');
+    Route::get('/account/new', [ProfileController::class, 'add'])
+        ->name('account.newForm');
+    Route::post('/account/new', [ProfileController::class, 'store'])
+        ->name('account.new');
 
     // account actions
     Route::get('/account/{user}', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
+        ->name('account.updateForm');
     Route::patch('/account/{user}', [ProfileController::class, 'update'])
-        ->name('profile.update');
+        ->name('account.update');
 
     // account variable actions
     Route::post('/account/{user}/variable/{variable}', [ProfileController::class, 'addVariable'])
-        ->name('profile.addUserVariableItem');
+        ->name('userVariableItem.add');
     Route::patch('/userVariableItem/{variableItem}', [ProfileController::class, 'updateVariable'])
-        ->name('profile.updateUserVariableItem');
+        ->name('userVariableItem.update');
     Route::delete('/userVariableItem/{variableItem}', [ProfileController::class, 'deleteVariable'])
-        ->name('profile.deleteUserVariableItem');
+        ->name('userVariableItem.delete');
 
     // cutoff index / creation
     Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
         ->name('cutoffs');
     Route::get('/cutoff/new', [PayrollPeriodController::class, 'add'])
-        ->name('cutoff.add');
+        ->name('cutoff.newForm');
     Route::post('/cutoff/new', [PayrollPeriodController::class, 'store'])
-        ->name('cutoff.store');
+        ->name('cutoff.new');
 
     // cutoff actions
     Route::get('/cutoff/{cutoff}', [PayrollPeriodController::class, 'get'])
@@ -58,8 +58,8 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
 
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
     // get a users's current payroll entry
-    Route::get('/payroll/account/{user}', [PayrollController::class, 'getCurrentItemFromUser'])
-        ->name('payroll.getCurrentItemFromUser');
+    Route::get('/account/{user}/current', [PayrollController::class, 'getCurrentItemFromUser'])
+        ->name('payroll.getCurrentFromUser');
 
     // list available accounts/cutoffs for a specific cutoff/account
     Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
@@ -69,27 +69,27 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
 
     // get specific entry
     Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
-        ->name('payroll.getItem');
+        ->name('payroll.get');
 
     // addition actions
-    Route::post('/payroll/{payrollItem}/additionItem/{addition}', [PayrollController::class, 'addAdditionItem'])
-        ->name('payroll.addAdditionItem');
-    Route::patch('/payroll/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
-        ->name('payroll.updateAdditionItem');
-    Route::delete('/payroll/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
-        ->name('payroll.deleteAdditionItem');
+    Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addAdditionItem'])
+        ->name('additionItem.new');
+    Route::patch('/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
+        ->name('additionItem.update');
+    Route::delete('/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
+        ->name('additionItem.delete');
 
     // addition variable actions
-    Route::patch('/payroll/additionVariableItem/{variableItem}', [PayrollController::class, 'updateAdditionVariableItem'])
-        ->name('payroll.updateAdditionVariableItem');
+    Route::patch('/additionVariableItem/{variableItem}', [PayrollController::class, 'updateAdditionVariableItem'])
+        ->name('additionVariableItem.update');
 
     // deduction actions
-    Route::post('/payroll/{payrollItem}/deductionItem/{deduction}', [PayrollController::class, 'addDeductionItem'])
-        ->name('payroll.addDeductionItem');
-    Route::patch('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
-        ->name('payroll.updateDeductionItem');
-    Route::delete('/payroll/deductionItem/{deductionItem}', [PayrollController::class, 'deleteDeductionItem'])
-        ->name('payroll.deleteDeductionItem');
+    Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addDeductionItem'])
+        ->name('deductionItem.new');
+    Route::patch('/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
+        ->name('deductionItem.update');
+    Route::delete('/deductionItem/{deductionItem}', [PayrollController::class, 'deleteDeductionItem'])
+        ->name('deductionItem.delete');
 });
 
 require __DIR__.'/auth.php';

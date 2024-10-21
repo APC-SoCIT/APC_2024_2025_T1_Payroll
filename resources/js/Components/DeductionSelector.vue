@@ -39,7 +39,7 @@ defineProps([
 
                 <template #content>
                     <DropdownLink v-for="deduction in deductions"
-                        :href="route('payroll.addDeductionItem', { payrollItem: payrollItem.id, deduction: deduction.id })" method="post" as="button">
+                        :href="route('deductionItem.new', { payrollItem: payrollItem.id, deduction: deduction.id })" method="post" as="button">
                         {{ deduction.name }}
                     </DropdownLink>
                 </template>

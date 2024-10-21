@@ -38,7 +38,7 @@ defineProps([
 
                 <template #content>
                     <DropdownLink v-for="userVariable in userVariables"
-                        :href="route('profile.addUserVariableItem', { user: targetAccount.id, variable: userVariable.id })" method="post" as="button">
+                        :href="route('userVariableItem.add', { user: targetAccount.id, variable: userVariable.id })" method="post" as="button">
                         {{ userVariable.name }}
                     </DropdownLink>
                 </template>

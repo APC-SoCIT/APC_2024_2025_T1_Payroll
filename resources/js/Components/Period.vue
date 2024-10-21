@@ -18,7 +18,7 @@ function confirm(prompt){
     <tr>
         <td class="p-4 border-b border-blue-gray-50">
             <Link v-if="account == null" :href="route('accounts.getFromCutoff', cutoff.id)">{{ useFormat(cutoff.end_date) }}</Link>
-            <Link v-else :href="route('payroll.getItem', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
+            <Link v-else :href="route('payroll.get', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
         </td>
         <td class="p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.start_date) }}

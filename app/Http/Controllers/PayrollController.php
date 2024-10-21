@@ -100,7 +100,7 @@ class PayrollController extends Controller
             'value' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $variableItem->additionItem->payrollItem->payrollPeriod->id,
             'user' => $variableItem->additionItem->payrollItem->user->id,
         ]));
@@ -119,7 +119,7 @@ class PayrollController extends Controller
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $payrollItem->payrollPeriod->id,
             'user' => $payrollItem->user->id,
         ]));
@@ -135,7 +135,7 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $additionItem->payrollItem->payrollPeriod->id,
             'user' => $additionItem->payrollItem->user->id,
         ]));
@@ -151,7 +151,7 @@ class PayrollController extends Controller
         $user_id = $additionItem->payrollItem->user->id;
         $additionItem->delete();
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $cutoff_id,
             'user' => $user_id,
         ]));
@@ -170,7 +170,7 @@ class PayrollController extends Controller
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $payrollItem->payrollPeriod->id,
             'user' => $payrollItem->user->id,
         ]));
@@ -186,7 +186,7 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]));
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $deductionItem->payrollItem->payrollPeriod->id,
             'user' => $deductionItem->payrollItem->user->id,
         ]));
@@ -202,7 +202,7 @@ class PayrollController extends Controller
         $user_id = $deductionItem->payrollItem->user->id;
         $deductionItem->delete();
 
-        return redirect(route('payroll.getItem', [
+        return redirect(route('payroll.get', [
             'cutoff' => $cutoff_id,
             'user' => $user_id,
         ]));

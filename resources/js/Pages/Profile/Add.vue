@@ -31,7 +31,7 @@ const form = useForm({
                         Add the employee's account information.
                     </p>
                     <div class="max-w-xl">
-                        <form @submit.prevent="form.post(route('profile.store'), { onSuccess: () => form.reset() })" class=" mt-6 space-y-6">
+                        <form @submit.prevent="form.post(route('account.new'), { onSuccess: () => form.reset() })" class=" mt-6 space-y-6">
                             <div>
                                 <InputLabel for="fullName" value="Employee's Full Name" />
                                 <InputError :message="form.errors.name" class="mt-2" />

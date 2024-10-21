@@ -18,7 +18,7 @@ const form = useForm({
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule New Payroll Cutoff</h2>
 
     <section>
-        <form @submit.prevent="form.post(route('cutoff.store'))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.post(route('cutoff.new'))" class="mt-6 space-y-6">
             <div>
                 <h3 class="font-semibold text-l text-gray-800 leading-tight">Start Date</h3>
                 <InputLabel for="start_date" value="First day of the cutoff" />

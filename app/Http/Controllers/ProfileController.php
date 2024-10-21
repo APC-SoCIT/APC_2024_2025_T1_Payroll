@@ -86,7 +86,7 @@ class ProfileController extends Controller
             'value' => 0,
         ]);
 
-        return Redirect::route('profile.edit', $user->id);
+        return Redirect::route('account.updateForm', $user->id);
     }
 
     public function updateVariable(UserVariableItem $variableItem, Request $request): RedirectResponse
@@ -102,7 +102,7 @@ class ProfileController extends Controller
             ])
         );
 
-        return Redirect::route('profile.edit', $variableItem->user->id);
+        return Redirect::route('account.updateForm', $variableItem->user->id);
     }
 
     public function deleteVariable(UserVariableItem $variableItem): RedirectResponse
@@ -115,6 +115,6 @@ class ProfileController extends Controller
         $user = $variableItem->user;
         $variableItem->delete();
 
-        return Redirect::route('profile.edit', $user->id);
+        return Redirect::route('account.updateForm', $user->id);
     }
 }

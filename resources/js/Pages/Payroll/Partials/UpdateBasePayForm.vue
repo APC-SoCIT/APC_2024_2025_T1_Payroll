@@ -33,7 +33,7 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('payroll.updateAdditionVariableItem', form.hours.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('additionVariableItem.update', form.hours.id))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="value" :value="form.hours.addition_variable.name" />
 
