@@ -37,40 +37,8 @@ class PayrollController extends Controller
             'payroll_period_id' => $cutoff->id,
         ]);
 
-        $additionItem = AdditionItem::firstOrCreate([
-            'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
-        ], [
-            'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
-            'amount' => 0,
-        ]);
-
-        $user->load('userVariableItems');
-        $payRate = AdditionVariableItem::updateOrCreate([
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 1,
-        ], [
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 1, // base pay rate
-            'value' => $user
-                ->userVariableItems
-                ->where('user_variable_id', 1)
-                ->first()
-                ->value,
-        ]);
-
-        $hours = AdditionVariableItem::firstOrCreate([
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 2,
-        ], [
-            'addition_item_id' => $additionItem->id,
-            'addition_variable_id' => 2, // regular hours rendered
-            'value' => 80,
-        ]);
-
-        $additionItem->amount = $payRate->value * $hours->value;
-        $additionItem->save();
+        $payrollItem = self::calculateBasePay($payrollItem);
+        $payrollItem = self::calculateTax($payrollItem);
 
         // upon first creation, it's not loaded
         $payrollItem->load([
@@ -194,7 +162,8 @@ class PayrollController extends Controller
 
     public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
     {
-        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()) {
+        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
+            || $deductionItem->deduction->id == 1) {
             abort(403);
         }
 
@@ -267,5 +236,118 @@ class PayrollController extends Controller
         }
 
         return $currentPeriod;
+    }
+
+    private static function calculateBasePay(PayrollItem $payrollItem): PayrollItem
+    {
+        $additionItem = AdditionItem::firstOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
+        ], [
+            'payroll_item_id' => $payrollItem->id,
+            'addition_id' => 1,
+            'amount' => 0,
+        ]);
+
+        $user = $payrollItem->user;
+        $user->load('userVariableItems');
+        $payRate = AdditionVariableItem::updateOrCreate([
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 1,
+        ], [
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 1, // base pay rate
+            'value' => $user
+                ->userVariableItems
+                ->where('user_variable_id', 1)
+                ->first()
+                ->value,
+        ]);
+
+        $hours = AdditionVariableItem::firstOrCreate([
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 2,
+        ], [
+            'addition_item_id' => $additionItem->id,
+            'addition_variable_id' => 2, // regular hours rendered
+            'value' => 80,
+        ]);
+
+        $additionItem->amount = $payRate->value * $hours->value;
+        $additionItem->save();
+
+        return $payrollItem;
+    }
+
+    private static function calculateTax(PayrollItem $payrollItem): PayrollItem
+    {
+        $totalAdditions = $payrollItem->additionItems
+            ->reduce(function (?int $carry, ?AdditionItem $item) {
+                return $carry + $item->amount;
+            });
+
+        $totalDeductionsBeforeTax = $payrollItem->deductionItems
+            ->where('deduction_id', '!=', 1)
+            ->reduce(function (?int $carry, ?AdditionItem $item) {
+                return $carry + $item->amount;
+            });
+
+        $netBeforeTax = $totalAdditions - $totalDeductionsBeforeTax;
+        $yearEstimate = $netBeforeTax * 24; // 24 cutoffs in a year
+
+        $brackets = collect([
+            [
+                'bracket' => 0,
+                'baseTax' => 0,
+                'excessRate' => 0,
+            ],
+            [
+                'bracket' => 250000,
+                'baseTax' => 0,
+                'excessRate' => 0.15,
+            ],
+            [
+                'bracket' => 400000,
+                'baseTax' => 22500,
+                'excessRate' => 0.20,
+            ],
+            [
+                'bracket' => 800000,
+                'baseTax' => 102500,
+                'excessRate' => 0.25,
+            ],
+            [
+                'bracket' => 2000000,
+                'baseTax' => 402500,
+                'excessRate' => 0.30,
+            ],
+            [
+                'bracket' => 8000000,
+                'baseTax' => 2202500,
+                'excessRate' => 0.35,
+            ],
+        ]);
+
+        $bracket = $brackets->where('bracket', '<', $yearEstimate)
+            ->sortByDesc('bracket')
+            ->first();
+
+        $excess = $yearEstimate - $bracket['bracket'];
+        $excessTax = $excess * $bracket['excessRate'];
+
+        $tax = ($bracket['baseTax'] + $excessTax) / 24;
+        $tax = round($tax, 2);
+
+        DeductionItem::updateOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => 1,
+        ], [
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => 1,
+            'amount' => $tax,
+        ]);
+
+        $payrollItem->load('deductionItems');
+        return $payrollItem;
     }
 }

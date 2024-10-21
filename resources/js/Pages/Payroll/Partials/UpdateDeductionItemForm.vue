@@ -42,14 +42,14 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
                     v-model="form.amount"
                     required
                     autofocus
-                    :disabled="periodHasEnded"
+                    :disabled="periodHasEnded || deductionItem.deduction.id == 1"
                     autocomplete="amount"
                 />
 
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <Link
-                v-if="!periodHasEnded"
+                v-if="!periodHasEnded && deductionItem.deduction.id != 1"
                 :href="route('deductionItem.delete', deductionItem.id)"
                 method="delete"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
@@ -57,7 +57,7 @@ const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
             >
                 Remove
             </Link>
-            <div v-if="!periodHasEnded" class="flex items-center gap-4">
+            <div v-if="!periodHasEnded && deductionItem.deduction.id != 1" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition
