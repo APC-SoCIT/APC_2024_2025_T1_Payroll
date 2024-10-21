@@ -13,6 +13,8 @@ class UserVariable extends Model
     protected $fillable = [
         'name',
         'description',
+        'required',
+        'min',
     ];
 
     public function userVariableItems(): HasMany

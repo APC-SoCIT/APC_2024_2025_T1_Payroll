@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->boolean('required')->default(false);
+            $table->decimal('min')->default(0);
             $table->timestamps();
         });
 
@@ -31,10 +33,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::table('user_variables')->insert([
-            'name' => 'Hourly rate',
-            'description' => 'Base pay based on contract',
-        ]);
+        $userVariables = [
+            [
+                'name' => 'Salary/Wage',
+                'description' => 'Base pay based on contract',
+                'required' => true,
+                'min' => 0,
+            ], [
+                'name' => 'Pag-IBIG Contribution',
+                'description' => 'Mandatory Pag-IBIG contribution',
+                'required' => true,
+                'min' => 200,
+            ]
+        ];
+
+        DB::table('user_variables')->insert($userVariables);
     }
 
     /**

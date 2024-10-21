@@ -16,6 +16,7 @@ class Addition extends Model
     protected $fillable = [
         'name',
         'description',
+        'calculated',
     ];
 
     public function additionItems(): HasMany
