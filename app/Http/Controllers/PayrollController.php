@@ -25,6 +25,7 @@ class PayrollController extends Controller
     public function getCurrentItemFromUser(User $user): Response
     {
         $currentPeriod = self::currentPeriod();
+        $currentPeriod->save();
 
         return self::getItem($currentPeriod, $user);
     }
@@ -208,11 +209,10 @@ class PayrollController extends Controller
                     ->endOfMonth();
             }
 
-            $currentPeriod = PayrollPeriod::create([
-                'start_date' => $start->toDateString(),
-                'cutoff_date' => $cutoff->toDateString(),
-                'end_date' => $end->toDateString(),
-            ]);
+            $currentPeriod = new PayrollPeriod;
+            $currentPeriod->start_date = $start->toDateString();
+            $currentPeriod->cutoff_date = $cutoff->toDateString();
+            $currentPeriod->end_date = $end->toDateString();
         }
 
         return $currentPeriod;

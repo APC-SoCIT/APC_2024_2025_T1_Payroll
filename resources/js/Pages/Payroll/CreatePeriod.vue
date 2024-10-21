@@ -3,6 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CreateCutoffForm from './Partials/CreateCutoffForm.vue';
 import { Head } from '@inertiajs/vue3';
 
+defineProps([
+    'cutoff'
+]);
+
 </script>
 
 <template>

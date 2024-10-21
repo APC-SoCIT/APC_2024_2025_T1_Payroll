@@ -47,7 +47,9 @@ class PayrollPeriodController extends Controller
 
     public function add(): Response
     {
-        return Inertia::render('Payroll/CreatePeriod');
+        return Inertia::render('Payroll/CreatePeriod', [
+            'cutoff' => PayrollController::currentPeriod(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

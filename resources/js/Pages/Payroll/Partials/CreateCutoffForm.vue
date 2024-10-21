@@ -3,14 +3,16 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 
-const page = usePage();
+const props = defineProps([
+    'cutoff'
+]);
 
 const form = useForm({
-    start_date: page.props.date,
-    cutoff_date: page.props.date,
-    end_date: page.props.date,
+    start_date: props.cutoff.start_date,
+    cutoff_date: props.cutoff.cutoff_date,
+    end_date: props.cutoff.end_date,
 });
 </script>
 
