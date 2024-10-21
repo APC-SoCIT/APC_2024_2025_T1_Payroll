@@ -8,17 +8,23 @@ const props = defineProps([
     'cutoff',
     'account',
 ]);
-
-function confirm(prompt){
-    return window.confirm(prompt);
-}
 </script>
 
 <template>
     <tr>
         <td class="p-4 border-b border-blue-gray-50">
-            <Link v-if="account == null" :href="route('accounts.getFromCutoff', cutoff.id)">{{ useFormat(cutoff.end_date) }}</Link>
-            <Link v-else :href="route('payroll.get', { cutoff: cutoff.id, user: account.id })">{{ useFormat(cutoff.end_date) }}</Link>
+            <Link v-if="account == null"
+                class="underline hover:text-gray-600"
+                :href="route('accounts.getFromCutoff', cutoff.id)"
+            >
+                {{ useFormat(cutoff.end_date) }}
+            </Link>
+            <Link v-else
+                class="underline hover:text-gray-600"
+                :href="route('payroll.get', { cutoff: cutoff.id, user: account.id })"
+            >
+                {{ useFormat(cutoff.end_date) }}
+            </Link>
         </td>
         <td class="p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.start_date) }}
@@ -30,14 +36,6 @@ function confirm(prompt){
             <PrimaryButton
                 v-if="cutoff.end_date > $page.props.date"
             ><Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link></PrimaryButton>
-            <DangerButton v-if="cutoff.end_date > $page.props.date">
-                <Link
-                    :href="route('cutoff.delete', cutoff.id)"
-                    method="delete"
-                    as="button"
-                    :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}?`)"
-                >Delete</Link>
-            </DangerButton>
         </td>
         <td v-else class="p-4 border-b border-blue-gray-50">
             {{ cutoff.end_date < $page.props.date

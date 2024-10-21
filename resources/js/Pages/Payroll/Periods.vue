@@ -15,7 +15,10 @@ const props = defineProps([
     <AuthenticatedLayout>
         <template #header>
             <h2 v-if="account == null" class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs</h2>
-            <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs for {{ account.name }}</h2>
+            <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">
+                Payroll Cutoffs for
+                <Link class="underline hover:text-gray-600" :href="route('account.get', account.id)">{{ account.name }}</Link>
+            </h2>
         </template>
 
         <div class="py-12">

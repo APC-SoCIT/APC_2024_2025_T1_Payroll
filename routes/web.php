@@ -27,7 +27,7 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
 
     // account actions
     Route::get('/account/{user}', [ProfileController::class, 'edit'])
-        ->name('account.updateForm');
+        ->name('account.get');
     Route::patch('/account/{user}', [ProfileController::class, 'update'])
         ->name('account.update');
 

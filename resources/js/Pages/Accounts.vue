@@ -17,7 +17,10 @@ const props = defineProps([
     <AuthenticatedLayout>
         <template #header>
             <h2 v-if="cutoff == null" class="font-semibold text-xl text-gray-800 leading-tight">Accounts</h2>
-            <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">Accounts in Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
+            <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">
+                Accounts in Cutoff for
+                <Link class="underline hover:text-gray-600" :href="route('cutoff.update', cutoff.id)">{{ useFormat(cutoff.end_date) }}</Link>
+            </h2>
         </template>
 
         <div class="py-12">

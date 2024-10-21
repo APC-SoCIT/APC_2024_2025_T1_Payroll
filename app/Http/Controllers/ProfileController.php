@@ -40,7 +40,14 @@ class ProfileController extends Controller
     public function store(ProfileUpdateRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        User::create($validated);
+        $user = User::create($validated);
+
+        UserVariableItem::updateOrCreate([
+            'user_id' => $user->id,
+            'user_variable_id' => 1,
+        ], [
+            'value' => 0,
+        ]);
 
         return redirect(route('accounts'));
     }
@@ -81,12 +88,10 @@ class ProfileController extends Controller
             'user_id' => $user->id,
             'user_variable_id' => $variable->id,
         ], [
-            'user_id' => $user->id,
-            'user_variable_id' => $variable->id,
             'value' => 0,
         ]);
 
-        return Redirect::route('account.updateForm', $user->id);
+        return Redirect::route('account.get', $user->id);
     }
 
     public function updateVariable(UserVariableItem $variableItem, Request $request): RedirectResponse
@@ -102,7 +107,7 @@ class ProfileController extends Controller
             ])
         );
 
-        return Redirect::route('account.updateForm', $variableItem->user->id);
+        return Redirect::route('account.get', $variableItem->user->id);
     }
 
     public function deleteVariable(UserVariableItem $variableItem): RedirectResponse
@@ -115,6 +120,6 @@ class ProfileController extends Controller
         $user = $variableItem->user;
         $variableItem->delete();
 
-        return Redirect::route('account.updateForm', $user->id);
+        return Redirect::route('account.get', $user->id);
     }
 }

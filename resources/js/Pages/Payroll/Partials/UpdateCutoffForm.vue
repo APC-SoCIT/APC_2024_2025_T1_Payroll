@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([ 'cutoff' ]);
 
@@ -13,12 +14,21 @@ const form = useForm({
     cutoff_date: props.cutoff.cutoff_date,
     end_date: props.cutoff.end_date,
 });
+
+function confirm(prompt){
+    return window.confirm(prompt);
+}
 </script>
 
 <template>
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Schedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
+    <section class="max-w-xl">
+        <header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rechedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
 
-    <section>
+            <p class="mt-1 text-sm text-gray-600">
+                Reschedule cutoff.
+            </p>
+        </header>
         <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id))" class="mt-6 space-y-6">
             <div>
                 <h3 class="font-semibold text-l text-gray-800 leading-tight">Start Date</h3>
@@ -73,6 +83,14 @@ const form = useForm({
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <DangerButton v-if="cutoff.end_date > $page.props.date">
+                    <Link class="uppercase"
+                        :href="route('cutoff.delete', cutoff.id)"
+                        method="delete"
+                        as="button"
+                        :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}?`)"
+                    >Delete</Link>
+                </DangerButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

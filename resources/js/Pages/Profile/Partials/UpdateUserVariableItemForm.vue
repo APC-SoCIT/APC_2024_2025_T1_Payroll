@@ -21,7 +21,7 @@ const form = useForm({
 <template>
     <section v-if="userVariableItem.user_variable.id == 1 && $page.props.auth.isPayroll">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">{{ userVariableItem.user_variable.name }}</h2>
+            <h2 class="text-m font-medium text-gray-900">{{ userVariableItem.user_variable.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ userVariableItem.user_variable.description }}
