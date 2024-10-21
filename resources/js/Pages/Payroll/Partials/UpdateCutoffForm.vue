@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useConfirm } from '@/Utils/Confirm.js';
 import { useFormat } from '@/Utils/FormatDate.js';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
@@ -14,10 +15,6 @@ const form = useForm({
     cutoff_date: props.cutoff.cutoff_date,
     end_date: props.cutoff.end_date,
 });
-
-function confirm(prompt){
-    return window.confirm(prompt);
-}
 </script>
 
 <template>
@@ -83,14 +80,6 @@ function confirm(prompt){
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-                <DangerButton v-if="cutoff.end_date > $page.props.date">
-                    <Link class="uppercase"
-                        :href="route('cutoff.delete', cutoff.id)"
-                        method="delete"
-                        as="button"
-                        :onBefore="() => confirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}?`)"
-                    >Delete</Link>
-                </DangerButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -102,5 +91,16 @@ function confirm(prompt){
                 </Transition>
             </div>
         </form>
+        <div class="py-2">
+            <Link
+                :href="route('cutoff.delete', cutoff.id)"
+                method="delete"
+                as="button"
+                :onBefore="useConfirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}? All entries will also be deleted. This action cannot be undone.`)"
+                class="uppercase inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
+            >
+                Delete
+            </Link>
+        </div>
     </section>
 </template>
