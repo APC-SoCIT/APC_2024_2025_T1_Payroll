@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PayrollHelper;
 use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -51,7 +51,7 @@ class PayrollPeriodController extends Controller
     public function add(): Response
     {
         return Inertia::render('Payroll/CreatePeriod', [
-            'cutoff' => PayrollController::currentPeriod(),
+            'cutoff' => PayrollHelper::currentPeriod(),
         ]);
     }
 
