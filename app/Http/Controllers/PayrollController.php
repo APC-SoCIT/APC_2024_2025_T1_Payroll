@@ -388,19 +388,15 @@ class PayrollController extends Controller
             ->first()
             ->value;
 
-        $lastPay = PayrollItem::where('user_id', $payrollItem->user_id)
-            ->whereHas('payrollPeriod', function (Builder $query) use ($payrollItem) {
-                $query->where('end_date', '<', $payrollItem->payrollPeriod->end_date)
-                    ->orderBy('end_date');
-            })
-            ->first();
-
-        $lastPay = is_null($lastPay)
-            ? $thisPay
-            : $lastPay->additionItems
-                ->where('addition_id', 1)
-                ->first()
-                ->amount;
+        $lastPay = self::lastCutoff($payrollItem)
+            // try to use last cutoff
+            ?->additionItems
+            ->where('addition_id', 1)
+            ->first()
+            ?->amount
+            // if it doesn't exist or is too far back,
+            // estimate by doubling current
+            ?? $thisPay;
 
         $monthPay = $thisPay + $lastPay;
         $contribution = round($monthPay * 0.05, 2);
@@ -483,7 +479,7 @@ class PayrollController extends Controller
             [29750, 2880, 1350, 4230],
         ]);
 
-        $totalAdditions = $payrollItem->additionItems
+        $thisPay = $payrollItem->additionItems
             ->whereIn('addition_id', [
                 1,  // salary
                 2,  // deminimis
@@ -493,7 +489,23 @@ class PayrollController extends Controller
                 return $carry + $item->amount;
             });
 
-        $bracket = $lookup->where('bracket', '<', $totalAdditions)
+        $lastPay = self::lastCutoff($payrollItem)
+            // try to use last cutoff
+            ?->whereIn('addition_id', [
+                1,  // salary
+                2,  // deminimis
+                5,  // honorarium
+            ])
+            ->reduce(function (?int $carry, ?AdditionItem $item) {
+                return $carry + $item->amount;
+            })
+            // if it doesn't exist or is too far back,
+            // estimate by doubling current
+            ?? $thisPay;
+
+        $monthPay = $thisPay + $lastPay;
+
+        $bracket = $lookup->where('bracket', '<', $monthPay)
             ->sortByDesc(0)
             ->first()
             ?? $lookup[0];
@@ -501,5 +513,18 @@ class PayrollController extends Controller
         $sssDeduction->amount = $bracket[2];
         $sssDeduction->save();
         $payrollItem->load('deductionItems');
+    }
+
+    private static function lastCutoff(PayrollItem $payrollItem): ?PayrollItem
+    {
+        return PayrollItem::where('user_id', $payrollItem->user_id)
+            ->whereHas('payrollPeriod', function (Builder $query) use ($payrollItem) {
+                // limit search to 1 month
+                $query->where('end_date', '>=', $payrollItem->payrollPeriod->start_date)
+                    // get a previous cutoff
+                    ->where('end_date', '<', $payrollItem->payrollPeriod->end_date)
+                    ->orderBy('end_date');
+            })
+            ->first();
     }
 }
