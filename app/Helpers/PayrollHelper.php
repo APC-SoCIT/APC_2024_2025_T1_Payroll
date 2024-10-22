@@ -74,43 +74,11 @@ class PayrollHelper
         $netBeforeTax = $totalAdditions - $totalDeductionsBeforeTax;
         $yearEstimate = $netBeforeTax * 24; // 24 cutoffs in a year
 
-        $brackets = collect([
-            [
-                'bracket' => 0,
-                'baseTax' => 0,
-                'excessRate' => 0,
-            ],
-            [
-                'bracket' => 250000,
-                'baseTax' => 0,
-                'excessRate' => 0.15,
-            ],
-            [
-                'bracket' => 400000,
-                'baseTax' => 22500,
-                'excessRate' => 0.20,
-            ],
-            [
-                'bracket' => 800000,
-                'baseTax' => 102500,
-                'excessRate' => 0.25,
-            ],
-            [
-                'bracket' => 2000000,
-                'baseTax' => 402500,
-                'excessRate' => 0.30,
-            ],
-            [
-                'bracket' => 8000000,
-                'baseTax' => 2202500,
-                'excessRate' => 0.35,
-            ],
-        ]);
-
-        $bracket = $brackets->where('bracket', '<', $yearEstimate)
+        $bracket = collect(self::$taxBrackets)
+            ->where('bracket', '<', $yearEstimate)
             ->sortByDesc('bracket')
             ->first()
-            ?? $brackets[0];
+            ?? self::$taxBrackets[0];
 
         $excess = $yearEstimate - $bracket['bracket'];
         $excessTax = $excess * $bracket['excessRate'];
@@ -198,63 +166,6 @@ class PayrollHelper
             return;
         }
 
-        $lookup = collect([
-            [0, 0, 0, 0],
-            [1000, 390, 180, 570],
-            [4250, 437.50, 202.50, 640],
-            [4750, 485, 225, 710],
-            [5250, 532.50, 247.50, 780],
-            [5750, 580, 270, 850],
-            [6250, 627.50, 292.50, 920],
-            [6750, 675, 315, 990],
-            [7250, 722.50, 337.50, 1060],
-            [7750, 770, 360, 1130],
-            [8250, 817.50, 382.50, 1200],
-            [8750, 865, 405, 1270],
-            [9250, 912.50, 427.50, 1340],
-            [9750, 960, 450, 1410],
-            [10250, 1007.50, 472.50, 1480],
-            [10750, 1055, 495, 1550],
-            [11250, 1102.50, 517.50, 1620],
-            [11750, 1150, 540, 1690],
-            [12250, 1197.50, 562.50, 1760],
-            [12750, 1245, 585, 1830],
-            [13250, 1292.50, 607.50, 1900],
-            [13750, 1340, 630, 1970],
-            [14250, 1387.50, 652.50, 2040],
-            [14750, 1435, 675, 2110],
-            [15250, 1482.50, 697.50, 2180],
-            [15750, 1550, 720, 2270],
-            [16250, 1597.50, 742.50, 2340],
-            [16750, 1645, 765, 2410],
-            [17250, 1692.50, 787.50, 2480],
-            [17750, 1740, 810, 2550],
-            [18250, 1787.50, 832.50, 2620],
-            [18750, 1835, 855, 2690],
-            [19250, 1882.50, 877.50, 2760],
-            [19750, 1930, 900, 2830],
-            [20250, 1977.50, 922.50, 2900],
-            [20750, 2025, 945, 2970],
-            [21250, 2072.50, 967.50, 3040],
-            [21750, 2120, 990, 3110],
-            [22250, 2167.50, 1012.50, 3180],
-            [22750, 2215, 1035, 3250],
-            [23250, 2262.50, 1057.50, 3320],
-            [23750, 2310, 1080, 3390],
-            [24250, 2357.50, 1102.50, 3460],
-            [24750, 2405, 1125, 3530],
-            [25250, 2452.50, 1147.50, 3600],
-            [25750, 2500, 1170, 3670],
-            [26250, 2547.50, 1192.50, 3740],
-            [26750, 2595, 1215, 3810],
-            [27250, 2642.50, 1237.50, 3880],
-            [27750, 2690, 1260, 3950],
-            [28250, 2737.50, 1282.50, 4020],
-            [28750, 2785, 1305, 4090],
-            [29250, 2832.50, 1327.50, 4160],
-            [29750, 2880, 1350, 4230],
-        ]);
-
         $thisPay = $payrollItem->additionItems
             ->whereIn('addition_id', [
                 1,  // salary
@@ -281,12 +192,13 @@ class PayrollHelper
 
         $monthPay = $thisPay + $lastPay;
 
-        $bracket = $lookup->where('bracket', '<', $monthPay)
-            ->sortByDesc(0)
+        $bracket = collect(self::$sssBrackets)
+            ->where('bracket', '<', $monthPay)
+            ->sortByDesc('employee_contribution')
             ->first()
-            ?? $lookup[0];
+            ?? self::$sssBrackets[0];
 
-        $sssDeduction->amount = $bracket[2];
+        $sssDeduction->amount = $bracket['employee_contribution'];
         $sssDeduction->save();
         $payrollItem->load('deductionItems');
     }
@@ -363,4 +275,69 @@ class PayrollHelper
 
         return $currentPeriod;
     }
+
+    private static $taxBrackets = [
+        ['bracket' => 0, 'baseTax' => 0, 'excessRate' => 0],
+        ['bracket' => 250000, 'baseTax' => 0, 'excessRate' => 0.15],
+        ['bracket' => 400000, 'baseTax' => 22500, 'excessRate' => 0.20],
+        ['bracket' => 800000, 'baseTax' => 102500, 'excessRate' => 0.25],
+        ['bracket' => 2000000, 'baseTax' => 402500, 'excessRate' => 0.30],
+        ['bracket' => 8000000, 'baseTax' => 2202500, 'excessRate' => 0.35],
+    ];
+
+    private static $sssBrackets = [
+        ['bracket' => 1000.00, 'employer_contribution' => 390.00, 'employee_contribution' => 180.00, 'total' => 570.00],
+        ['bracket' => 4250.00, 'employer_contribution' => 437.50, 'employee_contribution' => 202.50, 'total' => 640.00],
+        ['bracket' => 4750.00, 'employer_contribution' => 485.00, 'employee_contribution' => 225.00, 'total' => 710.00],
+        ['bracket' => 5250.00, 'employer_contribution' => 532.50, 'employee_contribution' => 247.50, 'total' => 780.00],
+        ['bracket' => 5750.00, 'employer_contribution' => 580.00, 'employee_contribution' => 270.00, 'total' => 850.00],
+        ['bracket' => 6250.00, 'employer_contribution' => 627.50, 'employee_contribution' => 292.50, 'total' => 920.00],
+        ['bracket' => 6750.00, 'employer_contribution' => 675.00, 'employee_contribution' => 315.00, 'total' => 990.00],
+        ['bracket' => 7250.00, 'employer_contribution' => 722.50, 'employee_contribution' => 337.50, 'total' => 1060.00],
+        ['bracket' => 7750.00, 'employer_contribution' => 770.00, 'employee_contribution' => 360.00, 'total' => 1130.00],
+        ['bracket' => 8250.00, 'employer_contribution' => 817.50, 'employee_contribution' => 382.50, 'total' => 1200.00],
+        ['bracket' => 8750.00, 'employer_contribution' => 865.00, 'employee_contribution' => 405.00, 'total' => 1270.00],
+        ['bracket' => 9250.00, 'employer_contribution' => 912.50, 'employee_contribution' => 427.50, 'total' => 1340.00],
+        ['bracket' => 9750.00, 'employer_contribution' => 960.00, 'employee_contribution' => 450.00, 'total' => 1410.00],
+        ['bracket' => 10250.00, 'employer_contribution' => 1007.50, 'employee_contribution' => 472.50, 'total' => 1480.00],
+        ['bracket' => 10750.00, 'employer_contribution' => 1055.00, 'employee_contribution' => 495.00, 'total' => 1550.00],
+        ['bracket' => 11250.00, 'employer_contribution' => 1102.50, 'employee_contribution' => 517.50, 'total' => 1620.00],
+        ['bracket' => 11750.00, 'employer_contribution' => 1150.00, 'employee_contribution' => 540.00, 'total' => 1690.00],
+        ['bracket' => 12250.00, 'employer_contribution' => 1197.50, 'employee_contribution' => 562.50, 'total' => 1760.00],
+        ['bracket' => 12750.00, 'employer_contribution' => 1245.00, 'employee_contribution' => 585.00, 'total' => 1830.00],
+        ['bracket' => 13250.00, 'employer_contribution' => 1292.50, 'employee_contribution' => 607.50, 'total' => 1900.00],
+        ['bracket' => 13750.00, 'employer_contribution' => 1340.00, 'employee_contribution' => 630.00, 'total' => 1970.00],
+        ['bracket' => 14250.00, 'employer_contribution' => 1387.50, 'employee_contribution' => 652.50, 'total' => 2040.00],
+        ['bracket' => 14750.00, 'employer_contribution' => 1435.00, 'employee_contribution' => 675.00, 'total' => 2110.00],
+        ['bracket' => 15250.00, 'employer_contribution' => 1482.50, 'employee_contribution' => 697.50, 'total' => 2180.00],
+        ['bracket' => 15750.00, 'employer_contribution' => 1550.00, 'employee_contribution' => 720.00, 'total' => 2270.00],
+        ['bracket' => 16250.00, 'employer_contribution' => 1597.50, 'employee_contribution' => 742.50, 'total' => 2340.00],
+        ['bracket' => 16750.00, 'employer_contribution' => 1645.00, 'employee_contribution' => 765.00, 'total' => 2410.00],
+        ['bracket' => 17250.00, 'employer_contribution' => 1692.50, 'employee_contribution' => 787.50, 'total' => 2480.00],
+        ['bracket' => 17750.00, 'employer_contribution' => 1740.00, 'employee_contribution' => 810.00, 'total' => 2550.00],
+        ['bracket' => 18250.00, 'employer_contribution' => 1787.50, 'employee_contribution' => 832.50, 'total' => 2620.00],
+        ['bracket' => 18750.00, 'employer_contribution' => 1835.00, 'employee_contribution' => 855.00, 'total' => 2690.00],
+        ['bracket' => 19250.00, 'employer_contribution' => 1882.50, 'employee_contribution' => 877.50, 'total' => 2760.00],
+        ['bracket' => 19750.00, 'employer_contribution' => 1930.00, 'employee_contribution' => 900.00, 'total' => 2830.00],
+        ['bracket' => 20250.00, 'employer_contribution' => 1977.50, 'employee_contribution' => 922.50, 'total' => 2900.00],
+        ['bracket' => 20750.00, 'employer_contribution' => 2025.00, 'employee_contribution' => 945.00, 'total' => 2970.00],
+        ['bracket' => 21250.00, 'employer_contribution' => 2072.50, 'employee_contribution' => 967.50, 'total' => 3040.00],
+        ['bracket' => 21750.00, 'employer_contribution' => 2120.00, 'employee_contribution' => 990.00, 'total' => 3110.00],
+        ['bracket' => 22250.00, 'employer_contribution' => 2167.50, 'employee_contribution' => 1012.50, 'total' => 3180.00],
+        ['bracket' => 22750.00, 'employer_contribution' => 2215.00, 'employee_contribution' => 1035.00, 'total' => 3250.00],
+        ['bracket' => 23250.00, 'employer_contribution' => 2262.50, 'employee_contribution' => 1057.50, 'total' => 3320.00],
+        ['bracket' => 23750.00, 'employer_contribution' => 2310.00, 'employee_contribution' => 1080.00, 'total' => 3390.00],
+        ['bracket' => 24250.00, 'employer_contribution' => 2357.50, 'employee_contribution' => 1102.50, 'total' => 3460.00],
+        ['bracket' => 24750.00, 'employer_contribution' => 2405.00, 'employee_contribution' => 1125.00, 'total' => 3530.00],
+        ['bracket' => 25250.00, 'employer_contribution' => 2452.50, 'employee_contribution' => 1147.50, 'total' => 3600.00],
+        ['bracket' => 25750.00, 'employer_contribution' => 2500.00, 'employee_contribution' => 1170.00, 'total' => 3670.00],
+        ['bracket' => 26250.00, 'employer_contribution' => 2547.50, 'employee_contribution' => 1192.50, 'total' => 3740.00],
+        ['bracket' => 26750.00, 'employer_contribution' => 2595.00, 'employee_contribution' => 1215.00, 'total' => 3810.00],
+        ['bracket' => 27250.00, 'employer_contribution' => 2642.50, 'employee_contribution' => 1237.50, 'total' => 3880.00],
+        ['bracket' => 27750.00, 'employer_contribution' => 2690.00, 'employee_contribution' => 1260.00, 'total' => 3950.00],
+        ['bracket' => 28250.00, 'employer_contribution' => 2737.50, 'employee_contribution' => 1282.50, 'total' => 4020.00],
+        ['bracket' => 28750.00, 'employer_contribution' => 2785.00, 'employee_contribution' => 1305.00, 'total' => 4090.00],
+        ['bracket' => 29250.00, 'employer_contribution' => 2832.50, 'employee_contribution' => 1327.50, 'total' => 4160.00],
+        ['bracket' => 29750.00, 'employer_contribution' => 2880.00, 'employee_contribution' => 1350.00, 'total' => 4230.00],
+    ];
 }
