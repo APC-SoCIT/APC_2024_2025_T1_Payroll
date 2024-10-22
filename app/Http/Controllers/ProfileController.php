@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
 use App\Models\UserVariable;
 use App\Models\UserVariableItem;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +33,7 @@ class ProfileController extends Controller
         return Inertia::render('Accounts', [
             'accounts' => $cutoff->hasEnded()
                 // if past, only related accounts
-                ? User::whereHas('payrollItems', function (Builder $query) use ($cutoff) {
-                    $query->where('payroll_period_id', $cutoff->id);
-                })
-                    ->orderBy('name')
-                    ->get()
+                ? $cutoff->users->sort('name')
                 // if current/future, only active accounts
                 : User::where('active', true)
                     ->orderBy('name')
@@ -79,13 +78,23 @@ class ProfileController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
-        $user->update($request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'active' => ['required', 'boolean'],
-        ]));
+        ]);
 
-        return Redirect::route('accounts');
+        $user->update($validated);
+
+        if (! $validated['active']) {
+            $user->payrollItems
+                ->where('payrollPeriod.end_date', '>=', Carbon::now()->toDateString())
+                ->each(function (?PayrollItem $item, ?int $key) {
+                    $item->delete();
+                });
+        }
+
+        return Redirect::route('account.get', $user->id);
     }
 
     public function addVariable(User $user, UserVariable $variable): RedirectResponse

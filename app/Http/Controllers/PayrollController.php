@@ -25,6 +25,10 @@ class PayrollController extends Controller
 {
     public function getCurrentItemFromUser(User $user): Response
     {
+        if (! $user->active) {
+            abort(404);
+        }
+
         $currentPeriod = self::currentPeriod();
         $currentPeriod->save();
 
@@ -104,7 +108,7 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $cutoff_id = $additionItem->payrollItem->id;
+        $cutoff_id = $additionItem->payrollItem->payrollPeriod->id;
         $user_id = $additionItem->payrollItem->user->id;
         $additionItem->delete();
 
@@ -161,7 +165,7 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $cutoff_id = $deductionItem->payrollItem->id;
+        $cutoff_id = $deductionItem->payrollItem->payrollPeriod->id;
         $user_id = $deductionItem->payrollItem->user->id;
         $deductionItem->delete();
 
@@ -350,22 +354,34 @@ class PayrollController extends Controller
 
     private static function calculatePagibig(PayrollItem $payrollItem): void
     {
-        DeductionItem::updateOrCreate([
-            'payroll_item_id' => $payrollItem->id,
-            'deduction_id' => 4,
-        ], [
-            'amount' => $payrollItem->user
-                ->userVariableItems
-                ->where('user_variable_id', 2)
-                ->first()
-                ->value,
-        ]);
+        $pagibigDeduction = $payrollItem->deductionItems
+            ->where('deduction_id', 4)
+            ->first();
 
+        if (is_null($pagibigDeduction)) {
+            return;
+        }
+
+        $pagibigDeduction->amount = $payrollItem->user
+            ->userVariableItems
+            ->where('user_variable_id', 2)
+            ->first()
+            ->value;
+
+        $pagibigDeduction->save();
         $payrollItem->load('deductionItems');
     }
 
     private static function calculatePhilhealth(PayrollItem $payrollItem): void
     {
+        $philhealthDeduction = $payrollItem->deductionItems
+            ->where('deduction_id', 3)
+            ->first();
+
+        if (is_null($philhealthDeduction)) {
+            return;
+        }
+
         $thisPay = $payrollItem->user
             ->userVariableItems
             ->where('user_variable_id', 1) // base pay
@@ -395,18 +411,21 @@ class PayrollController extends Controller
             $contribution = 5000;
         }
 
-        DeductionItem::updateOrCreate([
-            'payroll_item_id' => $payrollItem->id,
-            'deduction_id' => 3,
-        ], [
-            'amount' => $contribution,
-        ]);
-
+        $philhealthDeduction->amount = $contribution;
+        $philhealthDeduction->save();
         $payrollItem->load('deductionItems');
     }
 
     private static function calculateSss(PayrollItem $payrollItem): void
     {
+        $sssDeduction = $payrollItem->deductionItems
+            ->where('deduction_id', 2)
+            ->first();
+
+        if (is_null($sssDeduction)) {
+            return;
+        }
+
         $lookup = collect([
             [0, 0, 0, 0],
             [1000, 390, 180, 570],
@@ -479,13 +498,8 @@ class PayrollController extends Controller
             ->first()
             ?? $lookup[0];
 
-        DeductionItem::updateOrCreate([
-            'payroll_item_id' => $payrollItem->id,
-            'deduction_id' => 2,
-        ], [
-            'amount' => $bracket[2],
-        ]);
-
+        $sssDeduction->amount = $bracket[2];
+        $sssDeduction->save();
         $payrollItem->load('deductionItems');
     }
 }

@@ -30,7 +30,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('userVariableItem.update', userVariableItem.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('userVariableItem.update', userVariableItem.id), { preserveScroll: true })" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="value" value="Value" />
 

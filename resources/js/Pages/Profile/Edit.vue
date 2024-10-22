@@ -23,7 +23,7 @@ defineProps([
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
-                    <SecondaryButton><Link :href="route('payroll.getCurrentFromUser', targetAccount.id)">View entry in current cutoff</Link></SecondaryButton>
+                    <SecondaryButton v-if="targetAccount.active == true"><Link :href="route('payroll.getCurrentFromUser', targetAccount.id)">View entry in current cutoff</Link></SecondaryButton>
                     <SecondaryButton><Link :href="route('cutoffs.getFromUser', targetAccount.id)">View all involved cutoffs</Link></SecondaryButton>
                 </div>
             </div>

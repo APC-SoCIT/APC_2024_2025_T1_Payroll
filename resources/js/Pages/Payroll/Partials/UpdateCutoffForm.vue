@@ -26,7 +26,7 @@ const form = useForm({
                 Reschedule cutoff.
             </p>
         </header>
-        <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id), { preserveScroll: true })" class="mt-6 space-y-6">
             <div>
                 <h3 class="font-semibold text-l text-gray-800 leading-tight">Start Date</h3>
                 <InputLabel for="start_date" value="First day of the cutoff" />

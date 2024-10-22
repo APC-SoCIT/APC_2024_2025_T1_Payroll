@@ -17,7 +17,7 @@ const props = defineProps([
             </td>
             <td class="p-4 border-b border-blue-gray-50">{{ account.email }}</td>
             <td v-if="account.active" class="p-4 border-b border-blue-gray-50 text-center text-green-600">Active</td>
-            <td v-else class="p-4 border-b border-blue-gray-50 text-center text-green-600">Inactive</td>
+            <td v-else class="p-4 border-b border-blue-gray-50 text-center text-red-600">Inactive</td>
             <td v-if="cutoff == null" class="p-4 border-b border-blue-gray-50 text-center">
                 <PrimaryButton>
                     <Link :href="route('account.get', account.id)">Edit Account</Link>

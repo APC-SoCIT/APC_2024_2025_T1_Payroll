@@ -35,7 +35,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('deductionItem.update', deductionItem.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('deductionItem.update', deductionItem.id), { preserveScroll: true })" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="amount" value="Amount" />
 

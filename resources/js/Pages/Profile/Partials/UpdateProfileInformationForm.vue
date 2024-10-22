@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useConfirm } from '@/Utils/Confirm.js';
 import { useForm, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([ 'targetAccount' ]);
@@ -26,7 +27,15 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('account.update', {id: targetAccount.id}))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('account.update', {id: targetAccount.id}), {
+                preserveScroll: true,
+                onBefore: () => {
+                    if (!form.active && props.targetAccount.active == true) {
+                        return useConfirm(`Are you sure you want to deactivate the account of ${form.name}? This will delete all their records for ongoing and upcoming payroll cutoffs. This action cannot be undone.`)();
+                    }
+                    return true;
+                }
+            })" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" value="Name" />
 

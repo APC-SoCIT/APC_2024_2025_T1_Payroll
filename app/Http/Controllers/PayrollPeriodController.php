@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
 use Carbon\Carbon;
@@ -29,15 +30,17 @@ class PayrollPeriodController extends Controller
     public function getFromUser(User $user): Response
     {
         // all the user is involved with (including past)
-        $involved = PayrollPeriod::whereHas('payrollItems', function (Builder $query) use ($user) {
-            $query->where('user_id', $user->id);
-        });
+        $involved = $user->payrollItems
+            ->map(function (?PayrollItem $item) {
+                return $item->payrollPeriod;
+            });
 
-        $involved = $user->active
-            ? $involved->orWhere('end_date', '>=', Carbon::now()->toDateString())
-                ->latest('end_date')
-                ->get()
-            : $involved;
+        // if the user is active, include current and future too
+        if ($user->active) {
+            $involved->merge(
+                PayrollPeriod::where('end_date', '>=', Carbon::now()->toDateString())
+            );
+        }
 
         return Inertia::render('Payroll/Periods', [
             'cutoffs' => $involved,
