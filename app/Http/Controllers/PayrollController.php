@@ -38,7 +38,7 @@ class PayrollController extends Controller
             'payroll_period_id' => $cutoff->id,
         ]);
 
-        if (!$payrollItem->payrollPeriod->hasEnded()) {
+        if (! $payrollItem->payrollPeriod->hasEnded()) {
             self::calculateAll($payrollItem);
         }
 
@@ -225,10 +225,10 @@ class PayrollController extends Controller
 
     private static function calculateAll(PayrollItem $item): void
     {
-         self::calculateBasePay($item);
-         self::calculatePagibig($item);
-         self::calculatePhilhealth($item);
-         self::calculateTax($item);
+        self::calculateBasePay($item);
+        self::calculatePagibig($item);
+        self::calculatePhilhealth($item);
+        self::calculateTax($item);
 
         $totalAdditions = $item->additionItems
             ->reduce(function (?int $carry, ?AdditionItem $item) {
@@ -349,7 +349,7 @@ class PayrollController extends Controller
                 ->userVariableItems
                 ->where('user_variable_id', 2)
                 ->first()
-                ->value
+                ->value,
         ]);
 
         $payrollItem->load('deductionItems');
@@ -377,15 +377,20 @@ class PayrollController extends Controller
                 ->first()
                 ->amount;
 
-        error_log($lastPay);
-
         $monthPay = $thisPay + $lastPay;
+        $contribution = round($monthPay * 0.05, 2);
+
+        if ($contribution < 500) {
+            $contribution = 500;
+        } elseif ($contribution > 5000) {
+            $contribution = 5000;
+        }
 
         DeductionItem::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => 3,
         ], [
-            'amount' => $monthPay < 10000 ? 500 : ($monthPay > 100000 ? 5000 : $monthPay * 0.05)
+            'amount' => $contribution,
         ]);
 
         $payrollItem->load('deductionItems');
