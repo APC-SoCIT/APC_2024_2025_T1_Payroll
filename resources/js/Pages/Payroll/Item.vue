@@ -34,17 +34,38 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Payroll Item
-                for <Link class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('account.get', targetAccount.id)">{{ targetAccount.name }}</Link>
-                for <Link class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('cutoff.get', payrollItem.payroll_period.id)">{{ useFormat(payrollItem.payroll_period.end_date) }}</Link>
+                Payroll Item for
+                <Link v-if="$page.props.auth.isAuthorized"
+                    class="text-gray-500 hover:text-gray-700 hover:underline"
+                    :href="route('account.get', targetAccount.id)"
+                >
+                    {{ targetAccount.name }}
+                </Link>
+                <span v-else>{{ targetAccount.name }}</span>
+                for
+                <Link v-if="$page.props.auth.isAuthorized"
+                    class="text-gray-500 hover:text-gray-700 hover:underline"
+                    :href="route('cutoff.get', payrollItem.payroll_period.id)"
+                >
+                    {{ useFormat(payrollItem.payroll_period.end_date) }}
+                </Link>
+                <span v-else>{{ useFormat(payrollItem.payroll_period.end_date) }}</span>
             </h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
-                    <SecondaryButton><Link :href="route('cutoffs.getFromUser', targetAccount.id)">View all involved cutoffs</Link></SecondaryButton>
-                    <SecondaryButton><Link :href="route('accounts.getFromCutoff', payrollItem.payroll_period.id)">View all involved accounts</Link></SecondaryButton>
+                    <SecondaryButton>
+                        <Link :href="route('cutoffs.getFromUser', targetAccount.id)">
+                            View all involved cutoffs
+                        </Link>
+                    </SecondaryButton>
+                    <SecondaryButton v-if="$page.props.auth.isAuthorized" >
+                        <Link :href="route('accounts.getFromCutoff', payrollItem.payroll_period.id)">
+                            View all involved accounts
+                        </Link>
+                    </SecondaryButton>
                 </div>
             </div>
             <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">

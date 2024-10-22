@@ -34,16 +34,24 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                             </div>
-                            <div v-if="$page.props.auth.isHr || $page.props.auth.isPayroll"
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('accounts')" :active="route().current('accounts')">
-                                    Accounts
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink v-if="$page.props.auth.isAuthorized"
+                                    :href="route('cutoffs')"
+                                    :active="route().current('cutoffs')"
+                                >
+                                    Cutoffs
+                                </NavLink>
+                                <NavLink v-else
+                                    :href="route('cutoffs.getFromUser', $page.props.auth.user.id)"
+                                    :active="route().current('cutoffs.getFromUser', $page.props.auth.user.id)"
+                                >
+                                    Cutoffs
                                 </NavLink>
                             </div>
                             <div v-if="$page.props.auth.isHr || $page.props.auth.isPayroll"
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('cutoffs')" :active="route().current('cutoffs')">
-                                    Cutoffs
+                                <NavLink :href="route('accounts')" :active="route().current('accounts')">
+                                    Accounts
                                 </NavLink>
                             </div>
                         </div>
@@ -83,7 +91,9 @@ const showingNavigationDropdown = ref(false);
                                     </template>
 
                                     <template #content>
-                                        <!-- <DropdownLink :href="route('account.get')"> Profile </DropdownLink> -->
+                                        <DropdownLink :href="route('account.me')" method="get" as="button">
+                                            My Account
+                                        </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -135,6 +145,25 @@ const showingNavigationDropdown = ref(false);
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
+                    <div class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNaveLink v-if="$page.props.auth.isAuthorized"
+                            :href="route('cutoffs')"
+                            :active="route().current('cutoffs')"
+                        >
+                            Cutoffs
+                        </ResponsiveNaveLink>
+                        <ResponsiveNaveLink v-else
+                            :href="route('cutoffs.getFromUser', $page.props.auth.user.id)"
+                            :active="route().current('cutoffs.getFromUser', $page.props.auth.user.id)"
+                        >
+                            Cutoffs
+                        </ResponsiveNaveLink>
+                    </div>
+                    <div v-if="$page.props.auth.isAuthorized" class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink :href="route('accounts')" :active="route().current('dashboard')">
+                            Accounts
+                        </ResponsiveNavLink>
+                    </div>
 
                     <!-- Responsive Settings Options -->
                     <div class="pt-4 pb-1 border-t border-gray-200">
@@ -147,6 +176,9 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <!-- <ResponsiveNavLink :href="route('account.get')"> Profile </ResponsiveNavLink> -->
+                            <ResponsiveNavLink :href="route('account.me')" method="get" as="button">
+                                My Account
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

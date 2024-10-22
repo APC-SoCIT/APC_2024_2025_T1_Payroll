@@ -3,29 +3,47 @@
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PayrollPeriodController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Middleware\AccountsMiddleware;
+use App\Http\Middleware\AuthorizedMiddleware;
+use App\Http\Middleware\HrMiddleware;
 use App\Http\Middleware\PayrollMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return redirect(route('dashboard'));
+// PUBLIC
+Route::middleware('auth')->group(function () {
+    Route::get('/', function () {
+        return redirect(route('dashboard'));
+    })->name('index');
+
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->middleware(['auth', 'verified'])->name('dashboard');
+
+    Route::get('/account', [ProfileController::class, 'getOwn'])
+        ->name('account.me');
+
+    // list available accounts/cutoffs for a specific cutoff/account
+    Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
+        ->name('accounts.getFromCutoff');
+    Route::get('/account/{user}/cutoffs', [PayrollPeriodController::class, 'getFromUser'])
+        ->name('cutoffs.getFromUser');
+
+    // get specific entry
+    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
+        ->name('payroll.get');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
-    // account index / creation
+// HR OR PAYROLL
+Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
+    // account index
     Route::get('/accounts', [ProfileController::class, 'index'])
         ->name('accounts');
+
+    // account actions
     Route::get('/account/new', [ProfileController::class, 'add'])
         ->name('account.newForm');
     Route::post('/account/new', [ProfileController::class, 'store'])
         ->name('account.new');
-
-    // account actions
     Route::get('/account/{user}', [ProfileController::class, 'edit'])
         ->name('account.get');
     Route::patch('/account/{user}', [ProfileController::class, 'update'])
@@ -39,15 +57,18 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
     Route::delete('/userVariableItem/{variableItem}', [ProfileController::class, 'deleteVariable'])
         ->name('userVariableItem.delete');
 
-    // cutoff index / creation
+    // cutoff index
     Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
         ->name('cutoffs');
+});
+
+// HR ONLY
+Route::middleware(['auth', HrMiddleware::class])->group(function () {
+    // cutoff actions
     Route::get('/cutoff/new', [PayrollPeriodController::class, 'add'])
         ->name('cutoff.newForm');
     Route::post('/cutoff/new', [PayrollPeriodController::class, 'store'])
         ->name('cutoff.new');
-
-    // cutoff actions
     Route::get('/cutoff/{cutoff}', [PayrollPeriodController::class, 'get'])
         ->name('cutoff.get');
     Route::patch('/cutoff/{cutoff}', [PayrollPeriodController::class, 'update'])
@@ -56,20 +77,11 @@ Route::middleware(['auth', AccountsMiddleware::class])->group(function () {
         ->name('cutoff.delete');
 });
 
+// PAYROLL ONLY
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
     // get a users's current payroll entry
     Route::get('/account/{user}/current', [PayrollController::class, 'getCurrentItemFromUser'])
         ->name('payroll.getCurrentFromUser');
-
-    // list available accounts/cutoffs for a specific cutoff/account
-    Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
-        ->name('accounts.getFromCutoff');
-    Route::get('/account/{user}/cutoffs', [PayrollPeriodController::class, 'getFromUser'])
-        ->name('cutoffs.getFromUser');
-
-    // get specific entry
-    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
-        ->name('payroll.get');
 
     // addition actions
     Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addAdditionItem'])

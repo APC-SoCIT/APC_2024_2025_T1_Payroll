@@ -46,7 +46,7 @@ const form = useForm({
                     v-model="form.name"
                     required
                     autofocus
-                    autocomplete="name"
+                    :disabled="!$page.props.auth.isAuthorized"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
@@ -61,7 +61,7 @@ const form = useForm({
                     class="mt-1 block w-full"
                     v-model="form.email"
                     required
-                    autocomplete="username"
+                    :disabled="!$page.props.auth.isAuthorized"
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
@@ -69,12 +69,12 @@ const form = useForm({
 
             <div class="block mt-4">
                 <label class="flex items-center">
-                    <Checkbox name="active" v-model:checked="form.active" />
+                    <Checkbox :disabled="!$page.props.auth.isAuthorized" name="active" v-model:checked="form.active" />
                     <span class="ms-2 text-sm text-gray-600">Active</span>
                 </label>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div v-if="$page.props.auth.isAuthorized" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition

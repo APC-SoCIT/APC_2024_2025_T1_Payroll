@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\AuthHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -35,15 +35,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'isHr' => $this->isRole('hr'),
-                'isPayroll' => $this->isRole('payroll'),
+                'isHr' => AuthHelper::isRole('hr'),
+                'isPayroll' => AuthHelper::isRole('payroll'),
+                'isAuthorized' => AuthHelper::isAuthorized(),
             ],
             'date' => Carbon::now()->toDateString(),
         ];
-    }
-
-    private function isRole(string $role): bool
-    {
-        return Auth::check() ? in_array(Auth::user()->email, config('roles.'.$role.'_accounts')) : false;
     }
 }

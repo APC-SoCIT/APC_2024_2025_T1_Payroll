@@ -57,8 +57,20 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(User $user): Response
+    public function edit(?User $user): Response
     {
+        $user ??= User::find(Auth::user()->id);
+
+        return Inertia::render('Profile/Edit', [
+            'targetAccount' => $user->load('userVariableItems.userVariable'),
+            'userVariables' => UserVariable::all(),
+        ]);
+    }
+
+    public function getOwn(): Response
+    {
+        $user = User::find(Auth::user()->id);
+
         return Inertia::render('Profile/Edit', [
             'targetAccount' => $user->load('userVariableItems.userVariable'),
             'userVariables' => UserVariable::all(),
@@ -118,8 +130,7 @@ class ProfileController extends Controller
 
     public function deleteVariable(UserVariableItem $variableItem): void
     {
-        // base pay should be protected
-        if ($variableItem->userVariable->id == 1) {
+        if ($variableItem->userVariable->required) {
             abort(403);
         }
 

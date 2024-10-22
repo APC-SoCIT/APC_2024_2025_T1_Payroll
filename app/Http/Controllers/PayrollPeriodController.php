@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PayrollHelper;
+use App\Helpers\AuthHelper;
 use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
@@ -36,7 +37,9 @@ class PayrollPeriodController extends Controller
             });
 
         // if the user is active, include current and future too
-        if ($user->active) {
+        // (only authorized can see)
+        if ($user->active
+            && AuthHelper::isAuthorized()) {
             $involved->merge(
                 PayrollPeriod::where('end_date', '>=', Carbon::now()->toDateString())
             );

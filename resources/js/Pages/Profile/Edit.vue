@@ -4,7 +4,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import UserVariableSelector from '@/Components/UserVariableSelector.vue'
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import UpdateUserVariableItemForm from './Partials/UpdateUserVariableItemForm.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([
     'targetAccount',
@@ -25,12 +25,12 @@ const missingUserVariables = props.targetAccount.user_variable_items.filter(a =>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
+                <div v-if="$page.props.auth.isAuthorized" class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
                     <SecondaryButton v-if="targetAccount.active == true"><Link :href="route('payroll.getCurrentFromUser', targetAccount.id)">View entry in current cutoff</Link></SecondaryButton>
                     <SecondaryButton><Link :href="route('cutoffs.getFromUser', targetAccount.id)">View all involved cutoffs</Link></SecondaryButton>
                 </div>
             </div>
-            <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div :class="$page.props.auth.isAuthorized ? 'p-4 sm:p-8' : ''" class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <UpdateProfileInformationForm
                         :targetAccount="targetAccount"
@@ -38,7 +38,7 @@ const missingUserVariables = props.targetAccount.user_variable_items.filter(a =>
                     />
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div :class="$page.props.auth.isAuthorized ? '' : 'p-4 sm:p-8'" class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h3 class="text-lg font-medium text-gray-900">Account Variables</h3>
                     <UserVariableSelector v-if="missingUserVariables.length > 0"

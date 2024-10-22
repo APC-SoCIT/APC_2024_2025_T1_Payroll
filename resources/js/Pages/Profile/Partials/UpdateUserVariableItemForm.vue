@@ -42,12 +42,13 @@ const form = useForm({
                     min="0"
                     required
                     autofocus
+                    :disabled="!$page.props.auth.isAuthorized"
                     autocomplete="value"
                 />
 
                 <InputError class="mt-2" :message="form.errors.value" />
             </div>
-            <div class="flex items-center gap-4">
+            <div v-if="$page.props.auth.isAuthorized" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition

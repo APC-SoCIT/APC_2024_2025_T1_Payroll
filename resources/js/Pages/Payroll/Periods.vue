@@ -17,7 +17,10 @@ const props = defineProps([
             <h2 v-if="account == null" class="font-semibold text-xl text-gray-800 leading-tight">Payroll Cutoffs</h2>
             <h2 v-else class="font-semibold text-xl text-gray-800 leading-tight">
                 Payroll Cutoffs for
-                <Link class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('account.get', account.id)">{{ account.name }}</Link>
+                <Link v-if="$page.props.auth.isAuthorized" class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('account.get', account.id)">
+                    {{ account.name }}
+                </Link>
+                <span v-else>{{ account.name }}</span>
             </h2>
         </template>
 
@@ -29,7 +32,7 @@ const props = defineProps([
                             <Link :href="route('cutoff.newForm')">Add cutoff</Link>
                         </PrimaryButton>
                     </div>
-                    <div v-else class="text-end">
+                    <div v-else-if="$page.props.auth.isAuthorized" class="text-end">
                         <PrimaryButton class="mr-10 m-5 rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="button">
                             <Link :href="route('payroll.getCurrentFromUser', account.id)">Current Cutoff</Link>
                         </PrimaryButton>
