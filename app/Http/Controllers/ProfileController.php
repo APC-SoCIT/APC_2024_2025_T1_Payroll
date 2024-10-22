@@ -29,10 +29,16 @@ class ProfileController extends Controller
     {
         return Inertia::render('Accounts', [
             'accounts' => $cutoff->hasEnded()
+                // if past, only related accounts
                 ? User::whereHas('payrollItems', function (Builder $query) use ($cutoff) {
                     $query->where('payroll_period_id', $cutoff->id);
-                })->orderBy('name')->get()
-                : User::orderBy('name')->get(),
+                })
+                    ->orderBy('name')
+                    ->get()
+                // if current/future, only active accounts
+                : User::where('active', false)
+                    ->orderBy('name')
+                    ->get(),
             'cutoff' => $cutoff,
         ]);
     }
