@@ -71,24 +71,20 @@ class PayrollPeriodController extends Controller
         ]);
     }
 
-    public function update(PayrollPeriod $cutoff, Request $request): RedirectResponse
+    public function update(PayrollPeriod $cutoff, Request $request): void
     {
         $validator = self::makeCutoffValidator($request);
 
         $cutoff->update($validator->validate());
-
-        return redirect(route('cutoffs'));
     }
 
-    public function delete(PayrollPeriod $cutoff): RedirectResponse
+    public function delete(PayrollPeriod $cutoff): void
     {
         if ($cutoff->end_date < Carbon::now()->toDateString()) {
             abort(403);
         }
 
         $cutoff->delete();
-
-        return redirect(route('cutoffs'));
     }
 
     private static function makeCutoffValidator(Request $request): \Illuminate\Validation\Validator

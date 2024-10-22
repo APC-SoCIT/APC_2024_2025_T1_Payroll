@@ -10,7 +10,6 @@ use App\Models\DeductionItem;
 use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -60,7 +59,7 @@ class PayrollController extends Controller
         ]);
     }
 
-    public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): RedirectResponse
+    public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): void
     {
         if ($payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
@@ -73,13 +72,10 @@ class PayrollController extends Controller
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $payrollItem->payrollPeriod->id,
-            'user' => $payrollItem->user->id,
-        ]));
+        PayrollHelper::calculateAll($payrollItem->load('additionItems'));
     }
 
-    public function updateAdditionItem(Request $request, AdditionItem $additionItem): RedirectResponse
+    public function updateAdditionItem(Request $request, AdditionItem $additionItem): void
     {
         if ($additionItem->payrollItem->payrollPeriod->hasEnded()
             || $additionItem->addition->calculated) {
@@ -90,34 +86,26 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $additionItem->update([
-            'amount' => round($validated['amount'], 2),
-        ]);
+        $additionItem->amount =round($validated['amount'], 2);
+        $additionItem->save();
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $additionItem->payrollItem->payrollPeriod->id,
-            'user' => $additionItem->payrollItem->user->id,
-        ]));
+        PayrollHelper::calculateAll($additionItem->payrollItem->load('additionItems'));
     }
 
-    public function deleteAdditionItem(AdditionItem $additionItem): RedirectResponse
+    public function deleteAdditionItem(AdditionItem $additionItem): void
     {
         if ($additionItem->payrollItem->payrollPeriod->hasEnded()
             || $additionItem->addition->required) {
             abort(403);
         }
 
-        $cutoff_id = $additionItem->payrollItem->payrollPeriod->id;
-        $user_id = $additionItem->payrollItem->user->id;
+        $payrollItem = $additionItem->payrollItem;
         $additionItem->delete();
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $cutoff_id,
-            'user' => $user_id,
-        ]));
+        PayrollHelper::calculateAll($payrollItem->load('additionItems'));
     }
 
-    public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): RedirectResponse
+    public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): void
     {
         if ($payrollItem->payrollPeriod->hasEnded()) {
             abort(403);
@@ -130,13 +118,10 @@ class PayrollController extends Controller
             'amount' => 0,
         ]);
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $payrollItem->payrollPeriod->id,
-            'user' => $payrollItem->user->id,
-        ]));
+        PayrollHelper::calculateAll($payrollItem->load('deductionItems'));
     }
 
-    public function updateDeductionItem(Request $request, DeductionItem $deductionItem): RedirectResponse
+    public function updateDeductionItem(Request $request, DeductionItem $deductionItem): void
     {
         if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
             || $deductionItem->deduction->calculated) {
@@ -151,26 +136,22 @@ class PayrollController extends Controller
             'amount' => round($validated['amount'], 2),
         ]);
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $deductionItem->payrollItem->payrollPeriod->id,
-            'user' => $deductionItem->payrollItem->user->id,
-        ]));
+        $deductionItem->amount =round($validated['amount'], 2);
+        $deductionItem->save();
+
+        PayrollHelper::calculateAll($deductionItem->payrollItem->load('deductionItems'));
     }
 
-    public function deleteDeductionItem(DeductionItem $deductionItem): RedirectResponse
+    public function deleteDeductionItem(DeductionItem $deductionItem): void
     {
         if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
             || $deductionItem->deduction->required) {
             abort(403);
         }
 
-        $cutoff_id = $deductionItem->payrollItem->payrollPeriod->id;
-        $user_id = $deductionItem->payrollItem->user->id;
+        $payrollItem = $deductionItem->payrollItem;
         $deductionItem->delete();
 
-        return redirect(route('payroll.get', [
-            'cutoff' => $cutoff_id,
-            'user' => $user_id,
-        ]));
+        PayrollHelper::calculateAll($payrollItem->load('deductionItems'));
     }
 }

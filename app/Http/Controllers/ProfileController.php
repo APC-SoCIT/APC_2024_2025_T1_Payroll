@@ -9,12 +9,9 @@ use App\Models\User;
 use App\Models\UserVariable;
 use App\Models\UserVariableItem;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -76,7 +73,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(Request $request, User $user): void
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -89,15 +86,13 @@ class ProfileController extends Controller
         if (! $validated['active']) {
             $user->payrollItems
                 ->where('payrollPeriod.end_date', '>=', Carbon::now()->toDateString())
-                ->each(function (?PayrollItem $item, ?int $key) {
+                ->each(function (?PayrollItem $item) {
                     $item->delete();
                 });
         }
-
-        return Redirect::route('account.get', $user->id);
     }
 
-    public function addVariable(User $user, UserVariable $variable): RedirectResponse
+    public function addVariable(User $user, UserVariable $variable): void
     {
         UserVariableItem::updateOrCreate([
             'user_id' => $user->id,
@@ -105,11 +100,9 @@ class ProfileController extends Controller
         ], [
             'value' => 0,
         ]);
-
-        return Redirect::route('account.get', $user->id);
     }
 
-    public function updateVariable(UserVariableItem $variableItem, Request $request): RedirectResponse
+    public function updateVariable(UserVariableItem $variableItem, Request $request): void
     {
         if ($variableItem->userVariable->id == 1
             && ! in_array(Auth::user()->email, config('roles.payroll_accounts'))) {
@@ -121,20 +114,15 @@ class ProfileController extends Controller
                 'value' => ['required', 'numeric', 'min:0'],
             ])
         );
-
-        return Redirect::route('account.get', $variableItem->user->id);
     }
 
-    public function deleteVariable(UserVariableItem $variableItem): RedirectResponse
+    public function deleteVariable(UserVariableItem $variableItem): void
     {
         // base pay should be protected
         if ($variableItem->userVariable->id == 1) {
             abort(403);
         }
 
-        $user = $variableItem->user;
         $variableItem->delete();
-
-        return Redirect::route('account.get', $user->id);
     }
 }

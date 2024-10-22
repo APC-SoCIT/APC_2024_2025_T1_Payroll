@@ -47,17 +47,19 @@ test('current payroll item additions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
+        // add wage adjustment deduction
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 2]));
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
+    $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('additionItem.update', 1), [
+        // first additionItem is for automatically calculated pay
+        ->patch(route('additionItem.update', 2), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
+    $response->assertOk();
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -78,23 +80,26 @@ test('future payroll item additions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get(route('payroll.getCurrentFromUser', 1));
+        ->get(route('payroll.get', [
+            'cutoff' => 1,
+            'user' => 1
+        ]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
+        // add deminimis addition
+        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 2]));
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
+    $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('additionItem.update', 1), [
+        // first additionItem is for automatically calculated pay
+        ->patch(route('additionItem.update', 2), [
             'amount' => 727,
         ]);
-
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
 
     $this->assertDatabaseHas('addition_items', [
         'amount' => 727,
@@ -115,17 +120,19 @@ test('payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
+        // add wage adjustment deduction
+        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 5]));
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
+    $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('deductionItem.update', 1), [
+        // first additionItem is for automatically calculated tax
+        ->patch(route('deductionItem.update', 2), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 1, 'user' => 1]));
+    $response->assertOk();
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,
@@ -146,23 +153,28 @@ test('future payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get(route('payroll.getCurrentFromUser', 1));
+        ->get(route('payroll.get', [
+            'cutoff' => 1,
+            'user' => 1
+        ]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
+        // add wage adjustment deduction
+        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 5]));
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
+    $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('deductionItem.update', 1), [
+        // first additionItem is for automatically calculated tax
+        ->patch(route('deductionItem.update', 2), [
             'amount' => 727,
         ]);
 
-    $response->assertRedirect(route('payroll.get', ['cutoff' => 2, 'user' => 1]));
+    $response->assertOk();
 
     $this->assertDatabaseHas('deduction_items', [
         'amount' => 727,

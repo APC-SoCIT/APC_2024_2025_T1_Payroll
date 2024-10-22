@@ -12,9 +12,9 @@ test('accounts list page is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/accounts');
+        ->get(route('accounts'));
 
-    $response->assertRedirect('/dashboard');
+    $response->assertRedirect(route('dashboard'));
 });
 
 test('accounts list page is displayed', function () {
@@ -25,7 +25,7 @@ test('accounts list page is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/accounts');
+        ->get(route('accounts'));
 
     $response->assertOk();
 });
@@ -39,7 +39,7 @@ test('account page is restricted', function () {
         ->actingAs($user)
         ->get(route('account.get', 1));
 
-    $response->assertRedirect('/dashboard');
+    $response->assertRedirect(route('dashboard'));
 });
 
 test('account page is displayed', function () {
@@ -68,8 +68,7 @@ test('account update is restricted', function () {
             'active' => true,
         ]);
 
-    $response
-        ->assertRedirect('/dashboard');
+    $response->assertRedirect(route('dashboard'));
 
     $this->assertDatabaseMissing('users', [
         'name' => 'Test Account',
@@ -92,7 +91,7 @@ test('account can be updated', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/accounts');
+        ->assertOk(route('account.get', 1));
 
     $user->refresh();
 
