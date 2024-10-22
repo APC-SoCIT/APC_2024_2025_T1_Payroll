@@ -83,9 +83,13 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $additionItem->update($request->validate([
+        $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:0'],
-        ]));
+        ]);
+
+        $additionItem->update([
+            'amount' => round($validated['amount'], 2),
+        ]);
 
         return redirect(route('payroll.get', [
             'cutoff' => $additionItem->payrollItem->payrollPeriod->id,
@@ -136,9 +140,13 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $deductionItem->update($request->validate([
+        $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:0'],
-        ]));
+        ]);
+
+        $deductionItem->update([
+            'amount' => round($validated['amount'], 2),
+        ]);
 
         return redirect(route('payroll.get', [
             'cutoff' => $deductionItem->payrollItem->payrollPeriod->id,
@@ -228,6 +236,7 @@ class PayrollController extends Controller
         self::calculateBasePay($item);
         self::calculatePagibig($item);
         self::calculatePhilhealth($item);
+        self::calculateSss($item);
         self::calculateTax($item);
 
         $totalAdditions = $item->additionItems
@@ -391,6 +400,90 @@ class PayrollController extends Controller
             'deduction_id' => 3,
         ], [
             'amount' => $contribution,
+        ]);
+
+        $payrollItem->load('deductionItems');
+    }
+
+    private static function calculateSss(PayrollItem $payrollItem): void
+    {
+        $lookup = collect([
+            [0, 0, 0, 0],
+            [1000, 390, 180, 570],
+            [4250, 437.50, 202.50, 640],
+            [4750, 485, 225, 710],
+            [5250, 532.50, 247.50, 780],
+            [5750, 580, 270, 850],
+            [6250, 627.50, 292.50, 920],
+            [6750, 675, 315, 990],
+            [7250, 722.50, 337.50, 1060],
+            [7750, 770, 360, 1130],
+            [8250, 817.50, 382.50, 1200],
+            [8750, 865, 405, 1270],
+            [9250, 912.50, 427.50, 1340],
+            [9750, 960, 450, 1410],
+            [10250, 1007.50, 472.50, 1480],
+            [10750, 1055, 495, 1550],
+            [11250, 1102.50, 517.50, 1620],
+            [11750, 1150, 540, 1690],
+            [12250, 1197.50, 562.50, 1760],
+            [12750, 1245, 585, 1830],
+            [13250, 1292.50, 607.50, 1900],
+            [13750, 1340, 630, 1970],
+            [14250, 1387.50, 652.50, 2040],
+            [14750, 1435, 675, 2110],
+            [15250, 1482.50, 697.50, 2180],
+            [15750, 1550, 720, 2270],
+            [16250, 1597.50, 742.50, 2340],
+            [16750, 1645, 765, 2410],
+            [17250, 1692.50, 787.50, 2480],
+            [17750, 1740, 810, 2550],
+            [18250, 1787.50, 832.50, 2620],
+            [18750, 1835, 855, 2690],
+            [19250, 1882.50, 877.50, 2760],
+            [19750, 1930, 900, 2830],
+            [20250, 1977.50, 922.50, 2900],
+            [20750, 2025, 945, 2970],
+            [21250, 2072.50, 967.50, 3040],
+            [21750, 2120, 990, 3110],
+            [22250, 2167.50, 1012.50, 3180],
+            [22750, 2215, 1035, 3250],
+            [23250, 2262.50, 1057.50, 3320],
+            [23750, 2310, 1080, 3390],
+            [24250, 2357.50, 1102.50, 3460],
+            [24750, 2405, 1125, 3530],
+            [25250, 2452.50, 1147.50, 3600],
+            [25750, 2500, 1170, 3670],
+            [26250, 2547.50, 1192.50, 3740],
+            [26750, 2595, 1215, 3810],
+            [27250, 2642.50, 1237.50, 3880],
+            [27750, 2690, 1260, 3950],
+            [28250, 2737.50, 1282.50, 4020],
+            [28750, 2785, 1305, 4090],
+            [29250, 2832.50, 1327.50, 4160],
+            [29750, 2880, 1350, 4230],
+        ]);
+
+        $totalAdditions = $payrollItem->additionItems
+            ->whereIn('addition_id', [
+                1,  // salary
+                2,  // deminimis
+                5,  // honorarium
+            ])
+            ->reduce(function (?int $carry, ?AdditionItem $item) {
+                return $carry + $item->amount;
+            });
+
+        $bracket = $lookup->where('bracket', '<', $totalAdditions)
+            ->sortByDesc(0)
+            ->first()
+            ?? $lookup[0];
+
+        DeductionItem::updateOrCreate([
+            'payroll_item_id' => $payrollItem->id,
+            'deduction_id' => 2,
+        ], [
+            'amount' => $bracket[2],
         ]);
 
         $payrollItem->load('deductionItems');

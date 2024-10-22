@@ -36,7 +36,7 @@ class ProfileController extends Controller
                     ->orderBy('name')
                     ->get()
                 // if current/future, only active accounts
-                : User::where('active', false)
+                : User::where('active', true)
                     ->orderBy('name')
                     ->get(),
             'cutoff' => $cutoff,

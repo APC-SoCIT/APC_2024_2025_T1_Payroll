@@ -41,6 +41,7 @@ const form = useForm({
                 <TextInput
                     id="amount"
                     type="number"
+                    step="0.01"
                     class="mt-1 block w-full"
                     v-model="form.amount"
                     required
