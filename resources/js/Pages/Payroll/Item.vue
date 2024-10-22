@@ -20,6 +20,12 @@ const props = defineProps([
 ]);
 
 const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.date;
+
+const existingAdditions = props.payrollItem.addition_items.map(a => a.addition.id);
+const missingAdditions = props.additions.filter(a => !existingAdditions.includes(a.id));
+
+const existingDeductions = props.payrollItem.deduction_items.map(a => a.deduction.id);
+const missingDeductions = props.deductions.filter(a => !existingDeductions.includes(a.id));
 </script>
 
 <template>
@@ -52,10 +58,10 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
                     <AdditionSelector
-                        v-if="!periodHasEnded"
+                        v-if="!periodHasEnded && missingAdditions.length > 0"
                         :targetAccount
                         :payrollItem
-                        :additions
+                        :additions="missingAdditions"
                     />
                     <div v-for="additionItem in payrollItem.addition_items">
                         <UpdateAdditionItemForm
@@ -69,10 +75,10 @@ const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.da
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
                     <DeductionSelector
-                        v-if="!periodHasEnded"
+                        v-if="!periodHasEnded && missingDeductions.length > 0"
                         :targetAccount
                         :payrollItem
-                        :deductions
+                        :deductions="missingDeductions"
                     />
                     <div v-for="deductionItem in payrollItem.deduction_items">
                         <UpdateDeductionItemForm

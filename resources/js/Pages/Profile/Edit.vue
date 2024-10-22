@@ -6,10 +6,13 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import UpdateUserVariableItemForm from './Partials/UpdateUserVariableItemForm.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps([
+const props = defineProps([
     'targetAccount',
     'userVariables',
 ]);
+
+const existingUserVariables = props.targetAccount.user_variable_items.map(a => a.user_variable.id);
+const missingUserVariables = props.targetAccount.user_variable_items.filter(a => !existingUserVariables.includes(a.id));
 </script>
 
 <template>
@@ -38,9 +41,9 @@ defineProps([
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h3 class="text-lg font-medium text-gray-900">Account Variables</h3>
-                    <UserVariableSelector
+                    <UserVariableSelector v-if="missingUserVariables.length > 0"
                         :targetAccount
-                        :userVariables
+                        :userVariables="missingUserVariables"
                     />
                     <UpdateUserVariableItemForm v-for="userVariableItem in targetAccount.user_variable_items"
                         :key="userVariableItem.id"
