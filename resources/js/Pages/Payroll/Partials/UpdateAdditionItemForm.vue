@@ -38,16 +38,23 @@ const form = useForm({
             <div>
                 <InputLabel for="amount" value="Amount" />
 
-                <TextInput
+                <TextInput v-if="additionItem.addition.calculated"
                     id="amount"
                     type="number"
                     step="0.01"
                     class="mt-1 block w-full"
                     v-model="form.amount"
                     required
-                    autofocus
-                    :disabled
                     autocomplete="amount"
+                />
+                <!-- TextInput doesn't update on partial reloads -->
+                <input v-else
+                    type="number"
+                    step="0.01"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    required
+                    :value="additionItem.amount"
+                    disabled
                 />
 
                 <InputError class="mt-2" :message="form.errors.amount" />

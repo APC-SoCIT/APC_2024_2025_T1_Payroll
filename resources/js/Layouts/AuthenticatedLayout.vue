@@ -146,18 +146,18 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                     </div>
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNaveLink v-if="$page.props.auth.isAuthorized"
+                        <ResponsiveNavLink v-if="$page.props.auth.isAuthorized"
                             :href="route('cutoffs')"
                             :active="route().current('cutoffs')"
                         >
                             Cutoffs
-                        </ResponsiveNaveLink>
-                        <ResponsiveNaveLink v-else
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-else
                             :href="route('cutoffs.me')"
                             :active="route().current('cutoffs.me')"
                         >
                             Cutoffs
-                        </ResponsiveNaveLink>
+                        </ResponsiveNavLink>
                     </div>
                     <div v-if="$page.props.auth.isAuthorized" class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('accounts')" :active="route().current('dashboard')">
