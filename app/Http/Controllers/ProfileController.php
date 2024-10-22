@@ -57,7 +57,7 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(?User $user): Response
+    public function edit(User $user): Response
     {
         $user ??= User::find(Auth::user()->id);
 
@@ -69,12 +69,7 @@ class ProfileController extends Controller
 
     public function getOwn(): Response
     {
-        $user = User::find(Auth::user()->id);
-
-        return Inertia::render('Profile/Edit', [
-            'targetAccount' => $user->load('userVariableItems.userVariable'),
-            'userVariables' => UserVariable::all(),
-        ]);
+        return $this->edit(User::find(Auth::user()->id));
     }
 
     public function add(): Response

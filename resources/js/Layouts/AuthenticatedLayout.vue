@@ -42,8 +42,8 @@ const showingNavigationDropdown = ref(false);
                                     Cutoffs
                                 </NavLink>
                                 <NavLink v-else
-                                    :href="route('cutoffs.getFromUser', $page.props.auth.user.id)"
-                                    :active="route().current('cutoffs.getFromUser', $page.props.auth.user.id)"
+                                    :href="route('cutoffs.me')"
+                                    :active="route().current('cutoffs.me')"
                                 >
                                     Cutoffs
                                 </NavLink>
@@ -153,8 +153,8 @@ const showingNavigationDropdown = ref(false);
                             Cutoffs
                         </ResponsiveNaveLink>
                         <ResponsiveNaveLink v-else
-                            :href="route('cutoffs.getFromUser', $page.props.auth.user.id)"
-                            :active="route().current('cutoffs.getFromUser', $page.props.auth.user.id)"
+                            :href="route('cutoffs.me')"
+                            :active="route().current('cutoffs.me')"
                         >
                             Cutoffs
                         </ResponsiveNaveLink>

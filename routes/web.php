@@ -19,14 +19,13 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
+    // get own account
     Route::get('/account', [ProfileController::class, 'getOwn'])
         ->name('account.me');
 
-    // list available accounts/cutoffs for a specific cutoff/account
-    Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
-        ->name('accounts.getFromCutoff');
-    Route::get('/account/{user}/cutoffs', [PayrollPeriodController::class, 'getFromUser'])
-        ->name('cutoffs.getFromUser');
+    // get own related cutoffs
+    Route::get('/cutoffs/me', [PayrollPeriodController::class, 'getOwn'])
+        ->name('cutoffs.me');
 
     // get specific entry
     Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
@@ -57,9 +56,13 @@ Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
     Route::delete('/userVariableItem/{variableItem}', [ProfileController::class, 'deleteVariable'])
         ->name('userVariableItem.delete');
 
-    // cutoff index
+    // cutoffs
     Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
         ->name('cutoffs');
+    Route::get('/account/{user}/cutoffs', [PayrollPeriodController::class, 'getFromUser'])
+        ->name('cutoffs.getFromUser');
+    Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
+        ->name('accounts.getFromCutoff');
 });
 
 // HR ONLY

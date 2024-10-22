@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -49,6 +50,11 @@ class PayrollPeriodController extends Controller
             'cutoffs' => $involved,
             'account' => $user,
         ]);
+    }
+
+    public function getOwn(): Response
+    {
+        return $this->getFromUser(User::find(Auth::user()->id));
     }
 
     public function add(): Response
