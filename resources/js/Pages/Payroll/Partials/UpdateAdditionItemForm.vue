@@ -38,7 +38,7 @@ const form = useForm({
             <div>
                 <InputLabel for="amount" value="Amount" />
 
-                <TextInput v-if="additionItem.addition.calculated"
+                <TextInput v-if="!additionItem.addition.calculated"
                     id="amount"
                     type="number"
                     step="0.01"

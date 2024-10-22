@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Enums\AdditionId;
+use App\Enums\DeductionId;
 use App\Models\AdditionItem;
 use App\Models\DeductionItem;
 use App\Models\PayrollItem;
@@ -29,7 +31,7 @@ class PayrollHelper
                 return $carry + $item->amount;
             });
 
-        $item->amount = $totalAdditions - $totalDeductions;
+        $item->amount = round($totalAdditions - $totalDeductions, 2);
         $item->save();
     }
 
@@ -39,7 +41,7 @@ class PayrollHelper
         $user->load('userVariableItems');
         AdditionItem::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
-            'addition_id' => 1,
+            'addition_id' => AdditionId::Salary->value,
         ], [
             'amount' => $user
                 ->userVariableItems
@@ -53,8 +55,8 @@ class PayrollHelper
     {
         $totalAdditions = $payrollItem->additionItems
             ->whereIn('addition_id', [
-                1,  // salary
-                10, // salary adjustment
+                AdditionId::Salary->value,
+                AdditionId::SalaryAdjustment->value,
             ])
             ->reduce(function (?int $carry, ?AdditionItem $item) {
                 return $carry + $item->amount;
@@ -62,10 +64,10 @@ class PayrollHelper
 
         $totalDeductionsBeforeTax = $payrollItem->deductionItems
             ->whereIn('deduction_id', [
-                2, // SSS
-                3, // PhilHealth
-                4, // Pag-IBIG
-                5, // salary adjustment
+                DeductionId::Sss->value,
+                DeductionId::Philhealth->value,
+                DeductionId::Pagibig->value,
+                DeductionId::SalaryAdjustment->value,
             ])
             ->reduce(function (?int $carry, ?DeductionItem $item) {
                 return $carry + $item->amount;
@@ -88,7 +90,7 @@ class PayrollHelper
 
         DeductionItem::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
-            'deduction_id' => 1,
+            'deduction_id' => DeductionId::Tax->value,
         ], [
             'amount' => $tax,
         ]);
@@ -99,7 +101,7 @@ class PayrollHelper
     private static function calculatePagibig(PayrollItem $payrollItem): void
     {
         $pagibigDeduction = $payrollItem->deductionItems
-            ->where('deduction_id', 4)
+            ->where('deduction_id', DeductionId::Pagibig->value)
             ->first();
 
         if (is_null($pagibigDeduction)) {
@@ -119,7 +121,7 @@ class PayrollHelper
     private static function calculatePhilhealth(PayrollItem $payrollItem): void
     {
         $philhealthDeduction = $payrollItem->deductionItems
-            ->where('deduction_id', 3)
+            ->where('deduction_id', DeductionId::Philhealth->value)
             ->first();
 
         if (is_null($philhealthDeduction)) {
@@ -135,7 +137,7 @@ class PayrollHelper
         $lastPay = self::lastCutoff($payrollItem)
             // try to use last cutoff
             ?->additionItems
-            ->where('addition_id', 1)
+            ->where('addition_id', AdditionId::Salary->value)
             ->first()
             ?->amount
             // if it doesn't exist or is too far back,
@@ -159,7 +161,7 @@ class PayrollHelper
     private static function calculateSss(PayrollItem $payrollItem): void
     {
         $sssDeduction = $payrollItem->deductionItems
-            ->where('deduction_id', 2)
+            ->where('deduction_id', DeductionId::Sss->value)
             ->first();
 
         if (is_null($sssDeduction)) {
@@ -168,9 +170,9 @@ class PayrollHelper
 
         $thisPay = $payrollItem->additionItems
             ->whereIn('addition_id', [
-                1,  // salary
-                2,  // deminimis
-                5,  // honorarium
+                AdditionId::Salary->value,
+                AdditionId::Deminimis->value,
+                AdditionId::Honorarium->value,
             ])
             ->reduce(function (?int $carry, ?AdditionItem $item) {
                 return $carry + $item->amount;
@@ -179,9 +181,9 @@ class PayrollHelper
         $lastPay = self::lastCutoff($payrollItem)
             // try to use last cutoff
             ?->whereIn('addition_id', [
-                1,  // salary
-                2,  // deminimis
-                5,  // honorarium
+                AdditionId::Salary->value,
+                AdditionId::Deminimis->value,
+                AdditionId::Honorarium->value,
             ])
             ->reduce(function (?int $carry, ?AdditionItem $item) {
                 return $carry + $item->amount;
