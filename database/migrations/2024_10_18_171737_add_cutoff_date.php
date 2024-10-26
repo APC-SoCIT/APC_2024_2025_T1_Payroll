@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payroll_periods', function (Blueprint $table) {
+        Schema::table('cutoffs', function (Blueprint $table) {
             $table->date('cutoff_date');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payroll_periods', function (Blueprint $table) {
+        Schema::table('cutoffs', function (Blueprint $table) {
             $table->dropColumn('cutoff_date');
         });
     }

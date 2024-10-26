@@ -6,8 +6,8 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
-import UpdateAdditionItemForm from './Partials/UpdateAdditionItemForm.vue';
-import UpdateDeductionItemForm from './Partials/UpdateDeductionItemForm.vue';
+import UpdateItemAdditionForm from './Partials/UpdateItemAdditionForm.vue';
+import UpdateItemDeductionForm from './Partials/UpdateItemDeductionForm.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
@@ -19,12 +19,12 @@ const props = defineProps([
     'deductions',
 ]);
 
-const periodHasEnded = props.payrollItem.payroll_period.end_date < page.props.date;
+const periodHasEnded = props.payrollItem.cutoff.end_date < page.props.date;
 
-const existingAdditions = props.payrollItem.addition_items.map(a => a.addition.id);
+const existingAdditions = props.payrollItem.item_additions.map(a => a.addition.id);
 const missingAdditions = props.additions.filter(a => !existingAdditions.includes(a.id));
 
-const existingDeductions = props.payrollItem.deduction_items.map(a => a.deduction.id);
+const existingDeductions = props.payrollItem.item_deductions.map(a => a.deduction.id);
 const missingDeductions = props.deductions.filter(a => !existingDeductions.includes(a.id));
 </script>
 
@@ -45,11 +45,11 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                 for
                 <Link v-if="$page.props.auth.isAuthorized"
                     class="text-gray-500 hover:text-gray-700 hover:underline"
-                    :href="route('cutoff.get', payrollItem.payroll_period.id)"
+                    :href="route('cutoff.get', payrollItem.cutoff.id)"
                 >
-                    {{ useFormat(payrollItem.payroll_period.end_date) }}
+                    {{ useFormat(payrollItem.cutoff.end_date) }}
                 </Link>
-                <span v-else>{{ useFormat(payrollItem.payroll_period.end_date) }}</span>
+                <span v-else>{{ useFormat(payrollItem.cutoff.end_date) }}</span>
             </h2>
         </template>
 
@@ -62,7 +62,7 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                         </Link>
                     </SecondaryButton>
                     <SecondaryButton v-if="$page.props.auth.isAuthorized" >
-                        <Link :href="route('accounts.getFromCutoff', payrollItem.payroll_period.id)">
+                        <Link :href="route('accounts.getFromCutoff', payrollItem.cutoff.id)">
                             View all involved accounts
                         </Link>
                     </SecondaryButton>
@@ -84,11 +84,11 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                         :payrollItem
                         :additions="missingAdditions"
                     />
-                    <div v-for="additionItem in payrollItem.addition_items">
-                        <UpdateAdditionItemForm
+                    <div v-for="itemAddition in payrollItem.item_additions">
+                        <UpdateItemAdditionForm
                             :targetAccount
-                            :additionItem
-                            :payrollPeriod="payrollItem.payroll_period"
+                            :itemAddition
+                            :cutoff="payrollItem.cutoff"
                             class="max-w-xl"
                         />
                     </div>
@@ -101,12 +101,12 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                         :payrollItem
                         :deductions="missingDeductions"
                     />
-                    <div v-for="deductionItem in payrollItem.deduction_items">
-                        <UpdateDeductionItemForm
-                            :key="deductionItem.id"
+                    <div v-for="itemDeduction in payrollItem.item_deductions">
+                        <UpdateItemDeductionForm
+                            :key="itemDeduction.id"
                             :targetAccount
-                            :deductionItem
-                            :payrollPeriod="payrollItem.payroll_period"
+                            :itemDeduction
+                            :cutoff="payrollItem.cutoff"
                             class="max-w-xl"
                         />
                     </div>

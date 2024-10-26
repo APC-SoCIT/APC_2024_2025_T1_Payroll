@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\PayrollItem;
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,20 +48,20 @@ test('current payroll item additions can be updated', function () {
     $response = $this
         ->actingAs($user)
         // add wage adjustment deduction
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 2]));
+        ->post(route('itemAddition.new', ['payrollItem' => 1, 'addition' => 2]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first additionItem is for automatically calculated pay
-        ->patch(route('additionItem.update', 2), [
+        // first itemAddition is for automatically calculated pay
+        ->patch(route('itemAddition.update', 2), [
             'amount' => 727,
         ]);
 
     $response->assertOk();
 
-    $this->assertDatabaseHas('addition_items', [
+    $this->assertDatabaseHas('item_additions', [
         'amount' => 727,
     ]);
 });
@@ -72,7 +72,7 @@ test('future payroll item additions can be updated', function () {
         ->configure()
         ->create();
 
-    PayrollPeriod::create([
+    Cutoff::create([
         'start_date' => Carbon::now()->addMonth(1)->toDateString(),
         'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
         'end_date' => Carbon::now()->addMonth(2)->toDateString(),
@@ -90,18 +90,18 @@ test('future payroll item additions can be updated', function () {
     $response = $this
         ->actingAs($user)
         // add deminimis addition
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 2]));
+        ->post(route('itemAddition.new', ['payrollItem' => 1, 'addition' => 2]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first additionItem is for automatically calculated pay
-        ->patch(route('additionItem.update', 2), [
+        // first itemAddition is for automatically calculated pay
+        ->patch(route('itemAddition.update', 2), [
             'amount' => 727,
         ]);
 
-    $this->assertDatabaseHas('addition_items', [
+    $this->assertDatabaseHas('item_additions', [
         'amount' => 727,
     ]);
 });
@@ -121,20 +121,20 @@ test('payroll item deductions can be updated', function () {
     $response = $this
         ->actingAs($user)
         // add wage adjustment deduction
-        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 5]));
+        ->post(route('itemDeduction.new', ['payrollItem' => 1, 'deduction' => 5]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first additionItem is for automatically calculated tax
-        ->patch(route('deductionItem.update', 2), [
+        // first itemAddition is for automatically calculated tax
+        ->patch(route('itemDeduction.update', 2), [
             'amount' => 727,
         ]);
 
     $response->assertOk();
 
-    $this->assertDatabaseHas('deduction_items', [
+    $this->assertDatabaseHas('item_deductions', [
         'amount' => 727,
     ]);
 });
@@ -145,7 +145,7 @@ test('future payroll item deductions can be updated', function () {
         ->configure()
         ->create();
 
-    PayrollPeriod::create([
+    Cutoff::create([
         'start_date' => Carbon::now()->addMonth(1)->toDateString(),
         'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
         'end_date' => Carbon::now()->addMonth(2)->toDateString(),
@@ -163,20 +163,20 @@ test('future payroll item deductions can be updated', function () {
     $response = $this
         ->actingAs($user)
         // add wage adjustment deduction
-        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 5]));
+        ->post(route('itemDeduction.new', ['payrollItem' => 1, 'deduction' => 5]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first additionItem is for automatically calculated tax
-        ->patch(route('deductionItem.update', 2), [
+        // first itemAddition is for automatically calculated tax
+        ->patch(route('itemDeduction.update', 2), [
             'amount' => 727,
         ]);
 
     $response->assertOk();
 
-    $this->assertDatabaseHas('deduction_items', [
+    $this->assertDatabaseHas('item_deductions', [
         'amount' => 727,
     ]);
 });
@@ -191,7 +191,7 @@ test('previous payroll items updates are restricted', function () {
     $cutoff = Carbon::now()->subMonth(1)->toDateString();
     $end = $cutoff;
 
-    PayrollPeriod::create([
+    Cutoff::create([
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
@@ -199,24 +199,24 @@ test('previous payroll items updates are restricted', function () {
 
     PayrollItem::create([
         'user_id' => 1,
-        'payroll_period_id' => 1,
+        'cutoff_id' => 1,
     ]);
 
     $response = $this
         ->actingAs($user)
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
+        ->post(route('itemAddition.new', ['payrollItem' => 1, 'addition' => 1]));
 
     $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post(route('deductionItem.new', ['payrollItem' => 1, 'deduction' => 1]));
+        ->post(route('itemDeduction.new', ['payrollItem' => 1, 'deduction' => 1]));
 
     $response->assertForbidden();
 
     $response = $this
         ->actingAs($user)
-        ->post(route('additionItem.new', ['payrollItem' => 1, 'addition' => 1]));
+        ->post(route('itemAddition.new', ['payrollItem' => 1, 'addition' => 1]));
 
     $response->assertForbidden();
 });

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Keeps track of the cutoff dates of a payroll period
  **/
-class PayrollPeriod extends Model
+class Cutoff extends Model
 {
     use HasFactory;
 

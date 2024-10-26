@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * A deduction within a payroll item
  **/
-class DeductionItem extends Model
+class ItemDeduction extends Model
 {
     use HasFactory;
 
-    protected $table = 'deduction_items';
+    protected $table = 'item_deductions';
 
     protected $fillable = [
         'payroll_item_id',

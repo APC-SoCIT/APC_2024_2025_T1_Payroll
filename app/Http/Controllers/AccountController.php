@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\AccountUpdateRequest;
 use App\Models\PayrollItem;
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use App\Models\User;
+use App\Models\Variable;
 use App\Models\UserVariable;
-use App\Models\UserVariableItem;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProfileController extends Controller
+class AccountController extends Controller
 {
     public function index(): Response
     {
@@ -25,7 +25,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function getFromCutoff(PayrollPeriod $cutoff): Response
+    public function getFromCutoff(Cutoff $cutoff): Response
     {
         return Inertia::render('Accounts', [
             'accounts' => $cutoff->hasEnded()
@@ -39,14 +39,14 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function store(ProfileUpdateRequest $request): RedirectResponse
+    public function store(AccountUpdateRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $user = User::create($validated);
 
-        UserVariableItem::updateOrCreate([
+        UserVariable::updateOrCreate([
             'user_id' => $user->id,
-            'user_variable_id' => 1,
+            'variable_id' => 1,
         ], [
             'value' => 0,
         ]);
@@ -61,9 +61,9 @@ class ProfileController extends Controller
     {
         $user ??= User::find(Auth::user()->id);
 
-        return Inertia::render('Profile/Edit', [
-            'targetAccount' => $user->load('userVariableItems.userVariable'),
-            'userVariables' => UserVariable::all(),
+        return Inertia::render('Account/Edit', [
+            'targetAccount' => $user->load('userVariables.variable'),
+            'userVariables' => Variable::all(),
         ]);
     }
 
@@ -74,7 +74,7 @@ class ProfileController extends Controller
 
     public function add(): Response
     {
-        return Inertia::render('Profile/Add');
+        return Inertia::render('Account/Add');
     }
 
     /**
@@ -92,26 +92,26 @@ class ProfileController extends Controller
 
         if (! $validated['active']) {
             $user->payrollItems
-                ->where('payrollPeriod.end_date', '>=', Carbon::now()->toDateString())
+                ->where('cutoff.end_date', '>=', Carbon::now()->toDateString())
                 ->each(function (?PayrollItem $item) {
                     $item->delete();
                 });
         }
     }
 
-    public function addVariable(User $user, UserVariable $variable): void
+    public function addVariable(User $user, Variable $variable): void
     {
-        UserVariableItem::updateOrCreate([
+        UserVariable::updateOrCreate([
             'user_id' => $user->id,
-            'user_variable_id' => $variable->id,
+            'variable_id' => $variable->id,
         ], [
             'value' => 0,
         ]);
     }
 
-    public function updateVariable(UserVariableItem $variableItem, Request $request): void
+    public function updateVariable(UserVariable $variableItem, Request $request): void
     {
-        if ($variableItem->userVariable->id == 1
+        if ($variableItem->variable->id == 1
             && ! in_array(Auth::user()->email, config('roles.payroll_accounts'))) {
             abort(403);
         }
@@ -123,9 +123,9 @@ class ProfileController extends Controller
         );
     }
 
-    public function deleteVariable(UserVariableItem $variableItem): void
+    public function deleteVariable(UserVariable $variableItem): void
     {
-        if ($variableItem->userVariable->required) {
+        if ($variableItem->variable->required) {
             abort(403);
         }
 

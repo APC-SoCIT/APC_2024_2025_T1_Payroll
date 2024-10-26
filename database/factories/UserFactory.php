@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use App\Models\UserVariableItem;
+use App\Models\UserVariable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,9 +28,9 @@ class UserFactory extends Factory
     public function configure(): Factory
     {
         return $this->afterCreating(function (User $user) {
-            UserVariableItem::updateOrCreate([
+            UserVariable::updateOrCreate([
                 'user_id' => $user->id,
-                'user_variable_id' => 1,
+                'variable_id' => 1,
                 'value' => 0,
             ]);
         });

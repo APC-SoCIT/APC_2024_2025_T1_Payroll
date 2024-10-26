@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -53,7 +53,7 @@ test('payroll cutoff can be created', function () {
         ]);
 
     $response->assertRedirect('/cutoffs');
-    $this->assertDatabaseHas('payroll_periods', [
+    $this->assertDatabaseHas('cutoffs', [
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
@@ -126,7 +126,7 @@ test('payroll cutoff update validation', function () {
     $cutoff = Carbon::now()->subMonth(1)->toDateString();
     $end = $cutoff;
 
-    PayrollPeriod::create([
+    Cutoff::create([
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
@@ -157,7 +157,7 @@ test('payroll cutoff update validation', function () {
     $cutoff = Carbon::now()->addMonth(2)->toDateString();
     $end = $cutoff;
 
-    PayrollPeriod::create([
+    Cutoff::create([
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,

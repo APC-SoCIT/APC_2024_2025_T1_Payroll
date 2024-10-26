@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * A type/description of an addition
- **/
-class Addition extends Model
+class Variable extends Model
 {
     use HasFactory;
 
@@ -17,11 +14,11 @@ class Addition extends Model
         'name',
         'description',
         'required',
-        'calculated',
+        'min',
     ];
 
-    public function itemAdditions(): HasMany
+    public function userVariables(): HasMany
     {
-        return $this->hasMany(ItemAddition::class);
+        return $this->hasMany(UserVariable::class);
     }
 }
