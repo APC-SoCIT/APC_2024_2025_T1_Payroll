@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useFormat } from '@/Utils/FormatDate.js';

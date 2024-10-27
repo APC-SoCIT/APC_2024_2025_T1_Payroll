@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CreateCutoffForm from './Partials/CreateCutoffForm.vue';
 import { Head } from '@inertiajs/vue3';

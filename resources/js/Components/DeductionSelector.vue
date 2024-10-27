@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 

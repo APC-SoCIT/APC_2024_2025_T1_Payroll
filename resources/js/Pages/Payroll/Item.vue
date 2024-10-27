@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import AdditionSelector from '@/Components/AdditionSelector.vue';
 import DeductionSelector from '@/Components/DeductionSelector.vue';
 import Dropdown from '@/Components/Dropdown.vue';

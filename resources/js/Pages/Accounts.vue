@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Account from '@/Components/Account.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
