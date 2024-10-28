@@ -2,10 +2,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import UpdateAccountInformationForm from './Partials/UpdateAccountInformationForm.vue';
+import AdditionsAndDeductions from '@/Pages/Payroll/Partials/AdditionsAndDeductions.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([
     'targetAccount',
+    'payrollItem',
+    'additions',
+    'deductions',
 ]);
 </script>
 
@@ -33,9 +37,12 @@ const props = defineProps([
                 </div>
             </div>
             <div :class="$page.props.auth.isAuthorized ? '' : 'p-4 sm:p-8'" class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h3 class="text-lg font-medium text-gray-900">Account Variables</h3>
-                </div>
+                <AdditionsAndDeductions v-if="targetAccount.active == true"
+                    :targetAccount
+                    :payrollItem
+                    :additions
+                    :deductions
+                />
             </div>
         </div>
     </AuthenticatedLayout>

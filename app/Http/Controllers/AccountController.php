@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PayrollHelper;
 use App\Http\Requests\AccountUpdateRequest;
+use App\Models\Addition;
 use App\Models\Cutoff;
+use App\Models\Deduction;
 use App\Models\PayrollItem;
 use App\Models\User;
 use Carbon\Carbon;
@@ -53,8 +56,30 @@ class AccountController extends Controller
     {
         $user ??= User::find(Auth::user()->id);
 
+        $currentPeriod = PayrollHelper::currentPeriod();
+        $currentPeriod->save();
+
+        $payrollItem = PayrollItem::firstOrCreate([
+            'user_id' => $user->id,
+            'cutoff_id' => $currentPeriod->id,
+        ]);
+
+        if (! $payrollItem->cutoff->hasEnded()) {
+            PayrollHelper::calculateAll($payrollItem);
+        }
+
+        // upon first creation, it's not loaded
+        $payrollItem->load([
+            'cutoff',
+            'itemAdditions.addition',
+            'itemDeductions.deduction',
+        ]);
+
         return Inertia::render('Account/Edit', [
             'targetAccount' => $user,
+            'payrollItem' => $payrollItem,
+            'additions' => Addition::all(),
+            'deductions' => Deduction::all(),
         ]);
     }
 

@@ -1,16 +1,9 @@
 <script setup>
-import AdditionSelector from '@/Components/AdditionSelector.vue';
-import DeductionSelector from '@/Components/DeductionSelector.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdditionsAndDeductions from './Partials/AdditionsAndDeductions.vue'
 import { useFormat } from '@/Utils/FormatDate.js';
-import UpdateItemAdditionForm from './Partials/UpdateItemAdditionForm.vue';
-import UpdateItemDeductionForm from './Partials/UpdateItemDeductionForm.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-
-const page = usePage();
+import { Head, Link } from '@inertiajs/vue3';
 
 const props = defineProps([
     'targetAccount',
@@ -18,14 +11,6 @@ const props = defineProps([
     'additions',
     'deductions',
 ]);
-
-const periodHasEnded = props.payrollItem.cutoff.end_date < page.props.date;
-
-const existingAdditions = props.payrollItem.item_additions.map(a => a.addition.id);
-const missingAdditions = props.additions.filter(a => !existingAdditions.includes(a.id));
-
-const existingDeductions = props.payrollItem.item_deductions.map(a => a.deduction.id);
-const missingDeductions = props.deductions.filter(a => !existingDeductions.includes(a.id));
 </script>
 
 <template>
@@ -76,41 +61,12 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                 </div>
             </div>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
-                    <AdditionSelector
-                        v-if="!periodHasEnded && missingAdditions.length > 0"
-                        :targetAccount
-                        :payrollItem
-                        :additions="missingAdditions"
-                    />
-                    <div v-for="itemAddition in payrollItem.item_additions">
-                        <UpdateItemAdditionForm
-                            :targetAccount
-                            :itemAddition
-                            :cutoff="payrollItem.cutoff"
-                            class="max-w-xl"
-                        />
-                    </div>
-                </div>
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
-                    <DeductionSelector
-                        v-if="!periodHasEnded && missingDeductions.length > 0"
-                        :targetAccount
-                        :payrollItem
-                        :deductions="missingDeductions"
-                    />
-                    <div v-for="itemDeduction in payrollItem.item_deductions">
-                        <UpdateItemDeductionForm
-                            :key="itemDeduction.id"
-                            :targetAccount
-                            :itemDeduction
-                            :cutoff="payrollItem.cutoff"
-                            class="max-w-xl"
-                        />
-                    </div>
-                </div>
+                <AdditionsAndDeductions
+                    :targetAccount
+                    :payrollItem
+                    :additions
+                    :deductions
+                />
             </div>
         </div>
     </AuthenticatedLayout>
