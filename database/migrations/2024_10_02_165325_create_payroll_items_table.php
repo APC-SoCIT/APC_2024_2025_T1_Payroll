@@ -11,13 +11,16 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * FIXME: Refactor using decimal maths (integers/BCMath/PHPMoney, etc.)
      */
     public function up(): void
     {
         Schema::create('cutoffs', function (Blueprint $table) {
             $table->id();
             $table->date('start_date');
+            $table->date('cutoff_date');
             $table->date('end_date');
+            $table->boolean('month_end');
             $table->timestamps();
         });
 
@@ -40,6 +43,8 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('required');
             $table->boolean('calculated');
+            $table->boolean('taxable');
+            $table->boolean('timed');
             $table->timestamps();
         });
 
@@ -53,6 +58,8 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->noActionOnDelete();
             $table->decimal('amount')->default(0);
+            $table->tinyInteger('hours')->default(0);
+            $table->tinyInteger('minutes')->default(0);
             $table->timestamps();
         });
 
@@ -63,6 +70,10 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('required');
             $table->boolean('calculated');
+            $table->boolean('monthly');
+            $table->boolean('has_deadline');
+            $table->boolean('taxable');
+            $table->boolean('timed');
             $table->timestamps();
         });
 
@@ -76,6 +87,9 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->noActionOnDelete();
             $table->decimal('amount')->default(0);
+            $table->date('deadline')->nullable();
+            $table->tinyInteger('hours')->default(0);
+            $table->tinyInteger('minutes')->default(0);
             $table->timestamps();
         });
 
@@ -88,79 +102,105 @@ return new class extends Migration
                 'name' => 'Salary/Wage',
                 'description' => 'Base pay based on contract (edit through account)',
                 'required' => true,
-                'calculated' => true,
+                'calculated' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => AdditionId::Deminimis->value,
                 'name' => 'Deminimis Benefits',
                 'description' => 'Deminimis Benefits',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::ProfessionalFee->value,
                 'name' => 'Professional Fee',
                 'description' => 'Professional fees, including consultation and adviser fees',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::Allowance->value,
                 'name' => 'Allowance',
                 'description' => 'Allowance',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::Honorarium->value,
                 'name' => 'Honorarium',
                 'description' => 'Honorarium',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::Merit->value,
                 'name' => 'Merit Increase',
                 'description' => 'Merit Increase',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::AllowanceAdjustment->value,
                 'name' => 'Allowance Adjustment',
                 'description' => 'Allowance Adjustment',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::HonorariumOthers->value,
                 'name' => 'Honorarium Others',
                 'description' => 'Honorarium others',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => AdditionId::ProfessionalFeeOthers->value,
                 'name' => 'Professional Fee Others',
                 'description' => 'Professional fee others',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => AdditionId::SalaryAdjustment->value,
                 'name' => 'Salary/Wage Adjustment',
                 'description' => 'Manual adjustments',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => AdditionId::SickLeave->value,
                 'name' => 'Sick Leave',
                 'description' => 'Sick leave',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => true,
+                'timed' => true,
             ], [
                 'id' => AdditionId::OvertimePay->value,
                 'name' => 'Overtime Pay',
                 'description' => 'Overtime pay',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => true,
+                'timed' => true,
             ], [
                 'id' => AdditionId::SubstitutionPay->value,
                 'name' => 'Substitution Pay',
                 'description' => 'Substition pay',
                 'required' => false,
                 'calculated' => false,
+                'taxable' => true,
+                'timed' => true,
             ],
         ];
 
@@ -176,120 +216,200 @@ return new class extends Migration
                 'description' => 'Income tax (computed)',
                 'required' => true,
                 'calculated' => true,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Sss->value,
                 'name' => 'SSS Contribution',
                 'description' => 'Mandatory SSS contribution (computed)',
-                'required' => false,
+                'required' => true,
                 'calculated' => true,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Philhealth->value,
                 'name' => 'PhilHealth Contribution',
                 'description' => 'Mandatory PhilHealth contribution (computed)',
-                'required' => false,
+                'required' => true,
                 'calculated' => true,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Pagibig->value,
                 'name' => 'Pag-IBIG Contribution',
                 'description' => 'Mandatory Pag-IBIG contribution (edit through account)',
-                'required' => false,
-                'calculated' => true,
+                'required' => true,
+                'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => false,
+                'timed' => false,
             ], [
                 'id' => DeductionId::SalaryAdjustment->value,
                 'name' => 'Salary/Wage Adjustment',
                 'description' => 'Manual adjustments',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Absences->value,
                 'name' => 'Absences',
                 'description' => 'Absenses',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => true,
             ], [
                 'id' => DeductionId::Peraa->value,
                 'name' => 'PERAA',
                 'description' => 'PERAA',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Mp2->value,
                 'name' => 'MP2',
                 'description' => 'MP2',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => true,
+                'has_deadline' => true,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Sla->value,
                 'name' => 'SM/SLA',
                 'description' => 'SM/SLA',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::SmCard->value,
                 'name' => 'SM Card',
                 'description' => 'SM card',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::SssLoan->value,
                 'name' => 'SSS Loan',
                 'description' => 'SSS loan',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => true,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::SssCalamityLoan->value,
                 'name' => 'SSS Calamity Loan',
                 'description' => 'SSS calamity loan',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => true,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::PeraaLoan->value,
                 'name' => 'PERAA Loan',
                 'description' => 'PERAA loan',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => true,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::HdmfLoan->value,
                 'name' => 'HDMF Loan',
                 'description' => 'HDMF loan',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => true,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::ArPhone->value,
                 'name' => 'AR Phone',
                 'description' => 'AR phone',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::Hmo->value,
                 'name' => 'HMO',
                 'description' => 'HMO',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::SpecialExam->value,
                 'name' => 'Special Exam',
                 'description' => 'Special exam',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::ArOthers->value,
                 'name' => 'AR Others',
                 'description' => 'AR others',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::GradesPenalty->value,
                 'name' => 'Grades Penalty',
                 'description' => 'Grades penalty',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ], [
                 'id' => DeductionId::BikeLoan->value,
                 'name' => 'Bike Loan',
                 'description' => 'Bike loan',
                 'required' => false,
                 'calculated' => false,
+                'monthly' => false,
+                'has_deadline' => false,
+                'taxable' => true,
+                'timed' => false,
             ],
         ];
 

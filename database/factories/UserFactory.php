@@ -25,17 +25,6 @@ class UserFactory extends Factory
         ];
     }
 
-    public function configure(): Factory
-    {
-        return $this->afterCreating(function (User $user) {
-            UserVariable::updateOrCreate([
-                'user_id' => $user->id,
-                'variable_id' => 1,
-                'value' => 0,
-            ]);
-        });
-    }
-
     public function authorized(): Factory
     {
         return $this->state(function (array $attributes) {

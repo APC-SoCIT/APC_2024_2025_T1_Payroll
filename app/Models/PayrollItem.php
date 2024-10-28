@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * An account's individual entry within a payroll period
- **/
+ */
 class PayrollItem extends Model
 {
     use HasFactory;

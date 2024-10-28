@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Helpers\PayrollHelper;
 use App\Models\Addition;
-use App\Models\ItemAddition;
+use App\Models\Cutoff;
 use App\Models\Deduction;
+use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
-use App\Models\Cutoff;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -86,7 +86,7 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $itemAddition->amount =round($validated['amount'], 2);
+        $itemAddition->amount = round($validated['amount'], 2);
         $itemAddition->save();
 
         PayrollHelper::calculateAll($itemAddition->payrollItem->load('itemAdditions'));
@@ -132,11 +132,7 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $itemDeduction->update([
-            'amount' => round($validated['amount'], 2),
-        ]);
-
-        $itemDeduction->amount =round($validated['amount'], 2);
+        $itemDeduction->amount = round($validated['amount'], 2);
         $itemDeduction->save();
 
         PayrollHelper::calculateAll($itemDeduction->payrollItem->load('itemDeductions'));

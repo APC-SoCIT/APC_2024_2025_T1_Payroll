@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountUpdateRequest;
-use App\Models\PayrollItem;
 use App\Models\Cutoff;
+use App\Models\PayrollItem;
 use App\Models\User;
-use App\Models\Variable;
-use App\Models\UserVariable;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,14 +41,7 @@ class AccountController extends Controller
     public function store(AccountUpdateRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $user = User::create($validated);
-
-        UserVariable::updateOrCreate([
-            'user_id' => $user->id,
-            'variable_id' => 1,
-        ], [
-            'value' => 0,
-        ]);
+        User::create($validated);
 
         return redirect(route('accounts'));
     }
@@ -63,7 +55,6 @@ class AccountController extends Controller
 
         return Inertia::render('Account/Edit', [
             'targetAccount' => $user->load('userVariables.variable'),
-            'userVariables' => Variable::all(),
         ]);
     }
 
@@ -91,44 +82,13 @@ class AccountController extends Controller
         $user->update($validated);
 
         if (! $validated['active']) {
-            $user->payrollItems
-                ->where('cutoff.end_date', '>=', Carbon::now()->toDateString())
+            $user->payrollItems()
+                ->whereHas('cutoff', function (Builder $query) {
+                    $query->where('end_date', '>=', Carbon::now()->toDateString());
+                })
                 ->each(function (?PayrollItem $item) {
                     $item->delete();
                 });
         }
-    }
-
-    public function addVariable(User $user, Variable $variable): void
-    {
-        UserVariable::updateOrCreate([
-            'user_id' => $user->id,
-            'variable_id' => $variable->id,
-        ], [
-            'value' => 0,
-        ]);
-    }
-
-    public function updateVariable(UserVariable $variableItem, Request $request): void
-    {
-        if ($variableItem->variable->id == 1
-            && ! in_array(Auth::user()->email, config('roles.payroll_accounts'))) {
-            abort(403);
-        }
-
-        $variableItem->update(
-            $request->validate([
-                'value' => ['required', 'numeric', 'min:0'],
-            ])
-        );
-    }
-
-    public function deleteVariable(UserVariable $variableItem): void
-    {
-        if ($variableItem->variable->required) {
-            abort(403);
-        }
-
-        $variableItem->delete();
     }
 }

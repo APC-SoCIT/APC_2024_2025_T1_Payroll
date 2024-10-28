@@ -9,9 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('payroll item is restricted', function () {
-    $user = User::factory()
-        ->configure()
-        ->create();
+    $user = User::factory()->create();
 
     $response = $this
         ->actingAs($user)
@@ -23,7 +21,6 @@ test('payroll item is restricted', function () {
 test('payroll item is displayed', function () {
     $user = User::factory()
         ->authorized()
-        ->configure()
         ->create();
 
     $response = $this
@@ -36,7 +33,6 @@ test('payroll item is displayed', function () {
 test('current payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
-        ->configure()
         ->create();
 
     $response = $this
@@ -69,7 +65,6 @@ test('current payroll item additions can be updated', function () {
 test('future payroll item additions can be updated', function () {
     $user = User::factory()
         ->authorized()
-        ->configure()
         ->create();
 
     Cutoff::create([

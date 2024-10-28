@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A type/description of a deduction
- **/
+ */
 class Deduction extends Model
 {
     use HasFactory;
@@ -18,6 +18,9 @@ class Deduction extends Model
         'description',
         'required',
         'calculated',
+        'monthly',
+        'has_deadline',
+        'taxable',
     ];
 
     public function itemDeductions(): HasMany

@@ -31,9 +31,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(PayrollItem::class);
     }
-
-    public function userVariables(): HasMany
-    {
-        return $this->hasMany(UserVariable::class);
-    }
 }

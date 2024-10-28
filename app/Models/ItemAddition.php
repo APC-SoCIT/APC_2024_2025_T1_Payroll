@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * An addition within a payroll item
- **/
+ */
 class ItemAddition extends Model
 {
     use HasFactory;
@@ -17,6 +17,8 @@ class ItemAddition extends Model
         'payroll_item_id',
         'addition_id',
         'amount',
+        'hours',
+        'minutes',
     ];
 
     public function addition(): BelongsTo

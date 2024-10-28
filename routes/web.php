@@ -48,14 +48,6 @@ Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
     Route::patch('/account/{user}', [AccountController::class, 'update'])
         ->name('account.update');
 
-    // account variable actions
-    Route::post('/account/{user}/variable/{variable}', [AccountController::class, 'addVariable'])
-        ->name('userVariable.add');
-    Route::patch('/userVariable/{variableItem}', [AccountController::class, 'updateVariable'])
-        ->name('userVariable.update');
-    Route::delete('/userVariable/{variableItem}', [AccountController::class, 'deleteVariable'])
-        ->name('userVariable.delete');
-
     // cutoffs
     Route::get('/cutoffs', [CutoffController::class, 'index'])
         ->name('cutoffs');

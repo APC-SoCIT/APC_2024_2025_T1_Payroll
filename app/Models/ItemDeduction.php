@@ -8,17 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * A deduction within a payroll item
- **/
+ */
 class ItemDeduction extends Model
 {
     use HasFactory;
-
-    protected $table = 'item_deductions';
 
     protected $fillable = [
         'payroll_item_id',
         'deduction_id',
         'amount',
+        'deadline',
+        'hours',
+        'minutes',
     ];
 
     public function deduction(): BelongsTo
