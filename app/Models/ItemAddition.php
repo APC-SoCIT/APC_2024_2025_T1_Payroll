@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * An addition within a payroll item
  **/
-class AdditionItem extends Model
+class ItemAddition extends Model
 {
     use HasFactory;
 

@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_variables', function (Blueprint $table) {
+        Schema::create('variables', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description');
@@ -21,12 +21,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_variable_items', function (Blueprint $table) {
+        Schema::create('user_variables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->foreignId('user_variable_id')
+            $table->foreignId('variable_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->decimal('value');
@@ -47,7 +47,7 @@ return new class extends Migration
             ]
         ];
 
-        DB::table('user_variables')->insert($userVariables);
+        DB::table('variables')->insert($userVariables);
     }
 
     /**
@@ -55,7 +55,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_variable_items');
         Schema::dropIfExists('user_variables');
+        Schema::dropIfExists('variables');
     }
 };

@@ -2,8 +2,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import UserVariableSelector from '@/Components/UserVariableSelector.vue'
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import UpdateUserVariableItemForm from './Partials/UpdateUserVariableItemForm.vue';
+import UpdateAccountInformationForm from './Partials/UpdateAccountInformationForm.vue';
+import UpdateUserVariableForm from './Partials/UpdateUserVariableForm.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const props = defineProps([
@@ -11,8 +11,8 @@ const props = defineProps([
     'userVariables',
 ]);
 
-const existingUserVariables = props.targetAccount.user_variable_items.map(a => a.user_variable.id);
-const missingUserVariables = props.targetAccount.user_variable_items.filter(a => !existingUserVariables.includes(a.id));
+const existingUserVariables = props.targetAccount.user_variables.map(a => a.variable.id);
+const missingUserVariables = props.targetAccount.user_variables.filter(a => !existingUserVariables.includes(a.id));
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const missingUserVariables = props.targetAccount.user_variable_items.filter(a =>
             </div>
             <div :class="$page.props.auth.isAuthorized ? 'p-4 sm:p-8' : ''" class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdateProfileInformationForm
+                    <UpdateAccountInformationForm
                         :targetAccount="targetAccount"
                         class="max-w-xl"
                     />
@@ -45,10 +45,10 @@ const missingUserVariables = props.targetAccount.user_variable_items.filter(a =>
                         :targetAccount
                         :userVariables="missingUserVariables"
                     />
-                    <UpdateUserVariableItemForm v-for="userVariableItem in targetAccount.user_variable_items"
-                        :key="userVariableItem.id"
+                    <UpdateUserVariableForm v-for="userVariable in targetAccount.user_variables"
+                        :key="userVariable.id"
                         :targetAccount
-                        :userVariableItem
+                        :userVariable
                         class="max-w-xl"
                     />
                 </div>

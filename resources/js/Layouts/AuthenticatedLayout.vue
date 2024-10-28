@@ -175,7 +175,7 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <!-- <ResponsiveNavLink :href="route('account.get')"> Profile </ResponsiveNavLink> -->
+                            <!-- <ResponsiveNavLink :href="route('account.get')"> Account </ResponsiveNavLink> -->
                             <ResponsiveNavLink :href="route('account.me')" method="get" as="button">
                                 My Account
                             </ResponsiveNavLink>

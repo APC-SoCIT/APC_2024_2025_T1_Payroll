@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Helpers\PayrollHelper;
 use App\Models\Addition;
-use App\Models\AdditionItem;
+use App\Models\ItemAddition;
 use App\Models\Deduction;
-use App\Models\DeductionItem;
+use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,7 +17,7 @@ use Inertia\Response;
 /**
  * Controller for dealing with payroll entries
  *
- * @see { App\Http\Controllers\PayrollPeriodController } for cutoff scheduling
+ * @see { App\Http\Controllers\CutoffController } for cutoff scheduling
  */
 class PayrollController extends Controller
 {
@@ -33,22 +33,22 @@ class PayrollController extends Controller
         return self::getItem($currentPeriod, $user);
     }
 
-    public function getItem(PayrollPeriod $cutoff, User $user): Response
+    public function getItem(Cutoff $cutoff, User $user): Response
     {
         $payrollItem = PayrollItem::firstOrCreate([
             'user_id' => $user->id,
-            'payroll_period_id' => $cutoff->id,
+            'cutoff_id' => $cutoff->id,
         ]);
 
-        if (! $payrollItem->payrollPeriod->hasEnded()) {
+        if (! $payrollItem->cutoff->hasEnded()) {
             PayrollHelper::calculateAll($payrollItem);
         }
 
         // upon first creation, it's not loaded
         $payrollItem->load([
-            'payrollPeriod',
-            'additionItems.addition',
-            'deductionItems.deduction',
+            'cutoff',
+            'itemAdditions.addition',
+            'itemDeductions.deduction',
         ]);
 
         return Inertia::render('Payroll/Item', [
@@ -59,26 +59,26 @@ class PayrollController extends Controller
         ]);
     }
 
-    public function addAdditionItem(PayrollItem $payrollItem, Addition $addition): void
+    public function addItemAddition(PayrollItem $payrollItem, Addition $addition): void
     {
-        if ($payrollItem->payrollPeriod->hasEnded()) {
+        if ($payrollItem->cutoff->hasEnded()) {
             abort(403);
         }
 
-        AdditionItem::firstOrCreate([
+        ItemAddition::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => $addition->id,
         ], [
             'amount' => 0,
         ]);
 
-        PayrollHelper::calculateAll($payrollItem->load('additionItems'));
+        PayrollHelper::calculateAll($payrollItem->load('itemAdditions'));
     }
 
-    public function updateAdditionItem(Request $request, AdditionItem $additionItem): void
+    public function updateItemAddition(Request $request, ItemAddition $itemAddition): void
     {
-        if ($additionItem->payrollItem->payrollPeriod->hasEnded()
-            || $additionItem->addition->calculated) {
+        if ($itemAddition->payrollItem->cutoff->hasEnded()
+            || $itemAddition->addition->calculated) {
             abort(403);
         }
 
@@ -86,45 +86,45 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $additionItem->amount =round($validated['amount'], 2);
-        $additionItem->save();
+        $itemAddition->amount =round($validated['amount'], 2);
+        $itemAddition->save();
 
-        PayrollHelper::calculateAll($additionItem->payrollItem->load('additionItems'));
+        PayrollHelper::calculateAll($itemAddition->payrollItem->load('itemAdditions'));
     }
 
-    public function deleteAdditionItem(AdditionItem $additionItem): void
+    public function deleteItemAddition(ItemAddition $itemAddition): void
     {
-        if ($additionItem->payrollItem->payrollPeriod->hasEnded()
-            || $additionItem->addition->required) {
+        if ($itemAddition->payrollItem->cutoff->hasEnded()
+            || $itemAddition->addition->required) {
             abort(403);
         }
 
-        $payrollItem = $additionItem->payrollItem;
-        $additionItem->delete();
+        $payrollItem = $itemAddition->payrollItem;
+        $itemAddition->delete();
 
-        PayrollHelper::calculateAll($payrollItem->load('additionItems'));
+        PayrollHelper::calculateAll($payrollItem->load('itemAdditions'));
     }
 
-    public function addDeductionItem(PayrollItem $payrollItem, Deduction $deduction): void
+    public function addItemDeduction(PayrollItem $payrollItem, Deduction $deduction): void
     {
-        if ($payrollItem->payrollPeriod->hasEnded()) {
+        if ($payrollItem->cutoff->hasEnded()) {
             abort(403);
         }
 
-        DeductionItem::firstOrCreate([
+        ItemDeduction::firstOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => $deduction->id,
         ], [
             'amount' => 0,
         ]);
 
-        PayrollHelper::calculateAll($payrollItem->load('deductionItems'));
+        PayrollHelper::calculateAll($payrollItem->load('itemDeductions'));
     }
 
-    public function updateDeductionItem(Request $request, DeductionItem $deductionItem): void
+    public function updateItemDeduction(Request $request, ItemDeduction $itemDeduction): void
     {
-        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
-            || $deductionItem->deduction->calculated) {
+        if ($itemDeduction->payrollItem->cutoff->hasEnded()
+            || $itemDeduction->deduction->calculated) {
             abort(403);
         }
 
@@ -132,26 +132,26 @@ class PayrollController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $deductionItem->update([
+        $itemDeduction->update([
             'amount' => round($validated['amount'], 2),
         ]);
 
-        $deductionItem->amount =round($validated['amount'], 2);
-        $deductionItem->save();
+        $itemDeduction->amount =round($validated['amount'], 2);
+        $itemDeduction->save();
 
-        PayrollHelper::calculateAll($deductionItem->payrollItem->load('deductionItems'));
+        PayrollHelper::calculateAll($itemDeduction->payrollItem->load('itemDeductions'));
     }
 
-    public function deleteDeductionItem(DeductionItem $deductionItem): void
+    public function deleteItemDeduction(ItemDeduction $itemDeduction): void
     {
-        if ($deductionItem->payrollItem->payrollPeriod->hasEnded()
-            || $deductionItem->deduction->required) {
+        if ($itemDeduction->payrollItem->cutoff->hasEnded()
+            || $itemDeduction->deduction->required) {
             abort(403);
         }
 
-        $payrollItem = $deductionItem->payrollItem;
-        $deductionItem->delete();
+        $payrollItem = $itemDeduction->payrollItem;
+        $itemDeduction->delete();
 
-        PayrollHelper::calculateAll($payrollItem->load('deductionItems'));
+        PayrollHelper::calculateAll($payrollItem->load('itemDeductions'));
     }
 }

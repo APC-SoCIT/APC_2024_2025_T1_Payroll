@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\PayrollHelper;
 use App\Helpers\AuthHelper;
 use App\Models\PayrollItem;
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -20,12 +20,12 @@ use Inertia\Response;
  *
  * @see { App\Http\Controllers\PayrollController } for payroll entries
  */
-class PayrollPeriodController extends Controller
+class CutoffController extends Controller
 {
     public function index(): Response
     {
         return Inertia::render('Payroll/Periods', [
-            'cutoffs' => PayrollPeriod::latest('end_date')->get(),
+            'cutoffs' => Cutoff::latest('end_date')->get(),
         ]);
     }
 
@@ -34,7 +34,7 @@ class PayrollPeriodController extends Controller
         // all the user is involved with (including past)
         $involved = $user->payrollItems
             ->map(function (?PayrollItem $item) {
-                return $item->payrollPeriod;
+                return $item->cutoff;
             });
 
         // if the user is active, include current and future too
@@ -42,7 +42,7 @@ class PayrollPeriodController extends Controller
         if ($user->active
             && AuthHelper::isAuthorized()) {
             $involved->merge(
-                PayrollPeriod::where('end_date', '>=', Carbon::now()->toDateString())
+                Cutoff::where('end_date', '>=', Carbon::now()->toDateString())
             );
         }
 
@@ -68,26 +68,26 @@ class PayrollPeriodController extends Controller
     {
         $validator = self::makeCutoffValidator($request);
 
-        PayrollPeriod::create($validator->validate());
+        Cutoff::create($validator->validate());
 
         return redirect(route('cutoffs'));
     }
 
-    public function get(PayrollPeriod $cutoff): Response
+    public function get(Cutoff $cutoff): Response
     {
         return Inertia::render('Payroll/EditPeriod', [
             'cutoff' => $cutoff,
         ]);
     }
 
-    public function update(PayrollPeriod $cutoff, Request $request): void
+    public function update(Cutoff $cutoff, Request $request): void
     {
         $validator = self::makeCutoffValidator($request);
 
         $cutoff->update($validator->validate());
     }
 
-    public function delete(PayrollPeriod $cutoff): void
+    public function delete(Cutoff $cutoff): void
     {
         if ($cutoff->end_date < Carbon::now()->toDateString()) {
             abort(403);

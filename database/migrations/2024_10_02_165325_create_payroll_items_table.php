@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payroll_periods', function (Blueprint $table) {
+        Schema::create('cutoffs', function (Blueprint $table) {
             $table->id();
             $table->date('start_date');
             $table->date('end_date');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->foreignId('payroll_period_id')
+            $table->foreignId('cutoff_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->decimal('amount')->default(0);
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('addition_items', function (Blueprint $table) {
+        Schema::create('item_additions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payroll_item_id')
                 ->constrained()
@@ -66,7 +66,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('deduction_items', function (Blueprint $table) {
+        Schema::create('item_deductions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('payroll_item_id')
                 ->constrained()
@@ -301,11 +301,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deduction_items');
+        Schema::dropIfExists('item_deductions');
         Schema::dropIfExists('deductions');
-        Schema::dropIfExists('addition_items');
+        Schema::dropIfExists('item_additions');
         Schema::dropIfExists('additions');
         Schema::dropIfExists('payroll_items');
-        Schema::dropIfExists('payroll_periods');
+        Schema::dropIfExists('cutoffs');
     }
 };

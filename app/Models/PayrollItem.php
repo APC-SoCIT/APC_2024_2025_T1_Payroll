@@ -16,7 +16,7 @@ class PayrollItem extends Model
 
     protected $fillable = [
         'user_id',
-        'payroll_period_id',
+        'cutoff_id',
         'amount',
     ];
 
@@ -25,18 +25,18 @@ class PayrollItem extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function payrollPeriod(): BelongsTo
+    public function cutoff(): BelongsTo
     {
-        return $this->belongsTo(PayrollPeriod::class);
+        return $this->belongsTo(Cutoff::class);
     }
 
-    public function additionItems(): HasMany
+    public function itemAdditions(): HasMany
     {
-        return $this->hasMany(AdditionItem::class);
+        return $this->hasMany(ItemAddition::class);
     }
 
-    public function deductionItems(): HasMany
+    public function itemDeductions(): HasMany
     {
-        return $this->hasMany(DeductionItem::class);
+        return $this->hasMany(ItemDeduction::class);
     }
 }

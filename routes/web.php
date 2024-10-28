@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\PayrollController;
-use App\Http\Controllers\PayrollPeriodController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CutoffController;
+use App\Http\Controllers\AccountController;
 use App\Http\Middleware\AuthorizedMiddleware;
 use App\Http\Middleware\HrMiddleware;
 use App\Http\Middleware\PayrollMiddleware;
@@ -20,11 +20,11 @@ Route::middleware('auth')->group(function () {
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     // get own account
-    Route::get('/account', [ProfileController::class, 'getOwn'])
+    Route::get('/account', [AccountController::class, 'getOwn'])
         ->name('account.me');
 
     // get own related cutoffs
-    Route::get('/cutoffs/me', [PayrollPeriodController::class, 'getOwn'])
+    Route::get('/cutoffs/me', [CutoffController::class, 'getOwn'])
         ->name('cutoffs.me');
 
     // get specific entry
@@ -35,48 +35,48 @@ Route::middleware('auth')->group(function () {
 // HR OR PAYROLL
 Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
     // account index
-    Route::get('/accounts', [ProfileController::class, 'index'])
+    Route::get('/accounts', [AccountController::class, 'index'])
         ->name('accounts');
 
     // account actions
-    Route::get('/account/new', [ProfileController::class, 'add'])
+    Route::get('/account/new', [AccountController::class, 'add'])
         ->name('account.newForm');
-    Route::post('/account/new', [ProfileController::class, 'store'])
+    Route::post('/account/new', [AccountController::class, 'store'])
         ->name('account.new');
-    Route::get('/account/{user}', [ProfileController::class, 'edit'])
+    Route::get('/account/{user}', [AccountController::class, 'edit'])
         ->name('account.get');
-    Route::patch('/account/{user}', [ProfileController::class, 'update'])
+    Route::patch('/account/{user}', [AccountController::class, 'update'])
         ->name('account.update');
 
     // account variable actions
-    Route::post('/account/{user}/variable/{variable}', [ProfileController::class, 'addVariable'])
-        ->name('userVariableItem.add');
-    Route::patch('/userVariableItem/{variableItem}', [ProfileController::class, 'updateVariable'])
-        ->name('userVariableItem.update');
-    Route::delete('/userVariableItem/{variableItem}', [ProfileController::class, 'deleteVariable'])
-        ->name('userVariableItem.delete');
+    Route::post('/account/{user}/variable/{variable}', [AccountController::class, 'addVariable'])
+        ->name('userVariable.add');
+    Route::patch('/userVariable/{variableItem}', [AccountController::class, 'updateVariable'])
+        ->name('userVariable.update');
+    Route::delete('/userVariable/{variableItem}', [AccountController::class, 'deleteVariable'])
+        ->name('userVariable.delete');
 
     // cutoffs
-    Route::get('/cutoffs', [PayrollPeriodController::class, 'index'])
+    Route::get('/cutoffs', [CutoffController::class, 'index'])
         ->name('cutoffs');
-    Route::get('/account/{user}/cutoffs', [PayrollPeriodController::class, 'getFromUser'])
+    Route::get('/account/{user}/cutoffs', [CutoffController::class, 'getFromUser'])
         ->name('cutoffs.getFromUser');
-    Route::get('/cutoff/{cutoff}/accounts', [ProfileController::class, 'getFromCutoff'])
+    Route::get('/cutoff/{cutoff}/accounts', [AccountController::class, 'getFromCutoff'])
         ->name('accounts.getFromCutoff');
 });
 
 // HR ONLY
 Route::middleware(['auth', HrMiddleware::class])->group(function () {
     // cutoff actions
-    Route::get('/cutoff/new', [PayrollPeriodController::class, 'add'])
+    Route::get('/cutoff/new', [CutoffController::class, 'add'])
         ->name('cutoff.newForm');
-    Route::post('/cutoff/new', [PayrollPeriodController::class, 'store'])
+    Route::post('/cutoff/new', [CutoffController::class, 'store'])
         ->name('cutoff.new');
-    Route::get('/cutoff/{cutoff}', [PayrollPeriodController::class, 'get'])
+    Route::get('/cutoff/{cutoff}', [CutoffController::class, 'get'])
         ->name('cutoff.get');
-    Route::patch('/cutoff/{cutoff}', [PayrollPeriodController::class, 'update'])
+    Route::patch('/cutoff/{cutoff}', [CutoffController::class, 'update'])
         ->name('cutoff.update');
-    Route::delete('/cutoff/{cutoff}', [PayrollPeriodController::class, 'delete'])
+    Route::delete('/cutoff/{cutoff}', [CutoffController::class, 'delete'])
         ->name('cutoff.delete');
 });
 
@@ -87,20 +87,20 @@ Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
         ->name('payroll.getCurrentFromUser');
 
     // addition actions
-    Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addAdditionItem'])
-        ->name('additionItem.new');
-    Route::patch('/additionItem/{additionItem}', [PayrollController::class, 'updateAdditionItem'])
-        ->name('additionItem.update');
-    Route::delete('/additionItem/{additionItem}', [PayrollController::class, 'deleteAdditionItem'])
-        ->name('additionItem.delete');
+    Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
+        ->name('itemAddition.new');
+    Route::patch('/itemAddition/{itemAddition}', [PayrollController::class, 'updateItemAddition'])
+        ->name('itemAddition.update');
+    Route::delete('/itemAddition/{itemAddition}', [PayrollController::class, 'deleteItemAddition'])
+        ->name('itemAddition.delete');
 
     // deduction actions
-    Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addDeductionItem'])
-        ->name('deductionItem.new');
-    Route::patch('/deductionItem/{deductionItem}', [PayrollController::class, 'updateDeductionItem'])
-        ->name('deductionItem.update');
-    Route::delete('/deductionItem/{deductionItem}', [PayrollController::class, 'deleteDeductionItem'])
-        ->name('deductionItem.delete');
+    Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
+        ->name('itemDeduction.new');
+    Route::patch('/itemDeduction/{itemDeduction}', [PayrollController::class, 'updateItemDeduction'])
+        ->name('itemDeduction.update');
+    Route::delete('/itemDeduction/{itemDeduction}', [PayrollController::class, 'deleteItemDeduction'])
+        ->name('itemDeduction.delete');
 });
 
 require __DIR__.'/auth.php';

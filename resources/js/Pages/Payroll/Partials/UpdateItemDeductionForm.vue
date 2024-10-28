@@ -11,34 +11,35 @@ const page = usePage();
 
 const props = defineProps([
     'targetAccount',
-    'additionItem',
-    'payrollPeriod',
+    'itemDeduction',
+    'cutoff',
 ]);
 
-const periodHasEnded = props.payrollPeriod.end_date < page.props.date;
-const disabled = periodHasEnded || props.additionItem.addition.calculated;
-const deleteable = !periodHasEnded && !props.additionItem.addition.required;
+
+const periodHasEnded = props.cutoff.end_date < page.props.date;
+const disabled = periodHasEnded || props.itemDeduction.deduction.calculated;
+const deleteable = !periodHasEnded && !props.itemDeduction.deduction.required;
 
 const form = useForm({
-    amount: props.additionItem.amount,
+    amount: props.itemDeduction.amount,
 });
 </script>
 
 <template>
-    <section class="py-4">
+    <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">{{ additionItem.addition.name }}</h2>
+            <h2 class="text-lg font-medium text-gray-900">{{ itemDeduction.deduction.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                {{ additionItem.addition.description }}
+                {{ itemDeduction.deduction.description }}
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('additionItem.update', additionItem.id), { preserveScroll: true })" class="mt-6 space-y-2">
+        <form @submit.prevent="form.patch(route('itemDeduction.update', itemDeduction.id), { preserveScroll: true })" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="amount" value="Amount" />
 
-                <TextInput v-if="!additionItem.addition.calculated"
+                <TextInput v-if="!itemDeduction.deduction.calculated"
                     id="amount"
                     type="number"
                     step="0.01"
@@ -53,14 +54,13 @@ const form = useForm({
                     step="0.01"
                     class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                     required
-                    :value="additionItem.amount"
+                    :value="itemDeduction.amount"
                     disabled
                 />
 
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
-            <div v-if="!disabled"
-                class="flex items-center gap-4">
+            <div v-if="!disabled" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition
@@ -76,9 +76,9 @@ const form = useForm({
         <div class="py-2">
             <Link
                 v-if="deleteable"
-                :href="route('additionItem.delete', additionItem.id)"
+                :href="route('itemDeduction.delete', itemDeduction.id)"
                 method="delete"
-                :onBefore="useConfirm(`Are you sure you want to delete ${additionItem.addition.name}? This action cannot be undone.`)"
+                :onBefore="useConfirm(`Are you sure you want to delete ${itemDeduction.deduction.name}? This action cannot be undone.`)"
                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
                 as="button"
             >

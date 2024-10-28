@@ -4,21 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserVariable extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
-        'required',
-        'min',
+        'user_id',
+        'variable_id',
+        'value',
     ];
 
-    public function userVariableItems(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(UserVariableItem::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function variable(): BelongsTo
+    {
+        return $this->belongsTo(Variable::class);
     }
 }

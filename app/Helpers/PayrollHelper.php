@@ -4,10 +4,10 @@ namespace App\Helpers;
 
 use App\Enums\AdditionId;
 use App\Enums\DeductionId;
-use App\Models\AdditionItem;
-use App\Models\DeductionItem;
+use App\Models\ItemAddition;
+use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
-use App\Models\PayrollPeriod;
+use App\Models\Cutoff;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -21,13 +21,13 @@ class PayrollHelper
         self::calculateSss($item);
         self::calculateTax($item);
 
-        $totalAdditions = $item->additionItems
-            ->reduce(function (?int $carry, ?AdditionItem $item) {
+        $totalAdditions = $item->itemAdditions
+            ->reduce(function (?int $carry, ?ItemAddition $item) {
                 return $carry + $item->amount;
             });
 
-        $totalDeductions = $item->deductionItems
-            ->reduce(function (?int $carry, ?deductionItem $item) {
+        $totalDeductions = $item->itemDeductions
+            ->reduce(function (?int $carry, ?ItemDeduction $item) {
                 return $carry + $item->amount;
             });
 
@@ -38,14 +38,14 @@ class PayrollHelper
     private static function calculateBasePay(PayrollItem $payrollItem): void
     {
         $user = $payrollItem->user;
-        $user->load('userVariableItems');
-        AdditionItem::updateOrCreate([
+        $user->load('userVariables');
+        ItemAddition::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'addition_id' => AdditionId::Salary->value,
         ], [
             'amount' => $user
-                ->userVariableItems
-                ->where('user_variable_id', 1)
+                ->userVariables
+                ->where('variable_id', 1)
                 ->first()
                 ->value,
         ]);
@@ -53,23 +53,23 @@ class PayrollHelper
 
     private static function calculateTax(PayrollItem $payrollItem): void
     {
-        $totalAdditions = $payrollItem->additionItems
+        $totalAdditions = $payrollItem->itemAdditions
             ->whereIn('addition_id', [
                 AdditionId::Salary->value,
                 AdditionId::SalaryAdjustment->value,
             ])
-            ->reduce(function (?int $carry, ?AdditionItem $item) {
+            ->reduce(function (?int $carry, ?ItemAddition $item) {
                 return $carry + $item->amount;
             });
 
-        $totalDeductionsBeforeTax = $payrollItem->deductionItems
+        $totalDeductionsBeforeTax = $payrollItem->itemDeductions
             ->whereIn('deduction_id', [
                 DeductionId::Sss->value,
                 DeductionId::Philhealth->value,
                 DeductionId::Pagibig->value,
                 DeductionId::SalaryAdjustment->value,
             ])
-            ->reduce(function (?int $carry, ?DeductionItem $item) {
+            ->reduce(function (?int $carry, ?ItemDeduction $item) {
                 return $carry + $item->amount;
             });
 
@@ -88,19 +88,19 @@ class PayrollHelper
         $tax = ($bracket['baseTax'] + $excessTax) / 24;
         $tax = round($tax, 2);
 
-        DeductionItem::updateOrCreate([
+        ItemDeduction::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
             'deduction_id' => DeductionId::Tax->value,
         ], [
             'amount' => $tax,
         ]);
 
-        $payrollItem->load('deductionItems');
+        $payrollItem->load('itemDeductions');
     }
 
     private static function calculatePagibig(PayrollItem $payrollItem): void
     {
-        $pagibigDeduction = $payrollItem->deductionItems
+        $pagibigDeduction = $payrollItem->itemDeductions
             ->where('deduction_id', DeductionId::Pagibig->value)
             ->first();
 
@@ -109,18 +109,18 @@ class PayrollHelper
         }
 
         $pagibigDeduction->amount = $payrollItem->user
-            ->userVariableItems
-            ->where('user_variable_id', 2)
+            ->userVariables
+            ->where('variable_id', 2)
             ->first()
             ->value;
 
         $pagibigDeduction->save();
-        $payrollItem->load('deductionItems');
+        $payrollItem->load('itemDeductions');
     }
 
     private static function calculatePhilhealth(PayrollItem $payrollItem): void
     {
-        $philhealthDeduction = $payrollItem->deductionItems
+        $philhealthDeduction = $payrollItem->itemDeductions
             ->where('deduction_id', DeductionId::Philhealth->value)
             ->first();
 
@@ -129,14 +129,14 @@ class PayrollHelper
         }
 
         $thisPay = $payrollItem->user
-            ->userVariableItems
-            ->where('user_variable_id', 1) // base pay
+            ->userVariables
+            ->where('variable_id', 1) // base pay
             ->first()
             ->value;
 
         $lastPay = self::lastCutoff($payrollItem)
             // try to use last cutoff
-            ?->additionItems
+            ?->itemAdditions
             ->where('addition_id', AdditionId::Salary->value)
             ->first()
             ?->amount
@@ -155,12 +155,12 @@ class PayrollHelper
 
         $philhealthDeduction->amount = $contribution;
         $philhealthDeduction->save();
-        $payrollItem->load('deductionItems');
+        $payrollItem->load('itemDeductions');
     }
 
     private static function calculateSss(PayrollItem $payrollItem): void
     {
-        $sssDeduction = $payrollItem->deductionItems
+        $sssDeduction = $payrollItem->itemDeductions
             ->where('deduction_id', DeductionId::Sss->value)
             ->first();
 
@@ -168,13 +168,13 @@ class PayrollHelper
             return;
         }
 
-        $thisPay = $payrollItem->additionItems
+        $thisPay = $payrollItem->itemAdditions
             ->whereIn('addition_id', [
                 AdditionId::Salary->value,
                 AdditionId::Deminimis->value,
                 AdditionId::Honorarium->value,
             ])
-            ->reduce(function (?int $carry, ?AdditionItem $item) {
+            ->reduce(function (?int $carry, ?ItemAddition $item) {
                 return $carry + $item->amount;
             });
 
@@ -185,7 +185,7 @@ class PayrollHelper
                 AdditionId::Deminimis->value,
                 AdditionId::Honorarium->value,
             ])
-            ->reduce(function (?int $carry, ?AdditionItem $item) {
+            ->reduce(function (?int $carry, ?ItemAddition $item) {
                 return $carry + $item->amount;
             })
             // if it doesn't exist or is too far back,
@@ -202,17 +202,17 @@ class PayrollHelper
 
         $sssDeduction->amount = $bracket['employee_contribution'];
         $sssDeduction->save();
-        $payrollItem->load('deductionItems');
+        $payrollItem->load('itemDeductions');
     }
 
     private static function lastCutoff(PayrollItem $payrollItem): ?PayrollItem
     {
         return PayrollItem::where('user_id', $payrollItem->user_id)
-            ->whereHas('payrollPeriod', function (Builder $query) use ($payrollItem) {
+            ->whereHas('cutoff', function (Builder $query) use ($payrollItem) {
                 // limit search to 1 month
-                $query->where('end_date', '>=', $payrollItem->payrollPeriod->start_date)
+                $query->where('end_date', '>=', $payrollItem->cutoff->start_date)
                     // get a previous cutoff
-                    ->where('end_date', '<', $payrollItem->payrollPeriod->end_date)
+                    ->where('end_date', '<', $payrollItem->cutoff->end_date)
                     ->orderBy('end_date');
             })
             ->first();
@@ -222,12 +222,12 @@ class PayrollHelper
      * Get the current period.
      * If the latest period in the database is outdated, generate a new one.
      */
-    public static function currentPeriod(): PayrollPeriod
+    public static function currentPeriod(): Cutoff
     {
         $now = Carbon::now();
         $nowString = $now->toDateString();
 
-        $currentPeriod = PayrollPeriod::where('start_date', '<=', $nowString)
+        $currentPeriod = Cutoff::where('start_date', '<=', $nowString)
             ->where('end_date', '>=', $nowString)
             ->oldest('end_date')
             ->first();
@@ -237,7 +237,7 @@ class PayrollHelper
             $cutoff = null;
             $end = null;
 
-            if ($now->day < 11) {
+            if ($now->day < 16) {
                 $start = $now->copy()
                     ->startOfMonth();
 
@@ -245,31 +245,24 @@ class PayrollHelper
                     ->setDay(10);
 
                 $end = $now->copy()
-                    ->setDay(15);
-            } elseif ($now->day > 25) {
-                $start = $now->copy()
-                    ->addMonth()
-                    ->startOfMonth();
-
-                $cutoff = $now->copy()
-                    ->addMonth()
-                    ->setDay(10);
-
-                $end = $now->copy()
-                    ->addMonth()
                     ->setDay(15);
             } else {
                 $start = $now->copy()
                     ->setDay(16);
 
-                $cutoff = $now->copy()
-                    ->setDay(25);
-
                 $end = $now->copy()
                     ->endOfMonth();
+
+                if ($now->month == 2) {
+                    $cutoff = 23;
+                }
+                else {
+                    $cutoff = $now->copy()
+                    ->setDay(25);
+                }
             }
 
-            $currentPeriod = new PayrollPeriod;
+            $currentPeriod = new Cutoff;
             $currentPeriod->start_date = $start->toDateString();
             $currentPeriod->cutoff_date = $cutoff->toDateString();
             $currentPeriod->end_date = $end->toDateString();

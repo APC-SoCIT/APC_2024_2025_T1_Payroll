@@ -20,8 +20,8 @@ class Deduction extends Model
         'calculated',
     ];
 
-    public function additionItems(): HasMany
+    public function itemDeductions(): HasMany
     {
-        return $this->hasMany(AdditionItem::class);
+        return $this->hasMany(ItemDeduction::class);
     }
 }
