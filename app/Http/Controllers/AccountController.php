@@ -54,7 +54,7 @@ class AccountController extends Controller
         $user ??= User::find(Auth::user()->id);
 
         return Inertia::render('Account/Edit', [
-            'targetAccount' => $user->load('userVariables.variable'),
+            'targetAccount' => $user,
         ]);
     }
 

@@ -143,7 +143,7 @@ return new class extends Migration
                 'description' => 'Merit Increase',
                 'required' => false,
                 'calculated' => false,
-                'taxable' => false,
+                'taxable' => false, // not used for the annualized projection
                 'timed' => false,
             ], [
                 'id' => AdditionId::AllowanceAdjustment->value,
@@ -153,6 +153,14 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => false,
                 'timed' => false,
+            ], [
+                'id' => AdditionId::PreviousTaxable->value,
+                'name' => 'Total Previous Taxable Income',
+                'description' => 'Taxable compensation income from previous employer',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => false, // not needed to get this month's gross
+                'timed' => true,
             ], [
                 'id' => AdditionId::HonorariumOthers->value,
                 'name' => 'Honorarium Others',
@@ -175,7 +183,7 @@ return new class extends Migration
                 'description' => 'Manual adjustments',
                 'required' => false,
                 'calculated' => false,
-                'taxable' => true,
+                'taxable' => false, // not used for the annualized projection
                 'timed' => false,
             ], [
                 'id' => AdditionId::SickLeave->value,
@@ -218,7 +226,7 @@ return new class extends Migration
                 'calculated' => true,
                 'monthly' => false,
                 'has_deadline' => false,
-                'taxable' => false,
+                'taxable' => true, // not used for the annualized projection
                 'timed' => false,
             ], [
                 'id' => DeductionId::Sss->value,
@@ -251,9 +259,9 @@ return new class extends Migration
                 'taxable' => false,
                 'timed' => false,
             ], [
-                'id' => DeductionId::SalaryAdjustment->value,
-                'name' => 'Salary/Wage Adjustment',
-                'description' => 'Manual adjustments',
+                'id' => DeductionId::PreviousTaxWithheld->value,
+                'name' => 'Total Previous Tax Withheld',
+                'description' => 'Total taxes withheld from previous employer',
                 'required' => false,
                 'calculated' => false,
                 'monthly' => false,

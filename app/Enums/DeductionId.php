@@ -13,7 +13,7 @@ enum DeductionId: int
     case Sss = 2;
     case Philhealth = 3;
     case Pagibig = 4;
-    case SalaryAdjustment = 5;
+    case PreviousTaxWithheld = 5;
     case Absences = 6;
     case Peraa = 7;
     case Mp2 = 8;

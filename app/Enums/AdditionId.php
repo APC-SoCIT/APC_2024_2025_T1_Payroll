@@ -16,10 +16,11 @@ enum AdditionId: int
     case Honorarium = 5;
     case Merit = 6;
     case AllowanceAdjustment = 7;
-    case HonorariumOthers = 8;
-    case ProfessionalFeeOthers = 9;
-    case SalaryAdjustment = 10;
-    case SickLeave = 11;
-    case OvertimePay = 12;
-    case SubstitutionPay = 13;
+    case PreviousTaxable = 8;
+    case HonorariumOthers = 9;
+    case ProfessionalFeeOthers = 10;
+    case SalaryAdjustment = 11;
+    case SickLeave = 12;
+    case OvertimePay = 13;
+    case SubstitutionPay = 14;
 }
