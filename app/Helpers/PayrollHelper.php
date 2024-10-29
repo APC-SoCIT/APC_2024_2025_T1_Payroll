@@ -33,15 +33,11 @@ class PayrollHelper
 
         $totalAdditions = $item->itemAdditions
             ->where('addition_id', '!=', AdditionId::PreviousTaxable->value)
-            ->reduce(function (?float $carry, ?ItemAddition $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $totalDeductions = $item->itemDeductions
             ->where('deduction_id', '!=', DeductionId::PreviousTaxWithheld->value)
-            ->reduce(function (?float $carry, ?ItemDeduction $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $item->amount = round($totalAdditions - $totalDeductions, 2);
         $item->save();
@@ -97,9 +93,7 @@ class PayrollHelper
                 AdditionId::Deminimis->value,
                 AdditionId::Honorarium->value,
             ])
-            ->reduce(function (?float $carry, ?ItemAddition $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $lastPay = $previous?->itemAdditions
             ->whereIn('addition_id', [
@@ -107,9 +101,7 @@ class PayrollHelper
                 AdditionId::Deminimis->value,
                 AdditionId::Honorarium->value,
             ])
-            ->reduce(function (?float $carry, ?ItemAddition $item) {
-                return $carry + $item->amount;
-            })
+            ->sum('amount')
             ?? 0;
 
         self::calculateSssFromItems($item, $previous, $thisPay, $lastPay);
@@ -127,21 +119,40 @@ class PayrollHelper
     {
         $totalTaxableAdditions = $payrollItem->itemAdditions
             ->where('addition.taxable', true)
-            ->reduce(function (?float $carry, ?ItemAddition $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $totalNonTaxableDeductions = $payrollItem->itemDeductions
             ->where('deduction.taxable', false)
-            ->reduce(function (?float $carry, ?ItemDeduction $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
-        $previousEmployerIncome = $payrollItem->itemAdditions
+        $previousIncome = $payrollItem->itemAdditions
             ->where('addition_id', AdditionId::PreviousTaxable->value)
             ->first()
             ?->amount
             ?? 0;
+
+        // add the total taxable incomes
+        $previousIncome += ItemAddition::where(function (Builder $query) {
+                $query->whereHas('addition', function (Builder $query) {
+                        $query->where('taxable', true);
+                    })
+                    // including retroactive variables
+                    ->orWhere('addition_id', AdditionId::Merit->value)
+                    ->orWhere('addition_id', AdditionId::SalaryAdjustment->value);
+            })
+            // that belong to entries
+            ->whereHas('payrollItem', function (Builder $query) use ($payrollItem) {
+                $query->where('user_id', $payrollItem->user_id)
+                    // of previous cutoffs within the year
+                    ->whereHas('cutoff', function (Builder $query) use ($payrollItem) {
+                        $query->where('end_date', '<', $payrollItem->cutoff->end_date)
+                            ->where('cutoff_date', '>', Carbon::createFromFormat('Y-m-d', $payrollItem->cutoff->cutoff_date)
+                                ->startOfYear()
+                                ->toDateString()
+                        );
+                    });
+            })
+            ->sum('amount');
 
         $totalTaxWithheld = $payrollItem->itemDeductions
             ->where('deduction_id', DeductionId::PreviousTaxWithheld->value)
@@ -163,10 +174,7 @@ class PayrollHelper
                         );
                     });
             })
-            ->get()
-            ->reduce(function (?float $carry, ?PayrollItem $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $remainingCutoffs = 0; // including this cutoff
         $month = Carbon::createFromFormat('Y-m-d', $payrollItem->cutoff->cutoff_date)->month;
@@ -177,7 +185,7 @@ class PayrollHelper
         }
 
         $netBeforeTax = $totalTaxableAdditions - $totalNonTaxableDeductions;
-        $yearEstimate = ($netBeforeTax * $remainingCutoffs) + $previousEmployerIncome;
+        $yearEstimate = ($netBeforeTax * $remainingCutoffs) + $previousIncome;
 
         $bracket = collect(self::$taxBrackets)
             ->where('bracket', '<', $yearEstimate)
@@ -192,14 +200,12 @@ class PayrollHelper
                 AdditionId::Merit->value,
                 AdditionId::SalaryAdjustment->value,
             ])
-            ->reduce(function (?float $carry, ?ItemAddition $item) {
-                return $carry + $item->amount;
-            });
+            ->sum('amount');
 
         $excessTax = $excess * $bracket['excessRate'];
         $tax = ($bracket['baseTax'] + $excessTax - $totalTaxWithheld)
             / $remainingCutoffs;
-        $tax = round($tax, 2);
+        $tax = max(0, round($tax, 2));
 
         ItemDeduction::updateOrCreate([
             'payroll_item_id' => $payrollItem->id,
