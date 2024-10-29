@@ -10,6 +10,7 @@ use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -57,6 +58,23 @@ class PayrollController extends Controller
             'additions' => Addition::all(),
             'deductions' => Deduction::all(),
         ]);
+    }
+
+    public function deleteItem(Cutoff $cutoff, User $user): RedirectResponse
+    {
+        $payrollItem = PayrollItem::where([
+                'user_id' => $user->id,
+                'cutoff_id' => $cutoff->id,
+            ])
+            ->first();
+
+        if (is_null($payrollItem)
+            || $payrollItem->cutoff->hasEnded()) {
+            abort(403);
+        }
+
+        $payrollItem->delete();
+        return redirect(route('cutoffs'));
     }
 
     public function addItemAddition(PayrollItem $payrollItem, Addition $addition): void
@@ -138,7 +156,7 @@ class PayrollController extends Controller
 
         $rules = [ 'amount' => ['required', 'numeric', 'min:0'] ];
         if ($itemDeduction->deduction->has_deadline) {
-            $rules['minutes'] = ['required', 'date'];
+            $rules['deadline'] = ['required', 'date'];
         }
 
         if ($itemDeduction->deduction->hour_based) {

@@ -47,7 +47,7 @@ class CutoffController extends Controller
         }
 
         return Inertia::render('Payroll/Periods', [
-            'cutoffs' => $involved,
+            'cutoffs' => $involved->sortByDesc('end_date'),
             'account' => $user,
         ]);
     }
@@ -87,13 +87,14 @@ class CutoffController extends Controller
         $cutoff->update($validator->validate());
     }
 
-    public function delete(Cutoff $cutoff): void
+    public function delete(Cutoff $cutoff): RedirectResponse
     {
         if ($cutoff->end_date < Carbon::now()->toDateString()) {
             abort(403);
         }
 
         $cutoff->delete();
+        return redirect(route('cutoffs'));
     }
 
     private static function makeCutoffValidator(Request $request): \Illuminate\Validation\Validator
@@ -102,6 +103,7 @@ class CutoffController extends Controller
             'start_date' => 'required|date',
             'cutoff_date' => 'required|date',
             'end_date' => 'required|date',
+            'month_end' => 'required|boolean',
         ]);
 
         $validator->after(function ($validator) {

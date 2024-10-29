@@ -24,6 +24,7 @@ const form = useForm({
     amount: props.itemDeduction.amount,
     hours: props.itemDeduction.hours,
     minutes: props.itemDeduction.minutes,
+    deadline: props.itemDeduction.deadline,
 });
 </script>
 
@@ -86,7 +87,7 @@ const form = useForm({
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <div v-if="itemDeduction.deduction.has_deadline">
-                <InputLabel for="minutes" value="Minutes" />
+                <InputLabel for="deadline" value="Deadline" />
                 <TextInput
                     id="minutes"
                     type="date"
@@ -94,8 +95,9 @@ const form = useForm({
                     class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                     v-model="form.deadline"
                     required
+                    :min="cutoff.end_date"
                 />
-                <InputError class="mt-2" :message="form.errors.minutes" />
+                <InputError class="mt-2" :message="form.errors.deadline" />
             </div>
             <div v-if="!disabled" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>

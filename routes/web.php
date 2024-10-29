@@ -26,10 +26,6 @@ Route::middleware('auth')->group(function () {
     // get own related cutoffs
     Route::get('/cutoffs/me', [CutoffController::class, 'getOwn'])
         ->name('cutoffs.me');
-
-    // get specific entry
-    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
-        ->name('payroll.get');
 });
 
 // HR OR PAYROLL
@@ -74,9 +70,15 @@ Route::middleware(['auth', HrMiddleware::class])->group(function () {
 
 // PAYROLL ONLY
 Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
-    // get a users's current payroll entry
+    // current payroll entry actions
     Route::get('/account/{user}/current', [PayrollController::class, 'getCurrentItemFromUser'])
         ->name('payroll.getCurrentFromUser');
+
+    // specific entry actions
+    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
+        ->name('payroll.get');
+    Route::delete('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'deleteItem'])
+        ->name('payroll.delete');
 
     // addition actions
     Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addItemAddition'])

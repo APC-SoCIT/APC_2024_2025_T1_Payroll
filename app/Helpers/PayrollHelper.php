@@ -72,14 +72,15 @@ class PayrollHelper
             $item->itemDeductions()->createMany($requiredDeductions);
         } else {
             $previous->itemAdditions
-                ->each(function (PayrollItem $previousItem) use ($item) {
+                ->each(function (ItemAddition $previousItem) use ($item) {
                     $new_item = $previousItem->replicate();
                     $new_item->payroll_item_id = $item->id;
                     $new_item->save();
                 });
 
             $previous->itemDeductions
-                ->each(function (PayrollItem $previousItem) use ($item) {
+                ->where('deadline', '<=', $item->cutoff->end_date)
+                ->each(function (ItemDeduction $previousItem) use ($item) {
                     $new_item = $previousItem->replicate();
                     $new_item->payroll_item_id = $item->id;
                     $new_item->save();

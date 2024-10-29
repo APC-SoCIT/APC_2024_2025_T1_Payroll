@@ -1,4 +1,5 @@
 <script setup>
+import Checkbox from '@/Components/Checkbox.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -14,13 +15,14 @@ const form = useForm({
     start_date: props.cutoff.start_date,
     cutoff_date: props.cutoff.cutoff_date,
     end_date: props.cutoff.end_date,
+    month_end: props.cutoff.month_end == true,
 });
 </script>
 
 <template>
     <section class="max-w-xl">
         <header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rechedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Reschedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
                 Reschedule cutoff.
@@ -76,6 +78,19 @@ const form = useForm({
                 />
 
                 <InputError class="mt-2" :message="form.errors.end_date" />
+            </div>
+
+            <div>
+                <h3 class="font-semibold text-l text-gray-800 leading-tight">End of Month</h3>
+
+                <Checkbox
+                    name="month_end"
+                    v-model:checked="form.month_end"
+                    :disabled="form.end_date < $page.props.date"
+                />
+                <span class="ms-2 text-sm text-gray-600">Last cutoff of the month</span>
+
+                <InputError class="mt-2" :message="form.errors.month_end" />
             </div>
 
             <div class="flex items-center gap-4">
