@@ -234,9 +234,10 @@ class PayrollHelper
         float $thisPay,
         float $lastPay
     ): void {
-        $sssDeduction = $currentItem->itemDeductions
-            ->where('deduction_id', DeductionId::Sss->value)
-            ->first();
+        $sssDeduction = ItemDeduction::firstOrCreate([
+                'payroll_item_id' => $currentItem->id,
+                'deduction_id' => DeductionId::Sss->value,
+            ]);
 
         $contributionDue = 0;
 
@@ -272,9 +273,10 @@ class PayrollHelper
         float $thisPay,
         float $lastPay
     ): void {
-        $philhealthDeduction = $currentItem->itemDeductions
-            ->where('deduction_id', DeductionId::Philhealth->value)
-            ->first();
+        $philhealthDeduction = ItemDeduction::firstOrCreate([
+                'payroll_item_id' => $currentItem->id,
+                'deduction_id' => DeductionId::Philhealth->value,
+            ]);
 
         $contributionDue = 0;
         if ($currentItem->cutoff->month_end) {

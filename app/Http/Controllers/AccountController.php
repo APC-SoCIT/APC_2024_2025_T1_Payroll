@@ -32,7 +32,11 @@ class AccountController extends Controller
         return Inertia::render('Accounts', [
             'accounts' => $cutoff->hasEnded()
                 // if past, only related accounts
-                ? $cutoff->users->sort('name')
+                ? $cutoff->payrollItems
+                    ->map(function (PayrollItem $item) {
+                        return $item->user;
+                    })
+                    ->sortBy('name')
                 // if current/future, only active accounts
                 : User::where('active', true)
                     ->orderBy('name')

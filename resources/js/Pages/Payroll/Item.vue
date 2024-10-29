@@ -53,7 +53,7 @@ const props = defineProps([
                             View all involved accounts
                         </Link>
                     </SecondaryButton>
-                    <DangerButton v-if="$page.props.auth.isAuthorized">
+                    <DangerButton v-if="$page.props.auth.isAuthorized && payrollItem.cutoff.end >= $page.props.date">
                         <Link
                             :href="route('payroll.delete', { cutoff: payrollItem.cutoff.id, user: targetAccount.id })"
                             :onBefore="useConfirm(`Are you sure you want to delete payroll entry for ${targetAccount.name} for ${useFormat(payrollItem.cutoff.end_date)}? This action cannot be undone.`)"
