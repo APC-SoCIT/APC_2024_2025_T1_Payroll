@@ -52,14 +52,14 @@ const props = defineProps([
                     <table class="ml-8 w-full text-left table-auto min-w-max">
                         <thead class="text-start">
                             <tr v-if="cutoff == null" class="bg-light">
-                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
                                 <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                                 <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
                             </tr>
                             <tr v-else class="bg-light">
-                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
                                 <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                             </tr>
                         </thead>
