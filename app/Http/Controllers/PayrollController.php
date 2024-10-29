@@ -82,13 +82,21 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0'],
-        ]);
+        $rules = [ 'amount' => ['required', 'numeric', 'min:0'] ];
+        if ($itemAddition->addition->hour_based) {
+            $rules['hours'] = ['required', 'integer', 'min:0'];
+            $rules['minutes'] = ['required', 'integer', 'min:0'];
+        }
 
-        $itemAddition->amount = round($validated['amount'], 2);
+        $validated = $request->validate($rules);
+        if ($itemAddition->addition->hour_based) {
+            $itemAddition->hours = $validated['hours'];
+            $itemAddition->minutes = $validated['minutes'];
+        } else {
+            $itemAddition->amount = round($validated['amount'], 2);
+        }
+
         $itemAddition->save();
-
         PayrollHelper::calculateAll($itemAddition->payrollItem->load('itemAdditions'));
     }
 
@@ -128,13 +136,30 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0'],
-        ]);
+        $rules = [ 'amount' => ['required', 'numeric', 'min:0'] ];
+        if ($itemDeduction->deduction->has_deadline) {
+            $rules['minutes'] = ['required', 'date'];
+        }
 
-        $itemDeduction->amount = round($validated['amount'], 2);
+        if ($itemDeduction->deduction->hour_based) {
+            $rules['hours'] = ['required', 'integer', 'min:0'];
+            $rules['minutes'] = ['required', 'integer', 'min:0'];
+        }
+
+        $validated = $request->validate($rules);
+
+        if ($itemDeduction->deduction->has_deadline) {
+            $itemDeduction->deadline = $validated['deadline'];
+        }
+
+        if ($itemDeduction->deduction->hour_based) {
+            $itemDeduction->hours = $validated['hours'];
+            $itemDeduction->minutes = $validated['minutes'];
+        } else {
+            $itemDeduction->amount = round($validated['amount'], 2);
+        }
+
         $itemDeduction->save();
-
         PayrollHelper::calculateAll($itemDeduction->payrollItem->load('itemDeductions'));
     }
 

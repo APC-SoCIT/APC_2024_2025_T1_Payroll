@@ -29,6 +29,8 @@ class PayrollHelper
         }
 
         self::calculateContributions($item, $previous);
+        self::calculateSubstitutions($item);
+        self::calculateAbsences($item);
         self::calculateTax($item);
 
         $totalAdditions = $item->itemAdditions
@@ -364,6 +366,38 @@ class PayrollHelper
     private static function calculatePeraa(float $pay): float
     {
         return round($pay * 0.03, 2);
+    }
+
+    private static function calculateSubstitutions(PayrollItem $item): void
+    {
+        $substitutionAddition = $item->itemAdditions
+            ->where('addition_id', AdditionId::SubstitutionPay->value)
+            ->first();
+
+        if (is_null($substitutionAddition)) {
+            return;
+        }
+
+        $hoursRendered = $substitutionAddition->hours + ($substitutionAddition->minutes / 60);
+        $substitutionAddition->amount = 300 * ($hoursRendered / (1 + (50 / 60)));
+        $substitutionAddition->save();
+        $item->load('itemAdditions');
+    }
+
+    private static function calculateAbsences(PayrollItem $item): void
+    {
+        $absenceDeduction = $item->itemDeductions
+            ->where('deduction_id', DeductionId::Absences->value)
+            ->first();
+
+        if (is_null($absenceDeduction)) {
+            return;
+        }
+
+        $hoursAbsent = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
+        $absenceDeduction->amount = 300 * ($hoursAbsent / (1 + (50 / 60)));
+        $absenceDeduction->save();
+        $item->load('itemDeductions');
     }
 
     private static function lastCutoff(PayrollItem $payrollItem): ?PayrollItem

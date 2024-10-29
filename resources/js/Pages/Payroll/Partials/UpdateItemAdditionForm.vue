@@ -21,6 +21,8 @@ const deleteable = !periodHasEnded && !props.itemAddition.addition.required;
 
 const form = useForm({
     amount: props.itemAddition.amount,
+    hours: props.itemAddition.hours,
+    minutes: props.itemAddition.minutes,
 });
 </script>
 
@@ -35,17 +37,39 @@ const form = useForm({
         </header>
 
         <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="mt-6 space-y-2">
+            <div v-if="itemAddition.addition.hour_based">
+                <InputLabel for="hours" value="Hours" />
+                <TextInput
+                    id="hours"
+                    type="number"
+                    step="1"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    v-model="form.hours"
+                    required
+                />
+                <InputError class="mt-2" :message="form.errors.hours" />
+            </div>
+            <div v-if="itemAddition.addition.hour_based">
+                <InputLabel for="minutes" value="Minutes" />
+                <TextInput
+                    id="minutes"
+                    type="number"
+                    step="1"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    v-model="form.minutes"
+                    required
+                />
+                <InputError class="mt-2" :message="form.errors.minutes" />
+            </div>
             <div>
                 <InputLabel for="amount" value="Amount" />
-
-                <TextInput v-if="!itemAddition.addition.calculated"
+                <TextInput v-if="!itemAddition.addition.calculated && !itemAddition.addition.hour_based"
                     id="amount"
                     type="number"
                     step="0.01"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                     v-model="form.amount"
                     required
-                    autocomplete="amount"
                 />
                 <!-- TextInput doesn't update on partial reloads -->
                 <input v-else
@@ -56,7 +80,6 @@ const form = useForm({
                     :value="itemAddition.amount"
                     disabled
                 />
-
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
             <div v-if="!disabled"
