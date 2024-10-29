@@ -12,9 +12,9 @@ test('payroll cutoff list is restricted', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/cutoffs');
+        ->get(route('cutoffs'));
 
-    $response->assertRedirect('/dashboard');
+    $response->assertRedirect(route('dashboard'));
 });
 
 test('payroll cutoff list is displayed', function () {
@@ -24,7 +24,7 @@ test('payroll cutoff list is displayed', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/cutoffs');
+        ->get(route('cutoffs'));
 
     $response->assertOk();
 });
@@ -36,7 +36,7 @@ test('payroll cutoff can be created', function () {
 
     $response = $this
         ->actingAs($user)
-        ->get('/cutoff/new');
+        ->get(route('cutoff.newForm'));
 
     $response->assertOk();
 
@@ -46,17 +46,19 @@ test('payroll cutoff can be created', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/cutoff/new', [
+        ->post(route('cutoff.new'), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
-    $response->assertRedirect('/cutoffs');
+    $response->assertRedirect(route('cutoffs'));
     $this->assertDatabaseHas('cutoffs', [
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
+        'month_end' => true,
     ]);
 });
 
@@ -78,10 +80,11 @@ test('payroll cutoff creation validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/cutoff/new', [
+        ->post(route('cutoff.new'), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['end_date']);
@@ -93,10 +96,11 @@ test('payroll cutoff creation validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/cutoff/new', [
+        ->post(route('cutoff.new'), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['end_date']);
@@ -108,10 +112,11 @@ test('payroll cutoff creation validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->post('/cutoff/new', [
+        ->post(route('cutoff.new'), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['cutoff_date']);
@@ -130,11 +135,12 @@ test('payroll cutoff update validation', function () {
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
+        'month_end' => true,
     ]);
 
     $response = $this
         ->actingAs($user)
-        ->get('/cutoff/1');
+        ->get(route('cutoff.get', 1));
 
     $response->assertOk();
 
@@ -145,10 +151,11 @@ test('payroll cutoff update validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/cutoff/1', [
+        ->patch(route('cutoff.update', 1), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['end_date']);
@@ -161,6 +168,7 @@ test('payroll cutoff update validation', function () {
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
+        'month_end' => true,
     ]);
 
     // end before start
@@ -170,10 +178,11 @@ test('payroll cutoff update validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/cutoff/2', [
+        ->patch(route('cutoff.update', 2), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['end_date']);
@@ -185,10 +194,11 @@ test('payroll cutoff update validation', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch('/cutoff/2', [
+        ->patch(route('cutoff.update', 2), [
             'start_date' => $start,
             'cutoff_date' => $cutoff,
             'end_date' => $end,
+            'month_end' => true,
         ]);
 
     $response->assertInvalid(['cutoff_date']);

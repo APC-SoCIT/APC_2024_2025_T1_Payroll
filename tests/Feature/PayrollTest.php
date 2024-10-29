@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\AdditionId;
+use App\Enums\DeductionId;
 use App\Models\PayrollItem;
 use App\Models\Cutoff;
 use App\Models\User;
@@ -71,6 +73,7 @@ test('future payroll item additions can be updated', function () {
         'start_date' => Carbon::now()->addMonth(1)->toDateString(),
         'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
         'end_date' => Carbon::now()->addMonth(2)->toDateString(),
+        'month_end' => true,
     ]);
 
     $response = $this
@@ -85,7 +88,10 @@ test('future payroll item additions can be updated', function () {
     $response = $this
         ->actingAs($user)
         // add deminimis addition
-        ->post(route('itemAddition.new', ['payrollItem' => 1, 'addition' => 2]));
+        ->post(route('itemAddition.new', [
+            'payrollItem' => 1,
+            'addition' => AdditionId::Deminimis->value,
+        ]));
 
     $response->assertOk();
 
@@ -115,15 +121,18 @@ test('payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        // add wage adjustment deduction
-        ->post(route('itemDeduction.new', ['payrollItem' => 1, 'deduction' => 5]));
+        // add random deduction
+        ->post(route('itemDeduction.new', [
+            'payrollItem' => 1,
+            'deduction' => DeductionId::Sla->value,
+        ]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first itemAddition is for automatically calculated tax
-        ->patch(route('itemDeduction.update', 2), [
+        // first few itemDeductions are tax and contributions
+        ->patch(route('itemDeduction.update', 5), [
             'amount' => 727,
         ]);
 
@@ -144,6 +153,7 @@ test('future payroll item deductions can be updated', function () {
         'start_date' => Carbon::now()->addMonth(1)->toDateString(),
         'cutoff_date' => Carbon::now()->addMonth(2)->toDateString(),
         'end_date' => Carbon::now()->addMonth(2)->toDateString(),
+        'month_end' => true,
     ]);
 
     $response = $this
@@ -157,15 +167,18 @@ test('future payroll item deductions can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        // add wage adjustment deduction
-        ->post(route('itemDeduction.new', ['payrollItem' => 1, 'deduction' => 5]));
+        // add random deduction
+        ->post(route('itemDeduction.new', [
+            'payrollItem' => 1,
+            'deduction' => DeductionId::Sla->value,
+        ]));
 
     $response->assertOk();
 
     $response = $this
         ->actingAs($user)
-        // first itemAddition is for automatically calculated tax
-        ->patch(route('itemDeduction.update', 2), [
+        // first few itemDeductions are tax and contributions
+        ->patch(route('itemDeduction.update', 5), [
             'amount' => 727,
         ]);
 
@@ -190,6 +203,7 @@ test('previous payroll items updates are restricted', function () {
         'start_date' => $start,
         'cutoff_date' => $cutoff,
         'end_date' => $end,
+        'month_end' => true,
     ]);
 
     PayrollItem::create([
