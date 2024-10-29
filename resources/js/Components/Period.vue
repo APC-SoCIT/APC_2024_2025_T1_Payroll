@@ -12,7 +12,7 @@ const props = defineProps([
 
 <template>
     <tr>
-        <td class="p-4 border-b border-blue-gray-50">
+        <td class="underline p-4 border-b border-blue-gray-50">
             <Link v-if="account == null"
                 class="text-gray-500 hover:text-gray-700 hover:underline"
                 :href="route('accounts.getFromCutoff', cutoff.id)"
