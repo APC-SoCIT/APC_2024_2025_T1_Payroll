@@ -18,9 +18,10 @@ class Deduction extends Model
         'description',
         'required',
         'calculated',
-        'monthly',
         'has_deadline',
+        'hour_based',
         'taxable',
+        'hr_access',
     ];
 
     public function itemDeductions(): HasMany

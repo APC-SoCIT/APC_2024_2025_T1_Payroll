@@ -46,7 +46,8 @@ class PayrollHelper
     private static function duplicateOrCreate(PayrollItem $item, ?PayrollItem $previous)
     {
         if (is_null($previous)) {
-            $requiredAdditions = Addition::whereRequired(true)->get()
+            $requiredAdditions = Addition::whereRequired(true)
+                ->get()
                 ->map(function (Addition $addition) {
                     return [
                         'addition_id' => $addition->id,
@@ -57,7 +58,8 @@ class PayrollHelper
             $item->itemAdditions()->createMany($requiredAdditions);
 
             $pagibigMin = $item->cutoff->month_end ? 200 : 100;
-            $requiredDeductions = Deduction::whereRequired(true)->get()
+            $requiredDeductions = Deduction::whereRequired(true)
+                ->get()
                 ->map(function (Deduction $deduction) use ($pagibigMin) {
                     return [
                         'deduction_id' => $deduction->id,

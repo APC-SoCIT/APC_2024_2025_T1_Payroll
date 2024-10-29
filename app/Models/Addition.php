@@ -18,7 +18,9 @@ class Addition extends Model
         'description',
         'required',
         'calculated',
+        'hour_based',
         'taxable',
+        'hr_access',
     ];
 
     public function itemAdditions(): HasMany

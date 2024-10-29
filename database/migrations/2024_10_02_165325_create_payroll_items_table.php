@@ -44,7 +44,8 @@ return new class extends Migration
             $table->boolean('required');
             $table->boolean('calculated');
             $table->boolean('taxable');
-            $table->boolean('timed');
+            $table->boolean('hour_based');
+            $table->boolean('hr_access');
             $table->timestamps();
         });
 
@@ -70,10 +71,10 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('required');
             $table->boolean('calculated');
-            $table->boolean('monthly');
             $table->boolean('has_deadline');
             $table->boolean('taxable');
-            $table->boolean('timed');
+            $table->boolean('hour_based');
+            $table->boolean('hr_access');
             $table->timestamps();
         });
 
@@ -100,11 +101,12 @@ return new class extends Migration
             [
                 'id' => AdditionId::Salary->value,
                 'name' => 'Salary/Wage',
-                'description' => 'Base pay based on contract (edit through account)',
+                'description' => 'Base pay based on contract',
                 'required' => true,
                 'calculated' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::Deminimis->value,
                 'name' => 'Deminimis Benefits',
@@ -112,7 +114,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::ProfessionalFee->value,
                 'name' => 'Professional Fee',
@@ -120,7 +123,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::Allowance->value,
                 'name' => 'Allowance',
@@ -128,7 +132,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::Honorarium->value,
                 'name' => 'Honorarium',
@@ -136,7 +141,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::Merit->value,
                 'name' => 'Merit Increase',
@@ -144,7 +150,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false, // not used for the annualized projection
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::AllowanceAdjustment->value,
                 'name' => 'Allowance Adjustment',
@@ -152,7 +159,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::PreviousTaxable->value,
                 'name' => 'Total Previous Taxable Income',
@@ -160,7 +168,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false, // not needed to get this month's gross
-                'timed' => true,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::HonorariumOthers->value,
                 'name' => 'Honorarium Others',
@@ -168,7 +177,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::ProfessionalFeeOthers->value,
                 'name' => 'Professional Fee Others',
@@ -176,7 +186,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::SalaryAdjustment->value,
                 'name' => 'Salary/Wage Adjustment',
@@ -184,23 +195,26 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => false, // not used for the annualized projection
-                'timed' => false,
-            ], [
-                'id' => AdditionId::SickLeave->value,
-                'name' => 'Sick Leave',
-                'description' => 'Sick leave',
-                'required' => false,
-                'calculated' => false,
-                'taxable' => true,
-                'timed' => true,
-            ], [
-                'id' => AdditionId::OvertimePay->value,
-                'name' => 'Overtime Pay',
-                'description' => 'Overtime pay',
-                'required' => false,
-                'calculated' => false,
-                'taxable' => true,
-                'timed' => true,
+                'hour_based' => false,
+                'hr_access' => false,
+            /*], [*/
+            /*    'id' => AdditionId::SickLeave->value,*/
+            /*    'name' => 'Sick Leave',*/
+            /*    'description' => 'Sick leave',*/
+            /*    'required' => false,*/
+            /*    'calculated' => false,*/
+            /*    'taxable' => true,*/
+            /*    'hour_based' => true,*/
+            /*    'hr_access' => false,*/
+            /*], [*/
+            /*    'id' => AdditionId::OvertimeOD->value,*/
+            /*    'name' => 'Overtime Pay',*/
+            /*    'description' => 'Overtime pay',*/
+            /*    'required' => false,*/
+            /*    'calculated' => false,*/
+            /*    'taxable' => true,*/
+            /*    'hour_based' => true,*/
+            /*    'hr_access' => false,*/
             ], [
                 'id' => AdditionId::SubstitutionPay->value,
                 'name' => 'Substitution Pay',
@@ -208,7 +222,8 @@ return new class extends Migration
                 'required' => false,
                 'calculated' => false,
                 'taxable' => true,
-                'timed' => true,
+                'hour_based' => true,
+                'hr_access' => false,
             ],
         ];
 
@@ -224,200 +239,200 @@ return new class extends Migration
                 'description' => 'Income tax (computed)',
                 'required' => true,
                 'calculated' => true,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true, // not used for the annualized projection
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Sss->value,
                 'name' => 'SSS Contribution',
                 'description' => 'Mandatory SSS contribution (computed)',
                 'required' => true,
                 'calculated' => true,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Philhealth->value,
                 'name' => 'PhilHealth Contribution',
                 'description' => 'Mandatory PhilHealth contribution (computed)',
                 'required' => true,
                 'calculated' => true,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Pagibig->value,
                 'name' => 'Pag-IBIG Contribution',
-                'description' => 'Mandatory Pag-IBIG contribution (edit through account)',
+                'description' => 'Mandatory Pag-IBIG contribution',
                 'required' => true,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => false,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::PreviousTaxWithheld->value,
                 'name' => 'Total Previous Tax Withheld',
                 'description' => 'Total taxes withheld from previous employer',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Absences->value,
                 'name' => 'Absences',
                 'description' => 'Absenses',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => true,
+                'hour_based' => true,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Peraa->value,
                 'name' => 'PERAA',
                 'description' => 'PERAA',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Mp2->value,
                 'name' => 'MP2',
                 'description' => 'MP2',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => true,
                 'has_deadline' => true,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Sla->value,
                 'name' => 'SM/SLA',
                 'description' => 'SM/SLA',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::SmCard->value,
                 'name' => 'SM Card',
                 'description' => 'SM card',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::SssLoan->value,
                 'name' => 'SSS Loan',
                 'description' => 'SSS loan',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => true,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::SssCalamityLoan->value,
                 'name' => 'SSS Calamity Loan',
                 'description' => 'SSS calamity loan',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => true,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::PeraaLoan->value,
                 'name' => 'PERAA Loan',
                 'description' => 'PERAA loan',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => true,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::HdmfLoan->value,
                 'name' => 'HDMF Loan',
                 'description' => 'HDMF loan',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => true,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::ArPhone->value,
                 'name' => 'AR Phone',
                 'description' => 'AR phone',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::Hmo->value,
                 'name' => 'HMO',
                 'description' => 'HMO',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::SpecialExam->value,
                 'name' => 'Special Exam',
                 'description' => 'Special exam',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::ArOthers->value,
                 'name' => 'AR Others',
                 'description' => 'AR others',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::GradesPenalty->value,
                 'name' => 'Grades Penalty',
                 'description' => 'Grades penalty',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ], [
                 'id' => DeductionId::BikeLoan->value,
                 'name' => 'Bike Loan',
                 'description' => 'Bike loan',
                 'required' => false,
                 'calculated' => false,
-                'monthly' => false,
                 'has_deadline' => false,
                 'taxable' => true,
-                'timed' => false,
+                'hour_based' => false,
+                'hr_access' => false,
             ],
         ];
 

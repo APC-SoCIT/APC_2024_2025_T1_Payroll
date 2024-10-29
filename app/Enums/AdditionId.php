@@ -21,6 +21,6 @@ enum AdditionId: int
     case ProfessionalFeeOthers = 10;
     case SalaryAdjustment = 11;
     case SickLeave = 12;
-    case OvertimePay = 13;
+    case OvertimeOD = 13;
     case SubstitutionPay = 14;
 }
