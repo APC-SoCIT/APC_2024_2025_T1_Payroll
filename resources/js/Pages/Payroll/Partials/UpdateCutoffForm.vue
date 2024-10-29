@@ -18,7 +18,7 @@ const form = useForm({
 </script>
 
 <template>
-    <section class="max-w-xl">
+    <section>
         <header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rechedule Cutoff for {{ useFormat(cutoff.end_date) }}</h2>
 
@@ -26,7 +26,7 @@ const form = useForm({
                 Reschedule cutoff.
             </p>
         </header>
-        <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id), { preserveScroll: true })" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('cutoff.update', cutoff.id), { preserveScroll: true })" class="mt-10 space-y-8">
             <div>
                 <h3 class="font-semibold text-l text-gray-800 leading-tight">Start Date</h3>
                 <InputLabel for="start_date" value="First day of the cutoff" />
@@ -78,29 +78,29 @@ const form = useForm({
                 <InputError class="mt-2" :message="form.errors.end_date" />
             </div>
 
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
-                </Transition>
+            <div class="place-content-end flex gap-4">
+                <div class="flex items-center gap-4">
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    </Transition>
+                    
+                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                </div>
+                <div class="py-2">
+                    <Link
+                        :href="route('cutoff.delete', cutoff.id)"
+                        method="delete"
+                        as="button"
+                        :onBefore="useConfirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}? All entries will also be deleted. This action cannot be undone.`)"
+                        class="uppercase inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    Delete</Link>
+                </div>
             </div>
         </form>
-        <div class="py-2">
-            <Link
-                :href="route('cutoff.delete', cutoff.id)"
-                method="delete"
-                as="button"
-                :onBefore="useConfirm(`Are you sure you want to delete the schedule for ${useFormat(new Date(cutoff.end_date))}? All entries will also be deleted. This action cannot be undone.`)"
-                class="uppercase inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
-            >
-                Delete
-            </Link>
-        </div>
     </section>
 </template>
