@@ -51,10 +51,7 @@ Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
         ->name('cutoffs.getFromUser');
     Route::get('/cutoff/{cutoff}/accounts', [AccountController::class, 'getFromCutoff'])
         ->name('accounts.getFromCutoff');
-});
 
-// HR ONLY
-Route::middleware(['auth', HrMiddleware::class])->group(function () {
     // cutoff actions
     Route::get('/cutoff/new', [CutoffController::class, 'add'])
         ->name('cutoff.newForm');
