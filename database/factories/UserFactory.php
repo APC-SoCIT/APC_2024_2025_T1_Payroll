@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\RoleId;
+use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -29,6 +32,15 @@ class UserFactory extends Factory
             return [
                 'email' => config('roles.hr_accounts')[0],
             ];
+        })->afterCreating(function (User $user) {
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Payroll->value,
+            ]);
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Hr->value,
+            ]);
         });
     }
 }

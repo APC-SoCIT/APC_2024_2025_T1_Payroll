@@ -4,7 +4,6 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\CutoffController;
 use App\Http\Controllers\AccountController;
 use App\Http\Middleware\AuthorizedMiddleware;
-use App\Http\Middleware\HrMiddleware;
 use App\Http\Middleware\PayrollMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

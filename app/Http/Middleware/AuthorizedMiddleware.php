@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\AuthHelper;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizedMiddleware
@@ -16,17 +16,7 @@ class AuthorizedMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::check()) {
-            return redirect(route('dashboard'));
-        }
-
-        $user = Auth::user();
-
-        if (in_array($user->email, config('roles.hr_accounts'))) {
-            return $next($request);
-        }
-
-        if (in_array($user->email, config('roles.payroll_accounts'))) {
+        if (AuthHelper::isAuthorized()) {
             return $next($request);
         }
 

@@ -35,8 +35,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'isHr' => AuthHelper::isRole('hr'),
-                'isPayroll' => AuthHelper::isRole('payroll'),
+                'isHr' => AuthHelper::isHr(),
+                'isPayroll' => AuthHelper::isPayroll(),
                 'isAuthorized' => AuthHelper::isAuthorized(),
             ],
             'date' => Carbon::now()->toDateString(),

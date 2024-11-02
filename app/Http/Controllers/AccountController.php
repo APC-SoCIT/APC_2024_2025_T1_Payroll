@@ -8,7 +8,9 @@ use App\Models\Addition;
 use App\Models\Cutoff;
 use App\Models\Deduction;
 use App\Models\PayrollItem;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UserRole;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -119,5 +121,23 @@ class AccountController extends Controller
                     $item->delete();
                 });
         }
+    }
+
+    public function addRole(User $user, Role $role): void
+    {
+        UserRole::firstOrCreate([
+            'user_id' => $user->id,
+            'role_id' => $role->id,
+        ]);
+    }
+
+    public function removeRole(User $user, Role $role): void
+    {
+        UserRole::where([
+            'user_id' => $user->id,
+            'role_id' => $role->id,
+        ])
+            ->first()
+            ->delete();
     }
 }
