@@ -36,7 +36,7 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Payroll Item for
                 <Link v-if="$page.props.auth.isAuthorized"
-                    class="text-gray-500 hover:text-gray-700 hover:underline"
+                    class="text-gray-500 hover:text-gray-700 underline"
                     :href="route('account.get', targetAccount.id)"
                 >
                     {{ targetAccount.name }}
@@ -44,7 +44,7 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
                 <span v-else>{{ targetAccount.name }}</span>
                 for
                 <Link v-if="$page.props.auth.isAuthorized"
-                    class="text-gray-500 hover:text-gray-700 hover:underline"
+                    class="text-gray-500 hover:text-gray-700 underline"
                     :href="route('cutoff.get', payrollItem.cutoff.id)"
                 >
                     {{ useFormat(payrollItem.cutoff.end_date) }}
