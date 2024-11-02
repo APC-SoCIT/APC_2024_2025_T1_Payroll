@@ -10,8 +10,8 @@ const props = defineProps([
 
 <template>
     <tbody>
-        <tr >
-            <td class="p-4 border-b border-blue-gray-50">
+        <tr>
+            <td class="px-8 border-b border-blue-gray-50">
                 <Link v-if="cutoff == null" class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('cutoffs.getFromUser', account.id)">{{ account.name }}</Link>
                 <Link v-else class="text-gray-500 hover:text-gray-700 hover:underline" :href="route('payroll.get', { cutoff: cutoff.id, user: account.id })">{{ account.name }}</Link>
             </td>

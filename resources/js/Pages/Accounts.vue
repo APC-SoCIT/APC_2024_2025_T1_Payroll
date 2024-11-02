@@ -5,7 +5,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
 import { useForm, Head, Link } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
-import FilterAccounts from '@/Components/FilterAccounts.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
+import Toolbar from 'primevue/toolbar';
+
 
 const props = defineProps([
     'accounts',
@@ -29,16 +32,47 @@ const props = defineProps([
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 
                 <div v-if="cutoff == null" class="columns-2 my-10">
-                    <div class="columns-2">
-                        <div>
-                            <TextInput>
-
-                            </TextInput>  
-                            </div>      
-                        <div>
-                            <FilterAccounts>
+                    <div class="flex">
+                        <div class=" mr-4">
+                            <TextInput class="w-80 mx-2">
                                 
-                            </FilterAccounts>
+                            </TextInput>  
+                        </div>
+                        <div>
+                            <Dropdown>
+                                <template #trigger>
+                                        <button type="button" class="flex px-4 p-2 rounded-md shadow-lg bg-gray-800">
+                                            <p class="text-white">
+                                                Filter
+                                            </p>
+
+                                            <svg
+                                                class="ml-2 h-4"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="white"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </button>
+                                </template>
+
+                                <template #content>
+                                    <DropdownLink>
+                                        All
+                                    </DropdownLink>
+                                    <DropdownLink>
+                                        Active
+                                    </DropdownLink>
+                                    <DropdownLink>
+                                        Inactive
+                                    </DropdownLink>
+                                </template>
+                            </Dropdown>
                         </div>
                     </div>
                     <div class="text-end">
@@ -49,7 +83,7 @@ const props = defineProps([
                 </div>
 
                 <div class="border flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                    <table class="ml-8 w-full text-left table-auto min-w-max">
+                    <table class="w-full text-left table-auto">
                         <thead class="text-start">
                             <tr v-if="cutoff == null" class="bg-light">
                                 <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>

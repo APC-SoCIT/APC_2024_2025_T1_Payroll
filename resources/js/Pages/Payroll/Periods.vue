@@ -38,7 +38,7 @@ const props = defineProps([
                 </div>
 
                 <div class="border relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                    <table class="ml-8 w-full text-left table-auto min-w-max">
+                    <table class="w-full text-left table-auto min-w-max">
                         <thead class="text-start">
                             <tr v-if="account == null" class="bg-light">
                                 <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
