@@ -22,7 +22,7 @@ const props = defineProps([
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Payroll Item for
-                <Link v-if="$page.props.auth.isAuthorized"
+                <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                     class="underline text-gray-500 hover:text-gray-700 hover:underline"
                     :href="route('account.get', targetAccount.id)"
                 >
@@ -30,7 +30,7 @@ const props = defineProps([
                 </Link>
                 <span v-else>{{ targetAccount.name }}</span>
                 for
-                <Link v-if="$page.props.auth.isAuthorized"
+                <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                     class="underline text-gray-500 hover:text-gray-700 hover:underline"
                     :href="route('cutoff.get', payrollItem.cutoff.id)"
                 >
@@ -48,12 +48,12 @@ const props = defineProps([
                             View all involved cutoffs
                         </Link>
                     </SecondaryButton>
-                    <SecondaryButton v-if="$page.props.auth.isAuthorized">
+                    <SecondaryButton v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)">
                         <Link :href="route('accounts.getFromCutoff', payrollItem.cutoff.id)">
                             View all involved accounts
                         </Link>
                     </SecondaryButton>
-                    <DangerButton v-if="$page.props.auth.isAuthorized && payrollItem.cutoff.end >= $page.props.date">
+                    <DangerButton v-if="($page.props.auth.isPayroll || $page.props.auth.isHr) && payrollItem.cutoff.end >= $page.props.date">
                         <Link
                             :href="route('payroll.delete', { cutoff: payrollItem.cutoff.id, user: targetAccount.id })"
                             :onBefore="useConfirm(`Are you sure you want to delete payroll entry for ${targetAccount.name} for ${useFormat(payrollItem.cutoff.end_date)}? This action cannot be undone.`)"

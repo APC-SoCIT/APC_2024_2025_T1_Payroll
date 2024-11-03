@@ -3,8 +3,7 @@
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\CutoffController;
 use App\Http\Controllers\AccountController;
-use App\Http\Middleware\AuthorizedMiddleware;
-use App\Http\Middleware\PayrollMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,8 +26,16 @@ Route::middleware('auth')->group(function () {
         ->name('cutoffs.me');
 });
 
+// ADMIN
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
+    Route::post('/account/{user}/role/{role}', [AccountController::class, 'addRole'])
+        ->name('role.add');
+    Route::delete('/role/{userRole}', [AccountController::class, 'removeRole'])
+        ->name('role.remove');
+});
+
 // HR OR PAYROLL
-Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':hr,payroll'])->group(function () {
     // account index
     Route::get('/accounts', [AccountController::class, 'index'])
         ->name('accounts');
@@ -65,7 +72,7 @@ Route::middleware(['auth', AuthorizedMiddleware::class])->group(function () {
 });
 
 // PAYROLL ONLY
-Route::middleware(['auth', PayrollMiddleware::class])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function () {
     // current payroll entry actions
     Route::get('/account/{user}/current', [PayrollController::class, 'getCurrentItemFromUser'])
         ->name('payroll.getCurrentFromUser');

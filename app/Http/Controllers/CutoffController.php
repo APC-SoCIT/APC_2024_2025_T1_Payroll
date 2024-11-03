@@ -33,6 +33,7 @@ class CutoffController extends Controller
     {
         // all the user is involved with (including past)
         $involved = $user->payrollItems
+            ->where('cutoff.end_date', '<', PayrollHelper::currentPeriod()->end_date)
             ->map(function (?PayrollItem $item) {
                 return $item->cutoff;
             });
@@ -40,7 +41,7 @@ class CutoffController extends Controller
         // if the user is active, include current and future too
         // (only authorized can see)
         if ($user->active
-            && AuthHelper::isAuthorized()) {
+            && (AuthHelper::isHr() || AuthHelper::isPayroll())) {
             $involved->merge(
                 Cutoff::where('end_date', '>=', Carbon::now()->toDateString())
             );

@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'isHr' => AuthHelper::isHr(),
                 'isPayroll' => AuthHelper::isPayroll(),
-                'isAuthorized' => AuthHelper::isAuthorized(),
+                'isAdmin' => AuthHelper::isAdmin(),
             ],
             'date' => Carbon::now()->toDateString(),
         ];

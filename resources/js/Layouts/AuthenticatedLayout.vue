@@ -35,7 +35,7 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink v-if="$page.props.auth.isAuthorized"
+                                <NavLink v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                                     :href="route('cutoffs')"
                                     :active="route().current('cutoffs')"
                                 >
@@ -146,7 +146,7 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                     </div>
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink v-if="$page.props.auth.isAuthorized"
+                        <ResponsiveNavLink v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                             :href="route('cutoffs')"
                             :active="route().current('cutoffs')"
                         >
@@ -159,7 +159,7 @@ const showingNavigationDropdown = ref(false);
                             Cutoffs
                         </ResponsiveNavLink>
                     </div>
-                    <div v-if="$page.props.auth.isAuthorized" class="pt-2 pb-3 space-y-1">
+                    <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)" class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('accounts')" :active="route().current('dashboard')">
                             Accounts
                         </ResponsiveNavLink>

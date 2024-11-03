@@ -4,30 +4,10 @@ namespace App\Helpers;
 
 use App\Enums\RoleId;
 use App\Models\User;
-use App\Models\UserRole;
 use Illuminate\Support\Facades\Auth;
 
 class AuthHelper
 {
-    public static function isAuthorized(): bool
-    {
-        if (! Auth::check()) {
-            return false;
-        }
-
-        $user = User::find(Auth::user()->id);
-        return $user->userRoles
-            ->map(function (UserRole $userRole) {
-                return $userRole->role_id;
-            })
-            ?->intersect([
-                RoleId::Payroll->value,
-                RoleId::Hr->value,
-            ])
-            ->isNotEmpty()
-            ?? false;
-    }
-
     public static function isAdmin(): bool
     {
         if (! Auth::check()) {

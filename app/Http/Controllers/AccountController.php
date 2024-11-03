@@ -82,10 +82,11 @@ class AccountController extends Controller
         ]);
 
         return Inertia::render('Account/Edit', [
-            'targetAccount' => $user,
+            'targetAccount' => $user->load('userRoles.role'),
             'payrollItem' => $payrollItem,
             'additions' => Addition::all(),
             'deductions' => Deduction::all(),
+            'roles' => Role::all(),
         ]);
     }
 
@@ -131,13 +132,8 @@ class AccountController extends Controller
         ]);
     }
 
-    public function removeRole(User $user, Role $role): void
+    public function removeRole(UserRole $userRole): void
     {
-        UserRole::where([
-            'user_id' => $user->id,
-            'role_id' => $role->id,
-        ])
-            ->first()
-            ->delete();
+        $userRole->delete();
     }
 }
