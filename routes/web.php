@@ -34,8 +34,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
         ->name('role.remove');
 });
 
-// HR OR PAYROLL
-Route::middleware(['auth', RoleMiddleware::class . ':hr,payroll'])->group(function () {
+// HR OR PAYROLL OR ADMIN
+Route::middleware(['auth', RoleMiddleware::class . ':admin,hr,payroll'])->group(function () {
     // account index
     Route::get('/accounts', [AccountController::class, 'index'])
         ->name('accounts');
@@ -49,7 +49,10 @@ Route::middleware(['auth', RoleMiddleware::class . ':hr,payroll'])->group(functi
         ->name('account.get');
     Route::patch('/account/{user}', [AccountController::class, 'update'])
         ->name('account.update');
+});
 
+// HR OR PAYROLL
+Route::middleware(['auth', RoleMiddleware::class . ':hr,payroll'])->group(function () {
     // cutoffs
     Route::get('/cutoffs', [CutoffController::class, 'index'])
         ->name('cutoffs');
