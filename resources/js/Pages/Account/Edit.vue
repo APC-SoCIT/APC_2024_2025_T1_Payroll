@@ -13,9 +13,6 @@ const props = defineProps([
     'deductions',
     'roles',
 ]);
-
-const existingRoles = props.targetAccount.user_roles.map(a => a.role.id);
-const missingRoles = props.roles.filter(a => !existingRoles.includes(a.id));
 </script>
 
 <template>
@@ -46,9 +43,9 @@ const missingRoles = props.roles.filter(a => !existingRoles.includes(a.id));
                         <p class="mt-1 text-sm text-gray-600">
                             Account permissions
                         </p>
-                        <RoleSelector v-if="missingRoles.length > 0"
+                        <RoleSelector
                             :targetAccount
-                            :roles="missingRoles"
+                            :roles
                         />
 
                         <div v-for="user_role in targetAccount.user_roles">

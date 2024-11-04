@@ -32,6 +32,10 @@ return new class extends Migration
 
         $roles = [
             [
+                'id' => RoleId::Admin->value,
+                'name' => 'Admin',
+                'description' => 'Manages account roles',
+            ], [
                 'id' => RoleId::Payroll->value,
                 'name' => 'Payroll',
                 'description' => 'Manages payroll entries',

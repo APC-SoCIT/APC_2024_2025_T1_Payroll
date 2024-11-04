@@ -9,6 +9,7 @@ namespace App\Enums;
  */
 enum RoleId: int
 {
-    case Payroll = 1;
-    case Hr = 2;
+    case Admin = 1;
+    case Payroll = 2;
+    case Hr = 3;
 }

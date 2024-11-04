@@ -14,7 +14,9 @@ class AuthHelper
             return false;
         }
 
-        return in_array(Auth::user()->email, config('roles.admin_accounts'));
+        $user = User::find(Auth::user()->id);
+        return $user->userRoles->contains('role_id', RoleId::Admin->value)
+            || in_array(Auth::user()->email, config('roles.admin_accounts'));
     }
 
     public static function isPayroll(): bool
