@@ -31,6 +31,7 @@ class PayrollHelper
         self::calculateContributions($item, $previous);
         self::calculateSubstitutions($item);
         self::calculateAbsences($item);
+        self::calculateOvertime($item);
         self::calculateTax($item);
 
         $totalAdditions = $item->itemAdditions
@@ -403,6 +404,31 @@ class PayrollHelper
         $item->load('itemDeductions');
     }
 
+    private static function calculateOvertime(PayrollItem $item): void
+    {
+        $overtimeAdditions = $item->itemAdditions
+            ->whereIn('addition_id', array_keys(self::$overtimeRates));
+
+        $grossPay = $item->itemAdditions
+            ->whereIn('addition_id', [
+                AdditionId::Salary->value,
+                AdditionId::Deminimis->value,
+                AdditionId::Allowance->value,
+                AdditionId::Honorarium->value,
+            ])
+            ->sum('amount');
+        $hourlyRate = ($grossPay * 2) * 12 / 52 / 44;
+
+        foreach ($overtimeAdditions as $overtimeAddition) {
+            $rate = self::$overtimeRates[$overtimeAddition->addition_id];
+            $time = $overtimeAddition->hours + ($overtimeAddition->minutes / 60);
+            $overtimeAddition->amount = round($hourlyRate * $rate * $time, 2);
+            $overtimeAddition->save();
+        }
+
+        $item->load('itemAdditions');
+    }
+
     private static function lastCutoff(PayrollItem $payrollItem): ?PayrollItem
     {
         $endDate = $payrollItem->cutoff->end_date;
@@ -475,6 +501,17 @@ class PayrollHelper
 
         return $currentPeriod;
     }
+
+    private static $overtimeRates = [
+        AdditionId::Overtime->value => 1.25,
+        AdditionId::OvertimeNight->value => 1.25 * 1.1,
+        AdditionId::OvertimeRest->value => 1.3,
+        AdditionId::OvertimeRestExcess->value => 1.3 * 1.3,
+        AdditionId::OvertimeRestExcess->value => 1.3 * 1.3,
+        AdditionId::OvertimeRestNight->value => 1.3 * 1.3 * 1.1,
+        AdditionId::OvertimeHoliday->value => 2,
+        AdditionId::OvertimeHolidayExcess->value => 2 * 1.3,
+    ];
 
     private static $taxBrackets = [
         ['bracket' => 0, 'baseTax' => 0, 'excessRate' => 0],

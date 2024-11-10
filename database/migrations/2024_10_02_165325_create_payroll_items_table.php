@@ -197,24 +197,87 @@ return new class extends Migration
                 'taxable' => false, // not used for the annualized projection
                 'hour_based' => false,
                 'hr_access' => false,
-            /*], [*/
-            /*    'id' => AdditionId::SickLeave->value,*/
-            /*    'name' => 'Sick Leave',*/
-            /*    'description' => 'Sick leave',*/
-            /*    'required' => false,*/
-            /*    'calculated' => false,*/
-            /*    'taxable' => true,*/
-            /*    'hour_based' => true,*/
-            /*    'hr_access' => false,*/
-            /*], [*/
-            /*    'id' => AdditionId::OvertimeOD->value,*/
-            /*    'name' => 'Overtime Pay',*/
-            /*    'description' => 'Overtime pay',*/
-            /*    'required' => false,*/
-            /*    'calculated' => false,*/
-            /*    'taxable' => true,*/
-            /*    'hour_based' => true,*/
-            /*    'hr_access' => false,*/
+            ], [
+                'id' => AdditionId::SickLeave->value,
+                'name' => 'Sick Leave',
+                'description' => 'Sick leave',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::Overtime->value,
+                'name' => 'Overtime Pay (Regular)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeNight->value,
+                'name' => 'Overtime Pay (Night)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeRest->value,
+                'name' => 'Overtime Pay (Rest Day/Special Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeRestExcess->value,
+                'name' => 'Overtime Pay (Excess on Rest Day/Special Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeRestNight->value,
+                'name' => 'Overtime Pay (Night on Rest Day/Special Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeHoliday->value,
+                'name' => 'Overtime Pay (Regular Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeHolidayExcess->value,
+                'name' => 'Overtime Pay (Excess on Regular Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
+            ], [
+                'id' => AdditionId::OvertimeHolidayNight->value,
+                'name' => 'Overtime Pay (Night on Regular Holiday)',
+                'description' => 'Overtime pay',
+                'required' => false,
+                'calculated' => false,
+                'taxable' => true,
+                'hour_based' => true,
+                'hr_access' => false,
             ], [
                 'id' => AdditionId::SubstitutionPay->value,
                 'name' => 'Substitution Pay',
