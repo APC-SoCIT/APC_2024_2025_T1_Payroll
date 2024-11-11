@@ -22,12 +22,13 @@ enum AdditionId: int
     case SalaryAdjustment = 11;
     case SickLeave = 12;
     case SubstitutionPay = 13;
-    case Overtime = 14;
-    case OvertimeNight = 15;
-    case OvertimeRest = 16;
-    case OvertimeRestExcess = 17;
-    case OvertimeRestNight = 18;
-    case OvertimeHoliday = 19;
-    case OvertimeHolidayExcess = 20;
-    case OvertimeHolidayNight = 21;
+    case SubstitutionPayShs = 14;
+    case Overtime = 15;
+    case OvertimeNight = 16;
+    case OvertimeRest = 17;
+    case OvertimeRestExcess = 18;
+    case OvertimeRestNight = 19;
+    case OvertimeHoliday = 20;
+    case OvertimeHolidayExcess = 21;
+    case OvertimeHolidayNight = 22;
 }

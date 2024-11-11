@@ -374,6 +374,28 @@ class PayrollHelper
 
     private static function calculateSubstitutions(PayrollItem $item): void
     {
+        self::calculateCollegeSubstitutions($item);
+        self::calculateShsSubstitutions($item);
+    }
+
+    private static function calculateShsSubstitutions(PayrollItem $item): void
+    {
+        $substitutionAddition = $item->itemAdditions
+            ->where('addition_id', AdditionId::SubstitutionPayShs->value)
+            ->first();
+
+        if (is_null($substitutionAddition)) {
+            return;
+        }
+
+        $hoursRendered = $substitutionAddition->hours + ($substitutionAddition->minutes / 60);
+        $substitutionAddition->amount = 240 * ($hoursRendered / (1 + (25 / 60)));
+        $substitutionAddition->save();
+        $item->load('itemAdditions');
+    }
+
+    private static function calculateCollegeSubstitutions(PayrollItem $item): void
+    {
         $substitutionAddition = $item->itemAdditions
             ->where('addition_id', AdditionId::SubstitutionPay->value)
             ->first();
@@ -390,6 +412,13 @@ class PayrollHelper
 
     private static function calculateAbsences(PayrollItem $item): void
     {
+        self::calculateRegularAbsences($item);
+        self::calculateCollegeAbsences($item);
+        self::calculateShsAbsences($item);
+    }
+
+    private static function calculateRegularAbsences(PayrollItem $item): void
+    {
         $absenceDeduction = $item->itemDeductions
             ->where('deduction_id', DeductionId::Absences->value)
             ->first();
@@ -398,8 +427,50 @@ class PayrollHelper
             return;
         }
 
+        $grossPay = $item->itemAdditions
+            ->whereIn('addition_id', [
+                AdditionId::Salary->value,
+                AdditionId::Deminimis->value,
+                AdditionId::Allowance->value,
+                AdditionId::Honorarium->value,
+            ])
+            ->sum('amount');
+        $hourlyRate = ($grossPay * 2) * 12 / 52 / 44;
+
         $hoursAbsent = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
-        $absenceDeduction->amount = 300 * ($hoursAbsent / (1 + (50 / 60)));
+        $absenceDeduction->amount = $hoursAbsent * $hourlyRate;
+        $absenceDeduction->save();
+        $item->load('itemDeductions');
+    }
+
+    private static function calculateCollegeAbsences(PayrollItem $item): void
+    {
+        $absenceDeduction = $item->itemDeductions
+            ->where('deduction_id', DeductionId::ClassAbsences->value)
+            ->first();
+
+        if (is_null($absenceDeduction)) {
+            return;
+        }
+
+        $hoursRendered = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
+        $absenceDeduction->amount = 300 * ($hoursRendered / (1 + (50 / 60)));
+        $absenceDeduction->save();
+        $item->load('itemDeductions');
+    }
+
+    private static function calculateShsAbsences(PayrollItem $item): void
+    {
+        $absenceDeduction = $item->itemDeductions
+            ->where('deduction_id', DeductionId::ClassAbsencesShs->value)
+            ->first();
+
+        if (is_null($absenceDeduction)) {
+            return;
+        }
+
+        $hoursRendered = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
+        $absenceDeduction->amount = 240 * ($hoursRendered / (1 + (25 / 60)));
         $absenceDeduction->save();
         $item->load('itemDeductions');
     }
