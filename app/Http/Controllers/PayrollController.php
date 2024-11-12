@@ -12,8 +12,10 @@ use App\Models\PayrollItem;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response as FacadesResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 /**
  * Controller for dealing with payroll entries
@@ -192,5 +194,50 @@ class PayrollController extends Controller
         $itemDeduction->delete();
 
         PayrollHelper::calculateAll($payrollItem->load('itemDeductions'));
+    }
+
+    public function exportCutoffData(Cutoff $cutoff): HttpFoundationResponse
+    {
+        $fileName = "{$cutoff->end_date}_export.csv";
+        $file = fopen($fileName, 'w');
+
+        $additions = Addition::all()->pluck('name');
+        $deductions = Deduction::all()->pluck('name');
+
+        $additionCount = $additions->count();
+        $deductionCount = $deductions->count();
+
+        $headers = [
+            'Account',
+            'Total',
+            ...$additions,
+            ...$deductions,
+        ];
+        fputcsv($file, $headers);
+
+        foreach ($cutoff->payrollItems as $item) {
+            $itemAdditions = array_fill(1, $additionCount, '');
+            $itemDeductions = array_fill(1, $deductionCount, '');
+
+            foreach ($item->itemAdditions as $itemAddition) {
+                $itemAdditions[$itemAddition->addition->id] = $itemAddition->amount;
+            }
+
+            foreach ($item->itemDeductions as $itemDeduction) {
+                $itemDeductions[$itemDeduction->deduction->id] = $itemDeduction->amount;
+            }
+
+            $row = [
+                $item->user->name,
+                $item->amount,
+                ...$itemAdditions,
+                ...$itemDeductions,
+            ];
+
+            fputcsv($file, $row);
+        }
+
+        fclose($file);
+        return FacadesResponse::download(public_path($fileName))->deleteFileAfterSend(true);
     }
 }

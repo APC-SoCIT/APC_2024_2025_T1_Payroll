@@ -85,6 +85,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('payroll.get');
     Route::delete('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'deleteItem'])
         ->name('payroll.delete');
+    Route::get('/cutoff/{cutoff}/export', [PayrollController::class, 'exportCutoffData'])
+        ->name('cutoff.export');
 
     // addition actions
     Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
