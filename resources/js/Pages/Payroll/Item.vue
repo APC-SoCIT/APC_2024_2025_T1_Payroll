@@ -77,13 +77,16 @@ const missingDeductions = props.deductions.filter(a => !existingDeductions.inclu
             </div>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
-                    <AdditionSelector
-                        v-if="!periodHasEnded && missingAdditions.length > 0"
-                        :targetAccount
-                        :payrollItem
-                        :additions="missingAdditions"
-                    />
+                    <div class="columns-2 flex justify-between items-center">
+                        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
+                        <div class="justify-content-end">
+                            <AdditionSelector
+                            v-if="!periodHasEnded && missingAdditions.length > 0"
+                            :targetAccount
+                            :payrollItem
+                            :additions="missingAdditions"/>     
+                        </div>
+                    </div>
                     <div v-for="itemAddition in payrollItem.item_additions">
                         <UpdateItemAdditionForm
                             :targetAccount

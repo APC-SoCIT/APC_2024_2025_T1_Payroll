@@ -10,15 +10,15 @@ defineProps([
 </script>
 
 <template>
-    <div class="hidden sm:flex sm:items-center sm:ms-6">
+    <div>
         <!-- Settings Dropdown -->
-        <div class="ms-3 relative">
+        <div class="relative">
             <Dropdown align="right" width="48">
                 <template #trigger>
                     <span class="inline-flex rounded-md">
                         <button
                             type="button"
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                            class="bg-white border inline-flex items-center px-3 py-2 rounded-md text-sm text-black hover:text-white hover:bg-gray-800 focus:outline-none transition ease-in-out duration-150"
                         >
                             Add Additions
                             <svg

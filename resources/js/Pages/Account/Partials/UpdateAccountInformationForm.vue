@@ -6,6 +6,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useConfirm } from '@/Utils/Confirm.js';
 import { useForm, usePage } from '@inertiajs/vue3';
+import DropdownRoles from '@/Components/DropdownRoles.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
 
 const props = defineProps([ 'targetAccount' ]);
 
@@ -67,11 +70,41 @@ const form = useForm({
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
+            <div class="block mt-4 flex">
+                <label class="flex items-center mr-4">
                     <Checkbox :disabled="!$page.props.auth.isAuthorized" name="active" v-model:checked="form.active" />
                     <span class="ms-2 text-sm text-gray-600">Active</span>
                 </label>
+                <Dropdown>
+                    <template #trigger>
+                        <div class="inline-flex rounded-md">
+                            <button type="button" class="bg-white border border-gray-300 inline-flex items-center px-3 py-2 rounded-md text-black hover:text-white hover:bg-gray-800 focus:outline-none transition ease-in-out duration-150">
+                                Select Role
+                                <svg
+                                    class="ms-2 -me-0.5 h-4 w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                    <template #content>
+                        <DropdownLink>
+                            Admin
+                        </DropdownLink>
+                        <DropdownLink>
+                            Human Resources
+                        </DropdownLink>
+                        <DropdownLink>
+                            Payroll
+                        </DropdownLink>
+                    </template>
+                </Dropdown>
             </div>
 
             <div v-if="$page.props.auth.isAuthorized" class="flex items-center gap-4">

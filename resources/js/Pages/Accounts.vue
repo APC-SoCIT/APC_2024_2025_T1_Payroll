@@ -7,7 +7,16 @@ import { useForm, Head, Link } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import Toolbar from 'primevue/toolbar';
+import FilterAccounts from '@/Components/FilterAccounts.vue';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/Components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button'
 
 
 const props = defineProps([
@@ -34,23 +43,44 @@ const props = defineProps([
                 <div v-if="cutoff == null" class="columns-2 my-10">
                     <div class="flex">
                         <div class=" mr-4">
-                            <TextInput class="w-80 mx-2">
+                            <TextInput class="w-80">
                                 
                             </TextInput>  
                         </div>
                         <div>
-                            <Dropdown>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger class="bg-white border inline-flex items-center px-3 py-2 rounded-md text-black hover:text-white hover:bg-gray-800 focus:outline-none transition ease-in-out duration-150">
+                                    Filter
+                                    <svg
+                                        class="ms-2 -me-0.5 h-4 w-4"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>Active</DropdownMenuItem>
+                                    <DropdownMenuItem>Not Active</DropdownMenuItem>
+                                    <DropdownMenuItem>All</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <!-- <Dropdown>
                                 <template #trigger>
-                                        <button type="button" class="flex px-4 p-2 rounded-md shadow-lg bg-gray-800">
-                                            <p class="text-white">
-                                                Filter
-                                            </p>
-
+                                    <span class="inline-flex rounded-md">
+                                        <button type="button" class="bg-white border inline-flex items-center px-3 py-2 rounded-md text-black hover:text-white hover:bg-gray-800 focus:outline-none transition ease-in-out duration-150">
+                                            Filter
                                             <svg
-                                                class="ml-2 h-4"
+                                                class="ms-2 -me-0.5 h-4 w-4"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20"
-                                                fill="white"
+                                                fill="currentColor"
                                             >
                                                 <path
                                                     fill-rule="evenodd"
@@ -59,25 +89,20 @@ const props = defineProps([
                                                 />
                                             </svg>
                                         </button>
+                                    </span>
                                 </template>
 
                                 <template #content>
-                                    <DropdownLink>
-                                        All
-                                    </DropdownLink>
-                                    <DropdownLink>
-                                        Active
-                                    </DropdownLink>
-                                    <DropdownLink>
-                                        Inactive
+                                    <DropdownLink as="button">
+                                        Option 1
                                     </DropdownLink>
                                 </template>
-                            </Dropdown>
+                            </Dropdown> -->
                         </div>
                     </div>
                     <div class="text-end">
                         <PrimaryButton class="mr-10 rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="button">
-                        <Link :href="route('account.new')">Add account</Link>
+                        <Link :href="route('account.new')">+ Add account</Link>
                         </PrimaryButton>
                     </div>        
                 </div>
@@ -86,14 +111,14 @@ const props = defineProps([
                     <table class="w-full text-left table-auto">
                         <thead class="text-start">
                             <tr v-if="cutoff == null" class="bg-light">
-                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
                                 <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                                 <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
                             </tr>
                             <tr v-else class="bg-light">
-                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                <th scope="col" width="30%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
                                 <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                             </tr>
                         </thead>

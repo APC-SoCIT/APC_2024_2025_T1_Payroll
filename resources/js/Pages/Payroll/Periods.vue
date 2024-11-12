@@ -28,7 +28,7 @@ const props = defineProps([
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div v-if="account == null" class="text-end">
                     <PrimaryButton class="mr-10 m-5 rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="button">
-                        <Link :href="route('cutoff.newForm')">Add cutoff</Link>
+                        <Link :href="route('cutoff.newForm')">+ Add cutoff</Link>
                     </PrimaryButton>
                 </div>
                 <div v-else-if="$page.props.auth.isAuthorized" class="text-end">
@@ -41,17 +41,17 @@ const props = defineProps([
                     <table class="w-full text-left table-auto min-w-max">
                         <thead class="text-start">
                             <tr v-if="account == null" class="bg-light">
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Start</th>
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Cutoff</th>
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
-                                <th scope="col" width="20%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Actions</th>
+                                <th scope="col" width="20%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
+                                <th scope="col" width="20%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Start</th>
+                                <th scope="col" width="20%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Cutoff</th>
+                                <th scope="col" width="20%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
+                                <th scope="col" width="20%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Actions</th>
                             </tr>
                             <tr v-else class="bg-light">
-                                <th scope="col" width="25%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
-                                <th scope="col" width="25%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Start</th>
-                                <th scope="col" width="25%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Cutoff</th>
-                                <th scope="col" width="25%" class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
+                                <th scope="col" width="25%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Release/End</th>
+                                <th scope="col" width="25%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Start</th>
+                                <th scope="col" width="25%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Cutoff</th>
+                                <th scope="col" width="25%" class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                             </tr>
                         </thead>
                         <Period v-for="cutoff in cutoffs" :cutoff :account/>
