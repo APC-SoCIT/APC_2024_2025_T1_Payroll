@@ -10,6 +10,7 @@ use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response as FacadesResponse;
@@ -239,5 +240,18 @@ class PayrollController extends Controller
 
         fclose($file);
         return FacadesResponse::download(public_path($fileName))->deleteFileAfterSend(true);
+    }
+
+    public function exportPdf(PayrollItem $item)
+    {
+        $pdf = Pdf::loadView('payrollItem', [
+            'item' => $item->load([
+                'user',
+                'cutoff',
+                'itemAdditions.addition',
+                'itemDeductions.deduction',
+            ]),
+        ]);
+        return $pdf->stream('payslip.pdf');
     }
 }
