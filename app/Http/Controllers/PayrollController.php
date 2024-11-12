@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuthHelper;
 use App\Helpers\PayrollHelper;
 use App\Models\Addition;
 use App\Models\Cutoff;
@@ -244,6 +245,11 @@ class PayrollController extends Controller
 
     public function exportPdf(PayrollItem $item)
     {
+        if (! AuthHelper::owns($item)
+            && ! AuthHelper::isPayroll()) {
+            abort(403);
+        }
+
         $pdf = Pdf::loadView('payrollItem', [
             'item' => $item->load([
                 'user',

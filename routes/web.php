@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/cutoffs/me', [CutoffController::class, 'getOwn'])
         ->name('cutoffs.me');
 
-    Route::get('/payslip/{item}/download', [PayrollController::class, 'exportPdf'])
+    Route::get('/payslip/{item}', [PayrollController::class, 'exportPdf'])
         ->name('payslip.download');
 });
 

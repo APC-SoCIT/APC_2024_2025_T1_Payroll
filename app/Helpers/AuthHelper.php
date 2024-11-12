@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Enums\RoleId;
+use App\Models\PayrollItem;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,5 +38,10 @@ class AuthHelper
 
         $user = User::find(Auth::user()->id);
         return $user->userRoles->contains('role_id', RoleId::Hr->value);
+    }
+
+    public static function owns(PayrollItem $item): bool
+    {
+        return $item->user_id == Auth::user()->id;
     }
 }
