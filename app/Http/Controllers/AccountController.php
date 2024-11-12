@@ -35,9 +35,7 @@ class AccountController extends Controller
             'accounts' => $cutoff->hasEnded()
                 // if past, only related accounts
                 ? $cutoff->payrollItems
-                    ->map(function (PayrollItem $item) {
-                        return $item->user;
-                    })
+                    ->pluck('user')
                     ->sortBy('name')
                 // if current/future, only active accounts
                 : User::where('active', true)
