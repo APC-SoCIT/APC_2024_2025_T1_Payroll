@@ -41,7 +41,7 @@
     <p>3 Humabon Place, Magallanes, Makati City, Philippines 1232</p>
     <table>
         <tr class="section">
-            <td><h2 class="text-transform:uppercase;">{{ $item->user->name }}</h2></td>
+            <td><h2 style="text-transform:uppercase;">{{ $item->user->name }}</h2></td>
         </tr>
         <tr class="section">
             <td><b>Email: {{ $item->user->email }}</b></td>
