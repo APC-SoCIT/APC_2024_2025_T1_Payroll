@@ -26,6 +26,11 @@ class Cutoff extends Model
         return $this->hasMany(PayrollItem::class);
     }
 
+    public function hasStarted(): bool
+    {
+        return $this->start_date <= Carbon::now()->toDateString();
+    }
+
     public function hasEnded(): bool
     {
         return $this->end_date < Carbon::now()->toDateString();

@@ -12,15 +12,18 @@ const props = defineProps([
 
 <template>
     <tr>
-        <td class="underline p-4 border-b border-blue-gray-50">
-            <Link v-if="account == null"
-                class="text-gray-500 hover:text-gray-700 hover:underline"
+        <td class="p-4 border-b text-gray-500 border-blue-gray-50">
+            <p v-if="$page.props.date < cutoff.start_date">
+                {{ useFormat(cutoff.end_date) }}
+            </p>
+            <Link v-else-if="account == null"
+                class="underline hover:text-gray-700 hover:underline"
                 :href="route('accounts.getFromCutoff', cutoff.id)"
             >
                 {{ useFormat(cutoff.end_date) }}
             </Link>
             <Link v-else
-                class="text-gray-500 hover:text-gray-700 hover:underline"
+                class="underline hover:text-gray-700 hover:underline"
                 :href="route('payroll.get', { cutoff: cutoff.id, user: account.id })"
             >
                 {{ useFormat(cutoff.end_date) }}

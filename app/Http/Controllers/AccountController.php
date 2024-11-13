@@ -31,6 +31,10 @@ class AccountController extends Controller
 
     public function getFromCutoff(Cutoff $cutoff): Response
     {
+        if (! $cutoff->hasStarted()) {
+            abort(403);
+        }
+
         return Inertia::render('Accounts', [
             'accounts' => $cutoff->hasEnded()
                 // if past, only related accounts

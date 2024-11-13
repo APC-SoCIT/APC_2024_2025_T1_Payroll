@@ -13,6 +13,7 @@ use App\Models\PayrollItem;
 use App\Models\User;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -42,6 +43,10 @@ class PayrollController extends Controller
 
     public function getItem(Cutoff $cutoff, User $user): Response
     {
+        if ($cutoff->start_date > Carbon::now()->toDateString()) {
+            abort(403);
+        }
+
         if (! AuthHelper::isPayroll()
             && Auth::user()->id != $user->id) {
             abort(403);
@@ -73,6 +78,10 @@ class PayrollController extends Controller
 
     public function deleteItem(Cutoff $cutoff, User $user): RedirectResponse
     {
+        if ($cutoff->start_date > Carbon::now()->toDateString()) {
+            abort(403);
+        }
+
         $payrollItem = PayrollItem::where([
                 'user_id' => $user->id,
                 'cutoff_id' => $cutoff->id,
@@ -90,7 +99,8 @@ class PayrollController extends Controller
 
     public function addItemAddition(PayrollItem $payrollItem, Addition $addition): void
     {
-        if ($payrollItem->cutoff->hasEnded()) {
+        if ($payrollItem->cutoff->hasEnded()
+            || ! $payrollItem->cutoff->hasStarted()) {
             abort(403);
         }
 
@@ -107,6 +117,7 @@ class PayrollController extends Controller
     public function updateItemAddition(Request $request, ItemAddition $itemAddition): void
     {
         if ($itemAddition->payrollItem->cutoff->hasEnded()
+            || ! $itemAddition->payrollItem->cutoff->hasStarted()
             || $itemAddition->addition->calculated) {
             abort(403);
         }
@@ -132,6 +143,7 @@ class PayrollController extends Controller
     public function deleteItemAddition(ItemAddition $itemAddition): void
     {
         if ($itemAddition->payrollItem->cutoff->hasEnded()
+            || ! $itemAddition->payrollItem->cutoff->hasStarted()
             || $itemAddition->addition->required) {
             abort(403);
         }
@@ -144,7 +156,8 @@ class PayrollController extends Controller
 
     public function addItemDeduction(PayrollItem $payrollItem, Deduction $deduction): void
     {
-        if ($payrollItem->cutoff->hasEnded()) {
+        if ($payrollItem->cutoff->hasEnded()
+            || ! $payrollItem->cutoff->hasStarted()) {
             abort(403);
         }
 
@@ -161,6 +174,7 @@ class PayrollController extends Controller
     public function updateItemDeduction(Request $request, ItemDeduction $itemDeduction): void
     {
         if ($itemDeduction->payrollItem->cutoff->hasEnded()
+            || ! $itemDeduction->payrollItem->cutoff->hasStarted()
             || $itemDeduction->deduction->calculated) {
             abort(403);
         }
@@ -195,6 +209,7 @@ class PayrollController extends Controller
     public function deleteItemDeduction(ItemDeduction $itemDeduction): void
     {
         if ($itemDeduction->payrollItem->cutoff->hasEnded()
+            || ! $itemDeduction->payrollItem->cutoff->hasStarted()
             || $itemDeduction->deduction->required) {
             abort(403);
         }
