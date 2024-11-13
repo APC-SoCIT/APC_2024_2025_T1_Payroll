@@ -29,6 +29,12 @@ class UserFactory extends Factory
     public function authorized(): Factory
     {
         return $this->afterCreating(function (User $user) {
+            $user->email = config('roles.admin_accounts')[0];
+            $user->save();
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Admin->value,
+            ]);
             UserRole::create([
                 'user_id' => $user->id,
                 'role_id' => RoleId::Payroll->value,

@@ -88,6 +88,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->noActionOnDelete();
             $table->decimal('amount')->default(0);
+            $table->smallInteger('total_payments')->default(0);
             $table->smallInteger('remaining_payments')->default(0);
             $table->tinyInteger('hours')->default(0);
             $table->tinyInteger('minutes')->default(0);
