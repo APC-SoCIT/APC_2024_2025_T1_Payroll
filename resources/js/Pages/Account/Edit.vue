@@ -5,12 +5,8 @@ import UpdateAccountInformationForm from './Partials/UpdateAccountInformationFor
 import AdditionsAndDeductions from '@/Pages/Payroll/Partials/AdditionsAndDeductions.vue';
 import RoleSelector from '@/Components/RoleSelector.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input'
-import { ref } from 'vue'
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/Components/ui/tags-input'
 import { X } from 'lucide-vue-next'
-
-const modelValue = ref(['Admin', 'Payroll', 'Human Resources'])
-
 
 const props = defineProps([
     'targetAccount',
@@ -49,8 +45,7 @@ console.log(props.targetAccount)
                     </SecondaryButton>
                 </div>
             </div>
-            <div :class="($page.props.auth.isPayroll || $page.props.auth.isHr) ? 'p-4 sm:p-8' : ''"
-                class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <UpdateAccountInformationForm :targetAccount="targetAccount" class="max-w-xl" />
                 </div>

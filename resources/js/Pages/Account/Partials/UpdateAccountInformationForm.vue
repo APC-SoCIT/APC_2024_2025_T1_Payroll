@@ -45,7 +45,7 @@ const form = useForm({
                 <div>
                     <InputLabel for="name" value="Name" />
                     <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus
-                        :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr)" />
+                        :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.name" />
                 </div>
@@ -55,7 +55,7 @@ const form = useForm({
                     <InputLabel for="email" value="Email Address" />
 
                     <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required
-                        :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr)" />
+                        :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.email" />
                 </div>
@@ -64,14 +64,14 @@ const form = useForm({
             <!-- Checkbox -->
             <div class="block mt-4">
                 <label class="flex items-center">
-                    <Checkbox :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr)" name="active"
+                    <Checkbox :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" name="active"
                         v-model:checked="form.active" />
                     <span class="ms-2 text-sm text-gray-600">Active</span>
                 </label>
             </div>
 
             <!-- Save button -->
-            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)" class="flex items-center gap-4">
+            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
