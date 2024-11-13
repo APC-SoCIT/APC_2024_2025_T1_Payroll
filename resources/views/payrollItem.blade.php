@@ -33,6 +33,11 @@
             text-align: right;
             width: 20%;
         }
+
+        tr.section>table.net {
+            padding-left: 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -87,11 +92,17 @@
             </table>
         </tr>
         <tr class="section">
-            <td>
-                Net Pay:
-                <span class="currency">&#x20B1;</span>
-                {{ number_format($item->amount, 2) }}
-            </td>
+            <table class="net">
+                <td>
+                    Net Pay:
+                </td>
+                <td class="currency">
+                    <span >&#x20B1;</span>
+                </td>
+                <td class="amount">
+                    {{ number_format($item->amount, 2) }}
+                </td>
+            </table>
         </tr>
     </table>
 </body>
