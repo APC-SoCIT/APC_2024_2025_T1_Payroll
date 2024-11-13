@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             ], [
                 'start_date' => '2024-02-01',
                 'cutoff_date' => '2024-02-10',
-                'end_date' => '2024-01-15',
+                'end_date' => '2024-02-15',
                 'month_end' => false,
             ], [
                 'start_date' => '2024-02-16',
@@ -129,7 +129,7 @@ class DatabaseSeeder extends Seeder
 
         $users = User::all();
         foreach ($users as $user) {
-            $item = PayrollItem::create(['cutoff_id' => $cutoffs[1]->id, 'user_id' => $user->id]);
+            $item = PayrollItem::create(['cutoff_id' => $cutoffs[0]->id, 'user_id' => $user->id]);
             ItemAddition::create([
                 'payroll_item_id' => $item->id,
                 'addition_id' => AdditionId::Salary->value,
@@ -140,6 +140,13 @@ class DatabaseSeeder extends Seeder
                 'deduction_id' => DeductionId::Pagibig->value,
                 'amount' => 100,
             ]);
+            ItemDeduction::create([
+                'payroll_item_id' => $item->id,
+                'deduction_id' => DeductionId::SssLoan->value,
+                'amount' => 250,
+                'remaining_payments' => 10,
+            ]);
+            $item->load(['itemAdditions', 'itemDeductions']);
         }
 
         foreach ($cutoffs as $cutoff) {

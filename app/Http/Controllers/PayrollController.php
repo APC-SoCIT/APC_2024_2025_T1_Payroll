@@ -160,7 +160,7 @@ class PayrollController extends Controller
 
         $rules = [ 'amount' => ['required', 'numeric', 'min:0'] ];
         if ($itemDeduction->deduction->has_deadline) {
-            $rules['deadline'] = ['required', 'date'];
+            $rules['remaining_payments'] = ['required', 'numeric', 'min:0'];
         }
 
         if ($itemDeduction->deduction->hour_based) {
@@ -171,7 +171,7 @@ class PayrollController extends Controller
         $validated = $request->validate($rules);
 
         if ($itemDeduction->deduction->has_deadline) {
-            $itemDeduction->deadline = $validated['deadline'];
+            $itemDeduction->remaining_payments = $validated['remaining_payments'];
         }
 
         if ($itemDeduction->deduction->hour_based) {

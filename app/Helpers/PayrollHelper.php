@@ -21,7 +21,7 @@ class PayrollHelper
 {
     public static function calculateAll(PayrollItem $item): void
     {
-        $previous = self::lastCutoff($item);
+        $previous = self::lastItem($item);
         $previous?->load('cutoff');
 
         if ($item->itemAdditions->isEmpty()) {
@@ -60,13 +60,12 @@ class PayrollHelper
 
             $item->itemAdditions()->createMany($requiredAdditions);
 
-            $pagibigMin = $item->cutoff->month_end ? 200 : 100;
             $requiredDeductions = Deduction::whereRequired(true)
                 ->get()
-                ->map(function (Deduction $deduction) use ($pagibigMin) {
+                ->map(function (Deduction $deduction) {
                     return [
                         'deduction_id' => $deduction->id,
-                        'amount' => $deduction->id == DeductionId::Pagibig->value ? $pagibigMin : 0,
+                        'amount' => $deduction->id == DeductionId::Pagibig->value ? 100 : 0,
                     ];
                 });
 
@@ -80,7 +79,17 @@ class PayrollHelper
                 });
 
             $previous->itemDeductions
-                ->where('deadline', '<=', $item->cutoff->end_date)
+                ->where('deduction.has_deadline', true)
+                ->where('remaining_payments', '>', 0)
+                ->each(function (ItemDeduction $previousItem) use ($item) {
+                    $new_item = $previousItem->replicate();
+                    $new_item->payroll_item_id = $item->id;
+                    $new_item->remaining_payments = $previousItem->remaining_payments - 1;
+                    $new_item->save();
+                });
+
+            $previous->itemDeductions
+                ->where('deduction.has_deadline', false)
                 ->each(function (ItemDeduction $previousItem) use ($item) {
                     $new_item = $previousItem->replicate();
                     $new_item->payroll_item_id = $item->id;
@@ -500,19 +509,12 @@ class PayrollHelper
         $item->load('itemAdditions');
     }
 
-    private static function lastCutoff(PayrollItem $payrollItem): ?PayrollItem
+    private static function lastItem(PayrollItem $payrollItem): ?PayrollItem
     {
-        $endDate = $payrollItem->cutoff->end_date;
-        $limit = Carbon::createFromFormat('Y-m-d', $endDate)->subMonth();
-
-        return PayrollItem::where('user_id', $payrollItem->user_id)
-            ->whereHas('cutoff', function (Builder $query) use ($limit, $endDate) {
-                // limit search to 1 month
-                $query->where('end_date', '>=', $limit)
-                    // get a previous cutoff
-                    ->where('end_date', '<', $endDate)
-                    ->orderBy('end_date');
-            })
+        return $payrollItem->user
+            ->payrollItems
+            ->where('cutoff.end_date', '<', $payrollItem->cutoff->end_date)
+            ->sortByDesc('cutoff.end_date')
             ->first();
     }
 
