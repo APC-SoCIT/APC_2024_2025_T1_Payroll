@@ -11,6 +11,7 @@ use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
 use App\Models\User;
+use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,6 +41,11 @@ class PayrollController extends Controller
 
     public function getItem(Cutoff $cutoff, User $user): Response
     {
+        if (! AuthHelper::isPayroll()
+            && Auth::user()->id != $user->id) {
+            abort(403);
+        }
+
         $payrollItem = PayrollItem::firstOrCreate([
             'user_id' => $user->id,
             'cutoff_id' => $cutoff->id,

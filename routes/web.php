@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     // get own related cutoffs
     Route::get('/cutoffs/me', [CutoffController::class, 'getOwn'])
         ->name('cutoffs.me');
+    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
+        ->name('payroll.get');
 
     Route::get('/payslip/{item}', [PayrollController::class, 'exportPdf'])
         ->name('payslip.download');
@@ -84,8 +86,6 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('payroll.getCurrentFromUser');
 
     // specific entry actions
-    Route::get('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'getItem'])
-        ->name('payroll.get');
     Route::delete('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'deleteItem'])
         ->name('payroll.delete');
     Route::get('/cutoff/{cutoff}/export', [PayrollController::class, 'exportCutoffData'])

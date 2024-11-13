@@ -42,6 +42,10 @@ class AuthHelper
 
     public static function owns(PayrollItem $item): bool
     {
-        return $item->user_id == Auth::user()->id;
+        if (! Auth::check()) {
+            return false;
+        }
+
+        return $item?->user_id == Auth::user()->id;
     }
 }
