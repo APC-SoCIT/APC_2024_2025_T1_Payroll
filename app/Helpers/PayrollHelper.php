@@ -169,6 +169,26 @@ class PayrollHelper
             })
             ->sum('amount');
 
+        // subtract the total non taxable deductions
+        $previousIncome -= ItemDeduction::where(function (Builder $query) {
+                $query->whereHas('deduction', function (Builder $query) {
+                        $query->where('taxable', false);
+                    });
+            })
+            // that belong to entries
+            ->whereHas('payrollItem', function (Builder $query) use ($payrollItem) {
+                $query->where('user_id', $payrollItem->user_id)
+                    // of previous cutoffs within the year
+                    ->whereHas('cutoff', function (Builder $query) use ($payrollItem) {
+                        $query->where('end_date', '<', $payrollItem->cutoff->end_date)
+                            ->where('cutoff_date', '>', Carbon::createFromFormat('Y-m-d', $payrollItem->cutoff->cutoff_date)
+                                ->startOfYear()
+                                ->toDateString()
+                        );
+                    });
+            })
+            ->sum('amount');
+
         $totalTaxWithheld = $payrollItem->itemDeductions
             ->where('deduction_id', DeductionId::PreviousTaxWithheld->value)
             ->first()
@@ -254,7 +274,7 @@ class PayrollHelper
         if ($currentItem->cutoff->month_end) {
             $lastContribution = $lastItem
                 ?->itemDeductions
-                ->where('deduction_id', DeductionId::Philhealth->value)
+                ->where('deduction_id', DeductionId::Sss->value)
                 ->first()
                 ?->amount
                 ?? 0;
