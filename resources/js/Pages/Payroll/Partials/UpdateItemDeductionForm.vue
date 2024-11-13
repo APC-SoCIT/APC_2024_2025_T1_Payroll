@@ -51,6 +51,7 @@ const form = useForm({
                 />
                 <InputError class="mt-2" :message="form.errors.hours" />
             </div>
+
             <div v-if="itemDeduction.deduction.hour_based">
                 <InputLabel for="minutes" value="Minutes" />
                 <TextInput
@@ -63,6 +64,7 @@ const form = useForm({
                 />
                 <InputError class="mt-2" :message="form.errors.minutes" />
             </div>
+
             <div>
                 <InputLabel for="amount" value="Amount" />
 
@@ -86,6 +88,7 @@ const form = useForm({
                 />
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
+
             <div v-if="itemDeduction.deduction.has_deadline">
                 <InputLabel for="remaining_payments" value="Remaining Payments" />
                 <TextInput
@@ -99,6 +102,7 @@ const form = useForm({
                 />
                 <InputError class="mt-2" :message="form.errors.remaining_payments" />
             </div>
+            
             <div v-if="!disabled" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
