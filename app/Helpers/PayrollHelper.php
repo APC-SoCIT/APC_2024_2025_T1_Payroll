@@ -286,7 +286,7 @@ class PayrollHelper
             $contributionDue = self::calculateSss($thisPay * 2) / 2;
         }
 
-        $sssDeduction->amount = $contributionDue;
+        $sssDeduction->amount = round($contributionDue, 2);
         $sssDeduction->save();
         $currentItem->load('itemDeductions');
     }
@@ -324,7 +324,7 @@ class PayrollHelper
             $contributionDue = self::calculatePhilhealth($thisPay * 2) / 2;
         }
 
-        $philhealthDeduction->amount = $contributionDue;
+        $philhealthDeduction->amount = round($contributionDue, 2);
         $philhealthDeduction->save();
         $currentItem->load('itemDeductions');
     }
@@ -365,7 +365,7 @@ class PayrollHelper
             $contributionDue = self::calculatePeraa($thisPay * 2) / 2;
         }
 
-        $peraaDeduction->amount = $contributionDue;
+        $peraaDeduction->amount = round($contributionDue, 2);
         $peraaDeduction->save();
         $currentItem->load('itemDeductions');
     }
@@ -435,6 +435,7 @@ class PayrollHelper
 
         $hoursRendered = $substitutionAddition->hours + ($substitutionAddition->minutes / 60);
         $substitutionAddition->amount = 300 * ($hoursRendered / (1 + (50 / 60)));
+        $substitutionAddition->amount = round($substitutionAddition->amount, 2);
         $substitutionAddition->save();
         $item->load('itemAdditions');
     }
@@ -468,6 +469,7 @@ class PayrollHelper
 
         $hoursAbsent = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
         $absenceDeduction->amount = $hoursAbsent * $hourlyRate;
+        $absenceDeduction->amount = round($absenceDeduction->amount, 2);
         $absenceDeduction->save();
         $item->load('itemDeductions');
     }
@@ -484,6 +486,7 @@ class PayrollHelper
 
         $hoursRendered = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
         $absenceDeduction->amount = 300 * ($hoursRendered / (1 + (50 / 60)));
+        $absenceDeduction->amount = round($absenceDeduction->amount, 2);
         $absenceDeduction->save();
         $item->load('itemDeductions');
     }
@@ -500,6 +503,7 @@ class PayrollHelper
 
         $hoursRendered = $absenceDeduction->hours + ($absenceDeduction->minutes / 60);
         $absenceDeduction->amount = 240 * ($hoursRendered / (1 + (25 / 60)));
+        $absenceDeduction->amount = round($absenceDeduction->amount, 2);
         $absenceDeduction->save();
         $item->load('itemDeductions');
     }
