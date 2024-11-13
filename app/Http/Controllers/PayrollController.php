@@ -15,6 +15,7 @@ use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Response as FacadesResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -249,8 +250,12 @@ class PayrollController extends Controller
         return FacadesResponse::download(public_path($fileName))->deleteFileAfterSend(true);
     }
 
-    public function exportPdf(PayrollItem $item)
+    public function exportPdf(Cutoff $cutoff, User $user): HttpResponse
     {
+        $item = PayrollItem::whereCutoffId($cutoff->id)
+            ->whereUserId($user->id)
+            ->first();
+
         if (! AuthHelper::owns($item)
             && ! AuthHelper::isPayroll()) {
             abort(403);
