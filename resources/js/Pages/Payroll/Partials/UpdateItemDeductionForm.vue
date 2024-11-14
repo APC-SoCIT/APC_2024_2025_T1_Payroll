@@ -46,12 +46,12 @@ const form = useForm({
         <div class="relative left-80 bottom-7">
             <form @submit.prevent="form.patch(route('itemDeduction.update', itemDeduction.id), { preserveScroll: true })" class="mt-6 space-y-6">
                 <div v-if="itemDeduction.deduction.hour_based">
-                    <InputLabel for="hours" value="Hours" />
+                    <InputLabel class="relative left-16" for="hours" value="Hours" />
                     <TextInput
                         id="hours"
                         type="number"
                         step="1"
-                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="relative right-32 text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.hours"
                         required
                         :disabled
@@ -60,12 +60,12 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.hour_based">
-                    <InputLabel for="minutes" value="Minutes" />
+                    <InputLabel class="relative left-12" for="minutes" value="Minutes" />
                     <TextInput
                         id="minutes"
                         type="number"
                         step="1"
-                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="relative right-32 text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.minutes"
                         required
                         :disabled
@@ -75,13 +75,13 @@ const form = useForm({
 
                 <div>
                     <div v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based">
-                        <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
+                        <InputLabel class="relative left-10" for="amount" value="Amount" />
 
                         <TextInput v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based"
                             id="amount"
                             type="number"
                             step="0.01"
-                            class="text-end mt-1 block w-60"
+                            class="relative right-32 text-end mt-1 block w-60"
                             v-model="form.amount"
                             required
                             autocomplete="amount"
@@ -92,11 +92,11 @@ const form = useForm({
                     <div v-else
                             type="number"
                             step="0.01"
-                            class="mt-1 font-semibold"
+                            class="relative left-14 mt-1 font-semibold"
                             required
                             disabled>
-                        <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
-                        <p class="text-end relative right-16">₱ {{ itemDeduction.amount }}</p>
+                        <InputLabel for="amount" value="Amount" />
+                        <p>₱ {{ itemDeduction.amount }}</p>
                         <InputError class="mt-2" :message="form.errors.amount" />
                     </div>
                 </div>
@@ -133,7 +133,7 @@ const form = useForm({
                 <p class="text-sm font-semibold text-end relative right-16">Remaining Balance: ₱ {{ form.remaining_payments * form.amount }}</p>
                 </div>
 
-                <div v-if="!disabled" class="flex items-center gap-2 relative left-20 bottom-3">
+                <div v-if="!disabled" class="flex items-center gap-2 relative bottom-3 right-14">
                     <Link
                         v-if="deleteable"
                         :href="route('itemDeduction.delete', itemDeduction.id)"
