@@ -37,8 +37,7 @@ return new class extends Migration
         });
 
         Schema::create('additions', function (Blueprint $table) {
-            $table->bigInteger('id')->unsigned();
-            $table->primary('id');
+            $table->id();
             $table->string('name');
             $table->text('description');
             $table->boolean('required');
@@ -65,8 +64,7 @@ return new class extends Migration
         });
 
         Schema::create('deductions', function (Blueprint $table) {
-            $table->bigInteger('id')->unsigned();
-            $table->primary('id');
+            $table->id();
             $table->string('name');
             $table->text('description');
             $table->boolean('required');

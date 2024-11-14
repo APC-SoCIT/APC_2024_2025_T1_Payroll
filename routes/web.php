@@ -132,6 +132,14 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('additions');
     Route::get('/addition/{addition}/entries', [AdditionController::class, 'getRelatedEntries'])
         ->name('addition.getRelated');
+    Route::get('/addition/new', [AdditionController::class, 'new'])
+        ->name('addition.newForm');
+    Route::post('/addition/new', [AdditionController::class, 'store'])
+        ->name('addition.new');
+    Route::get('/addition/{addition}', [AdditionController::class, 'edit'])
+        ->name('addition.edit');
+    Route::patch('/addition/{addition}', [AdditionController::class, 'update'])
+        ->name('addition.update');
 
     // addition actions
     Route::post('/cutoff/{cutoff}/account/{user}/addition/{addition}', [PayrollController::class, 'addItemAddition'])

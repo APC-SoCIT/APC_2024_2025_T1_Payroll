@@ -7,6 +7,8 @@ use App\Models\Addition;
 use App\Models\ItemAddition;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,4 +47,41 @@ class AdditionController extends Controller
             'accountsWithout' => $accountsWithout,
         ]);
     }
+
+    public function new(): Response
+    {
+        return Inertia::render('Addition/NewAddition');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate(self::$validationRules);
+
+        $validated['required'] = false;
+        $validated['calculated'] = false;
+        $validated['hour_based'] = false;
+        $validated['hr_access'] = true;
+
+        Addition::create($validated);
+
+        return redirect(route('additions'));
+    }
+
+    public function edit(Addition $addition): Response
+    {
+        return Inertia::render('Addition/EditAddition', ['addition' => $addition]);
+    }
+
+    public function update(Addition $addition, Request $request): void
+    {
+        $validated = $request->validate(self::$validationRules);
+
+        $addition->update($validated);
+    }
+
+    private static $validationRules = [
+        'name' => ['required', 'string', 'min:1', 'max:255'],
+        'description' => ['required', 'string', 'min:1', 'max:255'],
+        'taxable' => ['boolean'],
+    ];
 }
