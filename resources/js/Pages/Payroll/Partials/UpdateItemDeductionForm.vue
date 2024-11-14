@@ -75,7 +75,7 @@ const form = useForm({
 
                 <div>
                     <div v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based">
-                        <InputLabel for="amount" value="Amount" />
+                        <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
 
                         <TextInput v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based"
                             id="amount"
@@ -102,7 +102,7 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.has_deadline">
-                    <InputLabel for="total_payments" value="Total Payments" />
+                    <InputLabel class="text-end relative right-16" for="total_payments" value="Total Payments" />
                     <TextInput
                         id="total_payments"
                         type="number"
@@ -114,9 +114,9 @@ const form = useForm({
                         :disabled
                     />
                     <InputError class="mt-2" :message="form.errors.total_payments" />
-                    <p class="font-semibold">Total: ₱ {{ form.total_payments * form.amount }}</p>
+                    <p class="font-semibold text-end relative right-16">Total: ₱ {{ form.total_payments * form.amount }}</p>
 
-                <InputLabel for="remaining_payments" value="Remaining Payments" />
+                <InputLabel class="text-end relative right-16" for="remaining_payments" value="Remaining Payments" />
                 <TextInput
                     id="remaining_payments"
                     type="number"
@@ -129,11 +129,11 @@ const form = useForm({
                     :disabled
                 />
                 <InputError class="mt-2" :message="form.errors.remaining_payments" />
-                <p class="text-sm font-semibold">Running Balance: ₱ {{ (form.total_payments - form.remaining_payments) * form.amount }}</p>
-                <p class="text-sm font-semibold">Remaining Balance: ₱ {{ form.remaining_payments * form.amount }}</p>
+                <p class="text-sm font-semibold text-end relative right-16">Running Balance: ₱ {{ (form.total_payments - form.remaining_payments) * form.amount }}</p>
+                <p class="text-sm font-semibold text-end relative right-16">Remaining Balance: ₱ {{ form.remaining_payments * form.amount }}</p>
                 </div>
 
-                <div v-if="!disabled" class="flex items-center gap-2">
+                <div v-if="!disabled" class="flex items-center gap-2 relative left-20 bottom-3">
                     <Link
                         v-if="deleteable"
                         :href="route('itemDeduction.delete', itemDeduction.id)"
@@ -144,17 +144,22 @@ const form = useForm({
                     >
                         Remove
                     </Link>
-                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                    <Transition
-                        enter-active-class="transition ease-in-out"
-                        enter-from-class="opacity-0"
-                        leave-active-class="transition ease-in-out"
-                        leave-to-class="opacity-0"
+                    <div
+                        v-else
+                        class="inline-flex items-center px-4 py-2 transparent border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest"
                     >
-                        <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                        ---------
+                    </div>
+                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
                 </div>
+                <Transition
+                    enter-active-class="transition ease-in-out"
+                    enter-from-class="opacity-0"
+                    leave-active-class="transition ease-in-out"
+                    leave-to-class="opacity-0"
+                >
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 text-end relative right-12 bottom-5">Saved.</p>
+                </Transition>
             </form>
         </div>
     </section>

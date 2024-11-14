@@ -46,7 +46,7 @@ const form = useForm({
             <!--Input that needs saving-->
             <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="my-3 space-y-2">
                 <div v-if="itemAddition.addition.hour_based">
-                    <InputLabel for="hours" value="Hours" />
+                    <InputLabel class="text-end relative right-16" for="hours" value="Hours" />
                     <TextInput
                         id="hours"
                         type="number"
@@ -59,7 +59,7 @@ const form = useForm({
                     <InputError class="mt-2" :message="form.errors.hours" />
                 </div>
                 <div v-if="itemAddition.addition.hour_based">
-                    <InputLabel for="minutes" value="Minutes" />
+                    <InputLabel class="text-end relative right-16" for="minutes" value="Minutes" />
                     <TextInput
                         id="minutes"
                         type="number"
@@ -72,7 +72,7 @@ const form = useForm({
                     <InputError class="mt-2" :message="form.errors.minutes" />
                 </div>
                 <div>
-                    <InputLabel for="amount" value="Amount" />
+                    <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
                     <TextInput v-if="!itemAddition.addition.calculated && !itemAddition.addition.hour_based"
                         id="amount"
                         type="number"
@@ -86,14 +86,14 @@ const form = useForm({
                     <p v-else
                         type="number"
                         step="0.01"
-                        class="mt-1 font-semibold"
+                        class="text-end relative right-16 mt-1 font-semibold"
                         required
                         disabled
                     >₱ {{ itemAddition.amount }}</p>
                     <InputError class="mt-2" :message="form.errors.amount" />
                 </div>
                 <div v-if="!disabled"
-                    class="flex items-center gap-2">
+                    class="flex items-center gap-2 relative left-20">
                     <Link
                         v-if="deleteable"
                         :href="route('itemAddition.delete', itemAddition.id)"
@@ -104,16 +104,22 @@ const form = useForm({
                     >
                         Remove
                     </Link>
-                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-                    <Transition
-                        enter-active-class="transition ease-in-out"
-                        enter-from-class="opacity-0"
-                        leave-active-class="transition ease-in-out"
-                        leave-to-class="opacity-0"
+                    <div
+                        v-else
+                        class="inline-flex items-center px-4 py-2 transparent border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest"
                     >
-                        <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                        ---------
+                    </div>
+                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
                 </div>
+                <Transition
+                    enter-active-class="transition ease-in-out"
+                    enter-from-class="opacity-0"
+                    leave-active-class="transition ease-in-out"
+                    leave-to-class="opacity-0"
+                >
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                </Transition>
             </form>
         </div>
     </section>
