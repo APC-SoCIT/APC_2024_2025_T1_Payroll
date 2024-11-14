@@ -74,18 +74,20 @@ const props = defineProps([
                     </div>
 
                     <div class="border flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                        <table class="w-full text-center table-auto">
-                            <thead class="text-start">
+                        <table class="  w-full text-start table-auto">
+                            <thead class="uppercase">
                                 <tr v-if="cutoff == null" class="bg-light">
-                                    <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                    <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
-                                    <th scope="col" width="20%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
-                                    <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
+                                    <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
+                                    <th scope="col" width="30%" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                    <th scope="col" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                    <th scope="col" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
+                                    <th scope="col" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
                                 </tr>
                                 <tr v-else class="bg-light">
-                                    <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
-                                    <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
-                                    <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
+                                    <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
+                                    <th scope="col" width="30%" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                    <th scope="col" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Email</th>
+                                    <th scope="col" width="40%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Status</th>
                                 </tr>
                             </thead>
                             <Account v-for="account in accounts" :account :cutoff/>
