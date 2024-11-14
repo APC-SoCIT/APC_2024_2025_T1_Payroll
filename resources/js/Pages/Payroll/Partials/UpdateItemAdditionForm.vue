@@ -28,9 +28,9 @@ const form = useForm({
 </script>
 
 <template>
-    <section class="grid grid-cols-5 py-4">
+    <section class="grid grid-cols-2 py-4">
         <header v-if="! additionView"
-            class="col-span-4">
+            class="col-span-1">
             <h2 class="text-lg font-medium text-gray-900">{{ itemAddition.addition.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
@@ -38,11 +38,11 @@ const form = useForm({
             </p>
         </header>
         <header v-else
-            class="col-span-4">
+            class="col-span-1">
             <h2 class="text-lg font-medium text-gray-900">{{ targetAccount.name }}</h2>
         </header>
 
-        <div class="relative left-40 bottom-3">
+        <div class="relative left-80 bottom-5">
             <!--Input that needs saving-->
             <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="my-3 space-y-2">
                 <div v-if="itemAddition.addition.hour_based">
@@ -86,7 +86,7 @@ const form = useForm({
                     <p v-else
                         type="number"
                         step="0.01"
-                        class="mt-1"
+                        class="mt-1 font-semibold"
                         required
                         disabled
                     >₱ {{ itemAddition.amount }}</p>

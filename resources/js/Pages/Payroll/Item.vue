@@ -20,7 +20,7 @@ const props = defineProps([
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="relative left-32 font-semibold text-xl text-gray-800 leading-tight">
                 Payroll Item for
                 <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                     class="underline text-gray-500 hover:text-gray-700 hover:underline"
@@ -41,8 +41,8 @@ const props = defineProps([
         </template>
 
         <div class="py-8">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="mb-5 text-end relative right-32">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="mb-5 text-end">
                     <SecondaryButton v-if="($page.props.auth.isPayroll || $page.props.auth.user.id == targetAccount.id)"
                         class="mr-2"
                     >
