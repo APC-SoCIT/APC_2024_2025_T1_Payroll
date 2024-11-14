@@ -148,7 +148,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('deduction.getRelated');
 
     // deduction actions
-    Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
+    Route::post('/cutoff/{cutoff}/account/{user}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
         ->name('itemDeduction.new');
     Route::patch('/itemDeduction/{itemDeduction}', [PayrollController::class, 'updateItemDeduction'])
         ->name('itemDeduction.update');

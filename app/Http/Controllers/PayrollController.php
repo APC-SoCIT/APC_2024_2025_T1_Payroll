@@ -158,9 +158,14 @@ class PayrollController extends Controller
         PayrollHelper::calculateAll($payrollItem->load('itemAdditions'));
     }
 
-    public function addItemDeduction(PayrollItem $payrollItem, Deduction $deduction): void
+    public function addItemDeduction(Cutoff $cutoff, User $user, Deduction $deduction): void
     {
-        if ($payrollItem->cutoff->hasEnded()
+        $payrollItem = PayrollItem::whereCutoffId($cutoff->id)
+            ->whereUserId($user->id)
+            ->first();
+
+        if (is_null($payrollItem)
+            || $payrollItem->cutoff->hasEnded()
             || ! $payrollItem->cutoff->hasStarted()) {
             abort(403);
         }
@@ -197,7 +202,7 @@ class PayrollController extends Controller
         $validated = $request->validate($rules);
 
         if ($itemDeduction->deduction->has_deadline) {
-            $itemDeduction->total_payments = $validated['remaining_payments'];
+            $itemDeduction->total_payments = $validated['total_payments'];
             $itemDeduction->remaining_payments = $validated['remaining_payments'];
         }
 
