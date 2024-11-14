@@ -22,6 +22,7 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'bank_account_number' => fake()->unique()->regexify('\d{10,12}'),
             'active' => true,
         ];
     }

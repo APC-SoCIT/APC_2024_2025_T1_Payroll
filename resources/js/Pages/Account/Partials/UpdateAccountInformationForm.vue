@@ -12,6 +12,7 @@ const props = defineProps(['targetAccount']);
 const form = useForm({
     name: props.targetAccount.name,
     email: props.targetAccount.email,
+    bank_account_number: props.targetAccount.bank_account_number,
     // checkbox component needs an explicit boolean value
     active: props.targetAccount.active == true,
 });
@@ -58,6 +59,16 @@ const form = useForm({
                         :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+
+                <!-- Bank Account text input -->
+                <div>
+                    <InputLabel for="bank_account_number" value="BDO Account Number" />
+
+                    <TextInput id="bank_account_number" type="bank_account_number" class="mt-1 block w-full" v-model="form.bank_account_number" required
+                        :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
+
+                    <InputError class="mt-2" :message="form.errors.bank_account_number" />
                 </div>
             </div>
 

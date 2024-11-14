@@ -234,7 +234,8 @@ class PayrollController extends Controller
         $deductionCount = $deductions->count();
 
         $headers = [
-            'Account',
+            'BDO Account Number',
+            'Name',
             'Total',
             ...$additions,
             ...$deductions,
@@ -254,6 +255,7 @@ class PayrollController extends Controller
             }
 
             $row = [
+                "'{$item->user->bank_account_number}",
                 $item->user->name,
                 $item->amount,
                 ...$itemAdditions,

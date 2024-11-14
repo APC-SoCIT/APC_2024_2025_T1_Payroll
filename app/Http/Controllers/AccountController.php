@@ -108,9 +108,31 @@ class AccountController extends Controller
     public function update(Request $request, User $user): void
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'active' => ['required', 'boolean'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($user->id),
+            ],
+            'bank_account_number' => [
+                'required',
+                'string',
+                'min:10',
+                'max:12',
+                'regex:/^\d{10,12}$/',
+                Rule::unique(User::class)->ignore($user->id),
+            ],
+            'active' => [
+                'required',
+                'boolean',
+            ],
         ]);
 
         $user->update($validated);
