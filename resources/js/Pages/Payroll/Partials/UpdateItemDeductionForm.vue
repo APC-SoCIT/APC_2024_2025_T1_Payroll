@@ -82,14 +82,13 @@ const form = useForm({
                     :disabled
                 />
                 <!-- TextInput doesn't update on partial reloads -->
-                <input v-else
+                <p v-else
                     type="number"
                     step="0.01"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    class="mt-1"
                     required
-                    :value="itemDeduction.amount"
                     disabled
-                />
+                >₱ {{ itemDeduction.amount }}</p>
                 <InputError class="mt-2" :message="form.errors.amount" />
             </div>
 

@@ -27,89 +27,88 @@ const form = useForm({
 </script>
 
 <template>
-    <section class="py-4">
-        <header>
+    <section class="grid grid-cols-5 py-4">
+        <header class="col-span-4">
             <h2 class="text-lg font-medium text-gray-900">{{ itemAddition.addition.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ itemAddition.addition.description }}
             </p>
         </header>
-
-        <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="mt-6 space-y-2">
-            <div v-if="itemAddition.addition.hour_based">
-                <InputLabel for="hours" value="Hours" />
-                <TextInput
-                    id="hours"
-                    type="number"
-                    step="1"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    v-model="form.hours"
-                    required
-                    :disabled
-                />
-                <InputError class="mt-2" :message="form.errors.hours" />
-            </div>
-            <div v-if="itemAddition.addition.hour_based">
-                <InputLabel for="minutes" value="Minutes" />
-                <TextInput
-                    id="minutes"
-                    type="number"
-                    step="1"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    v-model="form.minutes"
-                    required
-                    :disabled
-                />
-                <InputError class="mt-2" :message="form.errors.minutes" />
-            </div>
-            <div>
-                <InputLabel for="amount" value="Amount" />
-                <TextInput v-if="!itemAddition.addition.calculated && !itemAddition.addition.hour_based"
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    v-model="form.amount"
-                    required
-                    :disabled
-                />
-                <!-- TextInput doesn't update on partial reloads -->
-                <input v-else
-                    type="number"
-                    step="0.01"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    required
-                    :value="itemAddition.amount"
-                    disabled
-                />
-                <InputError class="mt-2" :message="form.errors.amount" />
-            </div>
-            <div v-if="!disabled"
-                class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
-                </Transition>
-            </div>
-        </form>
-        <div class="py-2">
-            <Link
-                v-if="deleteable"
-                :href="route('itemAddition.delete', itemAddition.id)"
-                method="delete"
-                :onBefore="useConfirm(`Are you sure you want to delete ${itemAddition.addition.name}? This action cannot be undone.`)"
-                class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                as="button"
-            >
-                Remove
-            </Link>
+        
+        <div class="relative left-40 bottom-3">
+            <!--Input that needs saving-->
+            <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="my-3 space-y-2">
+                <div v-if="itemAddition.addition.hour_based">
+                    <InputLabel for="hours" value="Hours" />
+                    <TextInput
+                        id="hours"
+                        type="number"
+                        step="1"
+                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        v-model="form.hours"
+                        required
+                        :disabled
+                    />
+                    <InputError class="mt-2" :message="form.errors.hours" />
+                </div>
+                <div v-if="itemAddition.addition.hour_based">
+                    <InputLabel for="minutes" value="Minutes" />
+                    <TextInput
+                        id="minutes"
+                        type="number"
+                        step="1"
+                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        v-model="form.minutes"
+                        required
+                        :disabled
+                    />
+                    <InputError class="mt-2" :message="form.errors.minutes" />
+                </div>
+                <div>
+                    <InputLabel for="amount" value="Amount" />
+                    <TextInput v-if="!itemAddition.addition.calculated && !itemAddition.addition.hour_based"
+                        id="amount"
+                        type="number"
+                        step="0.01"
+                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        v-model="form.amount"
+                        required
+                        :disabled
+                    />
+                    <!-- TextInput doesn't update on partial reloads -->
+                    <p v-else
+                        type="number"
+                        step="0.01"
+                        class="mt-1"
+                        required
+                        disabled
+                    >₱ {{ itemAddition.amount }}</p>
+                    <InputError class="mt-2" :message="form.errors.amount" />
+                </div>
+                <div v-if="!disabled"
+                    class="flex items-center gap-2">
+                    <Link
+                        v-if="deleteable"
+                        :href="route('itemAddition.delete', itemAddition.id)"
+                        method="delete"
+                        :onBefore="useConfirm(`Are you sure you want to delete ${itemAddition.addition.name}? This action cannot be undone.`)"
+                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                        as="button"
+                    >
+                        Remove
+                    </Link>
+                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    </Transition>
+                </div>
+            </form>
         </div>
     </section>
 </template>

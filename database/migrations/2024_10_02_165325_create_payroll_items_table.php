@@ -282,7 +282,7 @@ return new class extends Migration
             ], [
                 'id' => AdditionId::SubstitutionPay->value,
                 'name' => 'Substitution Pay (College)',
-                'description' => 'Substition pay (College)',
+                'description' => 'Substitution pay (College)',
                 'required' => false,
                 'calculated' => false,
                 'taxable' => true,
@@ -291,7 +291,7 @@ return new class extends Migration
             ], [
                 'id' => AdditionId::SubstitutionPayShs->value,
                 'name' => 'Substitution Pay (SHS)',
-                'description' => 'Substition pay (SHS)',
+                'description' => 'Substitution pay (SHS)',
                 'required' => false,
                 'calculated' => false,
                 'taxable' => true,

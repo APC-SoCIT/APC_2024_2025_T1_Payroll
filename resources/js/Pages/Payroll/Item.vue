@@ -40,10 +40,10 @@ const props = defineProps([
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
-                    <SecondaryButton>
+                <div class="mb-5 text-end relative right-32">
+                    <SecondaryButton class="mr-2">
                         <Link :href="route('cutoffs.getFromUser', targetAccount.id)">
                             View all involved cutoffs
                         </Link>
@@ -65,20 +65,20 @@ const props = defineProps([
                     </DangerButton>
                 </div>
             </div>
-            <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Payroll Entry Total: {{ payrollItem.amount }}
-                    </h2>
-                </div>
-            </div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <AdditionsAndDeductions
                     :targetAccount
                     :payrollItem
                     :additions
                     :deductions
                 />
+            </div>
+            <div class="p-4 sm:p-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
+                    <h2 class="text-right font-semibold text-xl text-gray-800 leading-tight">
+                        Payroll Entry Total: ₱ {{ payrollItem.amount }}
+                    </h2>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
