@@ -420,6 +420,7 @@ class PayrollHelper
 
         $hoursRendered = $substitutionAddition->hours + ($substitutionAddition->minutes / 60);
         $substitutionAddition->amount = 240 * ($hoursRendered / (1 + (25 / 60)));
+        $substitutionAddition->amount = round($substitutionAddition->amount, 2);
         $substitutionAddition->save();
         $item->load('itemAdditions');
     }
