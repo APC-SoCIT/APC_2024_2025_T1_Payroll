@@ -154,6 +154,14 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('deductions');
     Route::get('/deduction/{deduction}/entries', [DeductionController::class, 'getRelatedEntries'])
         ->name('deduction.getRelated');
+    Route::get('/deduction/new', [DeductionController::class, 'new'])
+        ->name('deduction.newForm');
+    Route::post('/deduction/new', [DeductionController::class, 'store'])
+        ->name('deduction.new');
+    Route::get('/deduction/{deduction}', [DeductionController::class, 'edit'])
+        ->name('deduction.edit');
+    Route::patch('/deduction/{deduction}', [DeductionController::class, 'update'])
+        ->name('deduction.update');
 
     // deduction actions
     Route::post('/cutoff/{cutoff}/account/{user}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])

@@ -105,7 +105,7 @@ const form = useForm({
                     class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                     v-model="form.total_payments"
                     required
-                    min=0
+                    min=1
                     :disabled
                 />
                 <InputError class="mt-2" :message="form.errors.total_payments" />
@@ -120,6 +120,7 @@ const form = useForm({
                     v-model="form.remaining_payments"
                     required
                     min=0
+                    :max="form.total_payments - 1"
                     :disabled
                 />
                 <InputError class="mt-2" :message="form.errors.remaining_payments" />

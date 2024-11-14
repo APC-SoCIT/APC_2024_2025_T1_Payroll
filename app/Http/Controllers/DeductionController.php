@@ -7,6 +7,8 @@ use App\Models\Deduction;
 use App\Models\ItemDeduction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,4 +47,42 @@ class DeductionController extends Controller
             'accountsWithout' => $accountsWithout,
         ]);
     }
+
+    public function new(): Response
+    {
+        return Inertia::render('Deduction/NewDeduction');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate(self::$validationRules);
+
+        $validated['required'] = false;
+        $validated['calculated'] = false;
+        $validated['hour_based'] = false;
+        $validated['hr_access'] = true;
+
+        Deduction::create($validated);
+
+        return redirect(route('deductions'));
+    }
+
+    public function edit(Deduction $deduction): Response
+    {
+        return Inertia::render('Deduction/EditDeduction', ['deduction' => $deduction]);
+    }
+
+    public function update(Deduction $deduction, Request $request): void
+    {
+        $validated = $request->validate(self::$validationRules);
+
+        $deduction->update($validated);
+    }
+
+    private static $validationRules = [
+        'name' => ['required', 'string', 'min:1', 'max:255'],
+        'description' => ['required', 'string', 'min:1', 'max:255'],
+        'taxable' => ['boolean'],
+        'has_deadline' => ['boolean'],
+    ];
 }

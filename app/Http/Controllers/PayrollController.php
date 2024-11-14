@@ -190,8 +190,7 @@ class PayrollController extends Controller
 
         $rules = [ 'amount' => ['required', 'numeric', 'min:0'] ];
         if ($itemDeduction->deduction->has_deadline) {
-            $rules['total_payments'] = ['required', 'numeric', 'min:0'];
-            $rules['remaining_payments'] = ['required', 'numeric', 'min:0'];
+            $rules['total_payments'] = ['required', 'numeric', 'min:1'];
         }
 
         if ($itemDeduction->deduction->hour_based) {
@@ -200,6 +199,18 @@ class PayrollController extends Controller
         }
 
         $validated = $request->validate($rules);
+
+        // FIXME: janky way to validate based on another field
+        if ($itemDeduction->deduction->has_deadline) {
+            $rules['remaining_payments'] = [
+                    'required',
+                    'numeric',
+                    'min:0',
+                    "max:{$validated['total_payments']}",
+                ];
+            $validated = $request->validate($rules);
+        }
+
 
         if ($itemDeduction->deduction->has_deadline) {
             $itemDeduction->total_payments = $validated['total_payments'];
