@@ -26,6 +26,7 @@ class User extends Authenticatable
 
     protected $attributes = [
         'active' => true,
+        'bank_account_number' => '0000000000',
     ];
 
     public function payrollItems(): HasMany
