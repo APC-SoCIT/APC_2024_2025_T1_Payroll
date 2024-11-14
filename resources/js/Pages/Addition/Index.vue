@@ -16,7 +16,7 @@ const props = defineProps([
     'additions',
 ]);
 </script>
-<!-- 
+<!--
 <template>
     <Head title="Addition Types" />
 
@@ -48,7 +48,9 @@ const props = defineProps([
                     <PrimaryButton
                         class="mr-10 m-5 rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                         type="button">
-                        + New Type
+                        <Link :href="route('addition.newForm')">
+                            + New Type
+                        </Link>
                     </PrimaryButton>
                 </div>
 
@@ -68,7 +70,7 @@ const props = defineProps([
                                 <TableCell> {{ addition.description }}</TableCell>
                                 <TableCell class="text-center">
                                     <PrimaryButton type="button">
-                                        <Link :href="route('mockup.additionsalarydetails')">Edit</Link>
+                                        <Link :href="route('addition.edit', addition.id)">Edit</Link>
                                     </PrimaryButton>
                                 </TableCell>
                             </TableRow>
