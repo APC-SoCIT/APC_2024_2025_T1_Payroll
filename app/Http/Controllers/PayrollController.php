@@ -36,7 +36,6 @@ class PayrollController extends Controller
         }
 
         $currentPeriod = PayrollHelper::currentPeriod();
-        $currentPeriod->save();
 
         return self::getItem($currentPeriod, $user);
     }
@@ -97,9 +96,14 @@ class PayrollController extends Controller
         return redirect(route('cutoffs'));
     }
 
-    public function addItemAddition(PayrollItem $payrollItem, Addition $addition): void
+    public function addItemAddition(Cutoff $cutoff, User $user, Addition $addition): void
     {
-        if ($payrollItem->cutoff->hasEnded()
+        $payrollItem = PayrollItem::whereCutoffId($cutoff->id)
+            ->whereUserId($user->id)
+            ->first();
+
+        if (is_null($payrollItem)
+            || $payrollItem->cutoff->hasEnded()
             || ! $payrollItem->cutoff->hasStarted()) {
             abort(403);
         }

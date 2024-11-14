@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/cutoff/{cutoff}/account/{user}/payslip', [PayrollController::class, 'exportPdf'])
         ->name('payslip.download');
-    
+
 
     // Mockup Additions
     Route::get('/mockup/addition', function () {
@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
     })
         ->name('mockup.deductionabsencedetails');
     });
-    
+
 
 // ADMIN
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
@@ -134,7 +134,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('addition.getRelated');
 
     // addition actions
-    Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
+    Route::post('/cutoff/{cutoff}/account/{user}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
         ->name('itemAddition.new');
     Route::patch('/itemAddition/{itemAddition}', [PayrollController::class, 'updateItemAddition'])
         ->name('itemAddition.update');

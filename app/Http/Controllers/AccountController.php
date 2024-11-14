@@ -65,7 +65,6 @@ class AccountController extends Controller
         $user ??= User::find(Auth::user()->id);
 
         $currentPeriod = PayrollHelper::currentPeriod();
-        $currentPeriod->save();
 
         $payrollItem = PayrollItem::firstOrCreate([
             'user_id' => $user->id,

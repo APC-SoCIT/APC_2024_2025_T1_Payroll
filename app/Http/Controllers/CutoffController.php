@@ -59,7 +59,7 @@ class CutoffController extends Controller
     public function add(): Response
     {
         return Inertia::render('Payroll/CreatePeriod', [
-            'cutoff' => PayrollHelper::currentPeriod(),
+            'cutoff' => PayrollHelper::currentPeriod(true),
         ]);
     }
 
@@ -67,7 +67,8 @@ class CutoffController extends Controller
     {
         $validator = self::makeCutoffValidator($request);
 
-        Cutoff::create($validator->validate());
+        $cutoff = Cutoff::create($validator->validate());
+        PayrollHelper::duplicateOrCreateAll($cutoff);
 
         return redirect(route('cutoffs'));
     }

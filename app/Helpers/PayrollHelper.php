@@ -10,6 +10,7 @@ use App\Models\Deduction;
 use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -46,7 +47,7 @@ class PayrollHelper
         $item->save();
     }
 
-    private static function duplicateOrCreate(PayrollItem $item, ?PayrollItem $previous)
+    private static function duplicateOrCreate(PayrollItem $item, ?PayrollItem $previous): void
     {
         if (is_null($previous)) {
             $requiredAdditions = Addition::whereRequired(true)
@@ -546,7 +547,7 @@ class PayrollHelper
      * Get the current period.
      * If the latest period in the database is outdated, generate a new one.
      */
-    public static function currentPeriod(): Cutoff
+    public static function currentPeriod(bool $preventSave = false): Cutoff
     {
         $now = Carbon::now();
         $nowString = $now->toDateString();
@@ -594,9 +595,32 @@ class PayrollHelper
             $currentPeriod->cutoff_date = $cutoff->toDateString();
             $currentPeriod->end_date = $end->toDateString();
             $currentPeriod->month_end = $month_end;
+
+            if (! $preventSave) {
+                $currentPeriod->save();
+                self::duplicateOrCreateAll($currentPeriod);
+            };
         }
 
         return $currentPeriod;
+    }
+
+    public static function duplicateOrCreateAll(Cutoff $cutoff): void
+    {
+        $users = User::where('active', true)
+            ->get();
+
+        foreach ($users as $user) {
+            $item = PayrollItem::create([
+                'cutoff_id' => $cutoff->id,
+                'user_id' => $user->id,
+                'amount' => 0,
+            ]);
+
+            $previous = self::lastItem($item);
+            $previous?->load('cutoff');
+            self::duplicateOrCreate($item, $previous);
+        }
     }
 
     private static $overtimeRates = [
