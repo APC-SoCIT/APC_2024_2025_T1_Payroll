@@ -58,7 +58,7 @@ const props = defineProps([
                         <tbody>
                             <tr v-for="addition in additions">
                                 <td class="p-4 border-b border-blue-gray-50"></td>
-                                <td class="p-4 border-b border-blue-gray-50"><Link class="underline" :href="route('addition.getRelated', addition.id)">{{ addition.name }}</Link></td>
+                                <td class="p-4 border-b border-blue-gray-50"><Link class="font-semibold underline" :href="route('addition.getRelated', addition.id)">{{ addition.name }}</Link></td>
                                 <td class="p-4 border-b border-blue-gray-50"> {{ addition.description }}</td>
                                 <td class="p-4 border-b border-blue-gray-50 text-center">
                                     <PrimaryButton type="button">

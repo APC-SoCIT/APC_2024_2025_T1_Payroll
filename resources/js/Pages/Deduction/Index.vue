@@ -69,7 +69,7 @@ const props = defineProps([
                             <tr v-for="deduction in deductions">
                                 <td class="p-4 border-b border-blue-gray-50"></td>
                                 <td class="p-4 border-b border-blue-gray-50">
-                                    <Link class="underline" :href="route('deduction.getRelated', deduction.id)">{{
+                                    <Link class="font-semibold underline" :href="route('deduction.getRelated', deduction.id)">{{
                                     deduction.name }}</Link>
                                 </td>
                                 <td class="p-4 border-b border-blue-gray-50">{{ deduction.description }}</td>
