@@ -12,6 +12,7 @@ const props = defineProps([
     'payrollItem',
     'additions',
     'deductions',
+    'account'
 ]);
 
 const periodHasEnded = props.payrollItem.cutoff.end_date < page.props.date;

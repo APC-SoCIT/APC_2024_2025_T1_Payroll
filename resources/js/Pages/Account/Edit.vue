@@ -14,6 +14,7 @@ const props = defineProps([
     'additions',
     'deductions',
     'roles',
+    'accounts'
 ]);
 
 console.log(props.targetAccount)
@@ -50,11 +51,11 @@ console.log(props.targetAccount)
                     <UpdateAccountInformationForm :targetAccount="targetAccount" class="max-w-xl" />
                 </div>
             </div>
-            <div class="mb-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div v-if="$page.props.auth.isAdmin" class="mb-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
                     <!-- Roles -->
                     <div>
-                        <section v-if="$page.props.auth.isAdmin">
+                        <section>
                             <h2 class="text-lg font-medium text-gray-900">Roles</h2>
 
                             <p class="mt-1 text-sm text-gray-600">
@@ -81,7 +82,8 @@ console.log(props.targetAccount)
                     </div>
                 </div>
             </div>
-            <div :class="($page.props.auth.isPayroll || $page.props.auth.isHr) ? '' : 'p-4 sm:p-8'"
+            <div v-if="($page.props.auth.isPayroll)"
+                :class="($page.props.auth.isPayroll || $page.props.auth.isHr) ? '' : 'p-4 sm:p-8'"
                 class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <AdditionsAndDeductions v-if="targetAccount.active == true" :targetAccount :payrollItem :additions
                     :deductions />

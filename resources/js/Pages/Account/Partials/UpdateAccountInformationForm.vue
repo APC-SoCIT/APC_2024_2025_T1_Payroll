@@ -82,7 +82,7 @@ const form = useForm({
             </div>
 
             <!-- Save button -->
-            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" class="relative left-full start-full flex gap-4">
+            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
