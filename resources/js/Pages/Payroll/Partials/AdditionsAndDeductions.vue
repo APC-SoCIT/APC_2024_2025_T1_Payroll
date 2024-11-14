@@ -34,7 +34,7 @@ const netPayPolicyViolation = (props.payrollItem.amount / salary) < 0.3;
     </div>
     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
-        <AdditionSelector
+        <AdditionSelector class="relative left-28 bottom-9"
             v-if="!periodHasEnded && missingAdditions.length > 0"
             :targetAccount
             :payrollItem
@@ -51,7 +51,7 @@ const netPayPolicyViolation = (props.payrollItem.amount / salary) < 0.3;
     </div>
     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Deductions</h2>
-        <DeductionSelector
+        <DeductionSelector class="relative left-32 bottom-9"
             v-if="!periodHasEnded && missingDeductions.length > 0"
             :targetAccount
             :payrollItem
