@@ -56,29 +56,31 @@ const props = defineProps([
 
                 <div
                     class="border flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead class="text-center w-80">Name</TableHead>
-                                <TableHead class="text-center w-80">Description</TableHead>
-                                <TableHead class="text-center w-52">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow v-for="deduction in deductions">
-                                <TableCell>
-                                    <Link class="ml-8 underline" :href="route('deduction.getRelated', deduction.id)">{{
+                    <table class="w-full text-start table-auto">
+                        <thead class="uppercase">
+                            <tr class="bg-light">
+                                <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
+                                <th scope="col" width="30%" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
+                                <th scope="col" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Description</th>
+                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="deduction in deductions">
+                                <td class="p-4 border-b border-blue-gray-50"></td>
+                                <td class="p-4 border-b border-blue-gray-50">
+                                    <Link class="underline" :href="route('deduction.getRelated', deduction.id)">{{
                                     deduction.name }}</Link>
-                                </TableCell>
-                                <TableCell>{{ deduction.description }}</TableCell>
-                                <TableCell class="text-center">
+                                </td>
+                                <td class="p-4 border-b border-blue-gray-50">{{ deduction.description }}</td>
+                                <td class="p-4 border-b border-blue-gray-50 text-center">
                                     <PrimaryButton type="button">
                                         <Link :href="route('deduction.edit', deduction.id)">Edit</Link>
                                     </PrimaryButton>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
