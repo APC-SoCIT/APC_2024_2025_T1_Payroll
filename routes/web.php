@@ -29,7 +29,41 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/cutoff/{cutoff}/account/{user}/payslip', [PayrollController::class, 'exportPdf'])
         ->name('payslip.download');
-});
+    
+
+    // Mockup Additions
+    Route::get('/mockup/addition', function () {
+        return Inertia::render('Mockup/Additions/Addition');
+    })
+        ->name('mockup.addition');
+
+    Route::get('/mockup/additionsalaryaccount', function () {
+        return Inertia::render('Mockup/Additions/AdditionSalaryAccount');
+    })
+        ->name('mockup.additionsalaryaccount');
+
+    Route::get('/mockup/additionsalarydetails', function () {
+        return Inertia::render('Mockup/Additions/AdditionSalaryDetails');
+    })
+        ->name('mockup.additionsalarydetails');
+
+    // Mockup Deductions
+    Route::get('/mockup/deduction', function () {
+        return Inertia::render('Mockup/Deductions/Deduction');
+    })
+        ->name('mockup.deduction');
+
+    Route::get('/mockup/deductionabsenceaccount', function () {
+        return Inertia::render('Mockup/Deductions/DeductionAbsenceAccount');
+    })
+        ->name('mockup.deductionabsenceaccount');
+
+    Route::get('/mockup/deductionabsencedetails', function () {
+        return Inertia::render('Mockup/Deductions/DeductionAbsenceDetails');
+    })
+        ->name('mockup.deductionabsencedetails');
+    });
+    
 
 // ADMIN
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
