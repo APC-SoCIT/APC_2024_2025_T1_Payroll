@@ -31,7 +31,7 @@ const form = useForm({
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">New Addition Type</h2>
                     <form @submit.prevent="form.post(route('addition.new'))">
-                        <div>
+                        <div class="py-3">
                             <InputLabel for="name" value="Name" />
                             <TextInput
                                 id="name"
@@ -44,7 +44,7 @@ const form = useForm({
 
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
-                        <div>
+                        <div class="py-2">
                             <InputLabel for="description" value="Description" />
                             <TextInput
                                 id="description"
@@ -62,7 +62,7 @@ const form = useForm({
                                 <span class="ms-2 text-sm text-gray-600">Taxable</span>
                             </label>
                         </div>
-                        <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-4 py-5">
                             <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 
                             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
