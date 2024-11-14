@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('bank_account_number')->unique();
+            $table->string('bank_account_number')->default('0000000000');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
