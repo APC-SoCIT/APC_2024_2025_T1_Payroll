@@ -7,6 +7,7 @@ import { Link } from '@inertiajs/vue3';
 const props = defineProps([
     'cutoff',
     'account',
+    'accounts'
 ]);
 </script>
 
@@ -47,7 +48,7 @@ const props = defineProps([
         </td>
         <td v-if="account == null" class="p-4 border-b border-blue-gray-50">
             <PrimaryButton
-                v-if="cutoff.end_date >= $page.props.date"
+                v-if="cutoff.end_date >= $page.props.date && !($page.props.auth.isPayroll)" 
             ><Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link></PrimaryButton>
         </td>
     </tr>

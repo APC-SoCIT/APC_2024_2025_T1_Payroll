@@ -61,7 +61,8 @@ const props = defineProps([
                                 <th scope="col"
                                     class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Status</th>
-                                <th scope="col"
+                                <th v-if="!($page.props.auth.isPayroll)"
+                                    scope="col"
                                     class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Action</th>
                             </tr>
