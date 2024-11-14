@@ -20,24 +20,26 @@ const props = defineProps([
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="relative left-32 font-semibold text-xl text-gray-800 leading-tight">
-                Payroll Item for
-                <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
-                    class="underline text-gray-500 hover:text-gray-700 hover:underline"
-                    :href="route('account.get', targetAccount.id)"
-                >
-                    {{ targetAccount.name }}
-                </Link>
-                <span v-else>{{ targetAccount.name }}</span>
-                for
-                <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
-                    class="underline text-gray-500 hover:text-gray-700 hover:underline"
-                    :href="route('cutoff.get', payrollItem.cutoff.id)"
-                >
-                    {{ useFormat(payrollItem.cutoff.end_date) }}
-                </Link>
-                <span v-else>{{ useFormat(payrollItem.cutoff.end_date) }}</span>
-            </h2>
+            <div class="relative left-32">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Payroll Item for
+                    <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                        class="underline text-gray-500 hover:text-gray-700 hover:underline"
+                        :href="route('account.get', targetAccount.id)"
+                    >
+                        {{ targetAccount.name }}
+                    </Link>
+                    <span v-else>{{ targetAccount.name }}</span>
+                    for
+                    <Link v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                        class="underline text-gray-500 hover:text-gray-700 hover:underline"
+                        :href="route('cutoff.get', payrollItem.cutoff.id)"
+                    >
+                        {{ useFormat(payrollItem.cutoff.end_date) }}
+                    </Link>
+                    <span v-else>{{ useFormat(payrollItem.cutoff.end_date) }}</span>
+                </h2>
+            </div>
         </template>
 
         <div class="py-8">
