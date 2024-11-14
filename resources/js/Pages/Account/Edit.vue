@@ -27,15 +27,15 @@ console.log(props.targetAccount)
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ targetAccount.name }}'s Account Details</h2>
+            <h2 class="relative left-32 font-semibold text-xl text-gray-800 leading-tight">{{ targetAccount.name }}'s Account Details</h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="pt-8">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
-                    class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
+                    class="text-end">
                     <!-- View entry in current cutoff button -->
-                    <SecondaryButton v-if="targetAccount.active == true">
+                    <SecondaryButton class="mr-2" v-if="targetAccount.active == true">
                         <Link :href="route('payroll.getCurrentFromUser', targetAccount.id)">View entry in current cutoff
                         </Link>
                     </SecondaryButton>
@@ -45,12 +45,12 @@ console.log(props.targetAccount)
                     </SecondaryButton>
                 </div>
             </div>
-            <div class="p-4 sm:p-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="p-4 sm:p-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <UpdateAccountInformationForm :targetAccount="targetAccount" class="max-w-xl" />
                 </div>
             </div>
-            <div class="mb-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="mb-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 space-x-4 bg-white shadow sm:rounded-lg">
                     <!-- Roles -->
                     <div>
@@ -82,7 +82,7 @@ console.log(props.targetAccount)
                 </div>
             </div>
             <div :class="($page.props.auth.isPayroll || $page.props.auth.isHr) ? '' : 'p-4 sm:p-8'"
-                class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <AdditionsAndDeductions v-if="targetAccount.active == true" :targetAccount :payrollItem :additions
                     :deductions />
             </div>

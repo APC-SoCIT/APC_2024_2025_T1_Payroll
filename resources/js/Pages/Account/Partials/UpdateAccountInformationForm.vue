@@ -45,7 +45,7 @@ const form = useForm({
                 <!-- Name text input -->
                 <div>
                     <InputLabel for="name" value="Name" />
-                    <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus
+                    <TextInput id="name" type="text" class="mt-1 block w-64 " v-model="form.name" required autofocus
                         :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.name" />
@@ -55,7 +55,7 @@ const form = useForm({
                 <div>
                     <InputLabel for="email" value="Email Address" />
 
-                    <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required
+                    <TextInput id="email" type="email" class="mt-1 block w-64" v-model="form.email" required
                         :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.email" />
@@ -65,7 +65,7 @@ const form = useForm({
                 <div>
                     <InputLabel for="bank_account_number" value="BDO Account Number" />
 
-                    <TextInput id="bank_account_number" type="bank_account_number" class="mt-1 block w-full" v-model="form.bank_account_number" required
+                    <TextInput id="bank_account_number" type="bank_account_number" class="mt-1 block w-64" v-model="form.bank_account_number" required
                         :disabled="!($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" />
 
                     <InputError class="mt-2" :message="form.errors.bank_account_number" />
