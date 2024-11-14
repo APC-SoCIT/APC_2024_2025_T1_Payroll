@@ -46,7 +46,7 @@ const form = useForm({
         <div class="relative left-80 bottom-7">
             <form @submit.prevent="form.patch(route('itemDeduction.update', itemDeduction.id), { preserveScroll: true })" class="mt-6 space-y-6">
                 <div v-if="itemDeduction.deduction.hour_based">
-                    <InputLabel class="relative left-16" for="hours" value="Hours" />
+                    <InputLabel class="text-end relative right-16" for="hours" value="Hours" />
                     <TextInput
                         id="hours"
                         type="number"
@@ -60,7 +60,7 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.hour_based">
-                    <InputLabel class="relative left-12" for="minutes" value="Minutes" />
+                    <InputLabel class="text-end relative right-16" for="minutes" value="Minutes" />
                     <TextInput
                         id="minutes"
                         type="number"
@@ -75,13 +75,13 @@ const form = useForm({
 
                 <div>
                     <div v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based">
-                        <InputLabel class="relative left-10" for="amount" value="Amount" />
+                        <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
 
                         <TextInput v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based"
                             id="amount"
                             type="number"
                             step="0.01"
-                            class="relative right-32 text-end mt-1 block w-60"
+                            class="text-end mt-1 block w-60"
                             v-model="form.amount"
                             required
                             autocomplete="amount"
@@ -92,7 +92,7 @@ const form = useForm({
                     <div v-else
                             type="number"
                             step="0.01"
-                            class="relative left-14 mt-1 font-semibold"
+                            class="text-end relative right-16 mt-1 font-semibold"
                             required
                             disabled>
                         <InputLabel for="amount" value="Amount" />
@@ -102,7 +102,7 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.has_deadline">
-                    <InputLabel class="text-end relative right-16" for="total_payments" value="Total Payments" />
+                    <InputLabel class="text-end relative right-44" for="total_payments" value="Total Payments" />
                     <TextInput
                         id="total_payments"
                         type="number"
@@ -133,7 +133,7 @@ const form = useForm({
                 <p class="text-sm font-semibold text-end relative right-16">Remaining Balance: ₱ {{ form.remaining_payments * form.amount }}</p>
                 </div>
 
-                <div v-if="!disabled" class="flex items-center gap-2 relative bottom-3 right-14">
+                <div v-if="!disabled" class="flex items-center gap-2 relative left-20">
                     <Link
                         v-if="deleteable"
                         :href="route('itemDeduction.delete', itemDeduction.id)"
