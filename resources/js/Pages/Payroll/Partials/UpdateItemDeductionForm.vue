@@ -13,6 +13,7 @@ const props = defineProps([
     'targetAccount',
     'itemDeduction',
     'cutoff',
+    'deductionView',
 ]);
 
 
@@ -31,12 +32,15 @@ const form = useForm({
 
 <template>
     <section>
-        <header>
+        <header v-if="! deductionView">
             <h2 class="text-lg font-medium text-gray-900">{{ itemDeduction.deduction.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ itemDeduction.deduction.description }}
             </p>
+        </header>
+        <header v-else>
+            <h2 class="text-lg font-medium text-gray-900">{{ targetAccount.name }}</h2>
         </header>
 
         <form @submit.prevent="form.patch(route('itemDeduction.update', itemDeduction.id), { preserveScroll: true })" class="mt-6 space-y-6">

@@ -4,6 +4,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\CutoffController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdditionController;
+use App\Http\Controllers\DeductionController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -105,6 +106,12 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('itemAddition.update');
     Route::delete('/itemAddition/{itemAddition}', [PayrollController::class, 'deleteItemAddition'])
         ->name('itemAddition.delete');
+
+    // deduction type actions
+    Route::get('/deductions', [DeductionController::class, 'index'])
+        ->name('deductions');
+    Route::get('/deduction/{deduction}/entries', [DeductionController::class, 'getRelatedEntries'])
+        ->name('deduction.getRelated');
 
     // deduction actions
     Route::post('/payroll/{payrollItem}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
