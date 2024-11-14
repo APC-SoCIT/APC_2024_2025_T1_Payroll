@@ -13,6 +13,7 @@ const props = defineProps([
     'targetAccount',
     'itemAddition',
     'cutoff',
+    'additionView',
 ]);
 
 const periodHasEnded = props.cutoff.end_date < page.props.date;
@@ -28,14 +29,19 @@ const form = useForm({
 
 <template>
     <section class="grid grid-cols-5 py-4">
-        <header class="col-span-4">
+        <header v-if="! additionView"
+            class="col-span-4">
             <h2 class="text-lg font-medium text-gray-900">{{ itemAddition.addition.name }}</h2>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ itemAddition.addition.description }}
             </p>
         </header>
-        
+        <header v-else
+            class="col-span-4">
+            <h2 class="text-lg font-medium text-gray-900">{{ targetAccount.name }}</h2>
+        </header>
+
         <div class="relative left-40 bottom-3">
             <!--Input that needs saving-->
             <form @submit.prevent="form.patch(route('itemAddition.update', itemAddition.id), { preserveScroll: true })" class="my-3 space-y-2">

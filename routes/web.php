@@ -3,6 +3,7 @@
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\CutoffController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdditionController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -90,6 +91,12 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('payroll.delete');
     Route::get('/cutoff/{cutoff}/export', [PayrollController::class, 'exportCutoffData'])
         ->name('cutoff.export');
+
+    // addition type actions
+    Route::get('/additions', [AdditionController::class, 'index'])
+        ->name('additions');
+    Route::get('/addition/{addition}/entries', [AdditionController::class, 'getRelatedEntries'])
+        ->name('addition.getRelated');
 
     // addition actions
     Route::post('/payroll/{payrollItem}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
