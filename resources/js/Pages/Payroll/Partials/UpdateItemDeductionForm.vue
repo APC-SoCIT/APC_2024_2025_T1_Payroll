@@ -31,7 +31,7 @@ const form = useForm({
 </script>
 
 <template>
-    <section class="grid grid-cols-2 py-3">
+    <section class="grid grid-cols-2 py-4">
         <header v-if="! deductionView" class="col-span-1">
             <h2 class="text-lg font-medium text-gray-900">{{ itemDeduction.deduction.name }}</h2>
 
@@ -51,7 +51,7 @@ const form = useForm({
                         id="hours"
                         type="number"
                         step="1"
-                        class="relative right-32 text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.hours"
                         required
                         :disabled
@@ -65,7 +65,7 @@ const form = useForm({
                         id="minutes"
                         type="number"
                         step="1"
-                        class="relative right-32 text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.minutes"
                         required
                         :disabled
@@ -81,7 +81,7 @@ const form = useForm({
                             id="amount"
                             type="number"
                             step="0.01"
-                            class="text-end mt-1 block w-60"
+                            class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             v-model="form.amount"
                             required
                             autocomplete="amount"
@@ -102,7 +102,7 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.has_deadline">
-                    <InputLabel class="text-end relative right-44" for="total_payments" value="Total Payments" />
+                    <InputLabel class="text-end relative right-16" for="total_payments" value="Total Payments" />
                     <TextInput
                         id="total_payments"
                         type="number"
