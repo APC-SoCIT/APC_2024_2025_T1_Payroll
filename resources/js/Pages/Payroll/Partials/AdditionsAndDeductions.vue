@@ -20,11 +20,18 @@ const missingAdditions = props.additions.filter(a => !existingAdditions.includes
 
 const existingDeductions = props.payrollItem.item_deductions.map(a => a.deduction.id);
 const missingDeductions = props.deductions.filter(a => !existingDeductions.includes(a.id));
+
+const salary = props.payrollItem.item_additions.find(a => a.addition_id == 1).amount;
+const netPayPolicyViolation = (props.payrollItem.amount / salary) < 0.3;
 </script>
 
 <!-- Addiions and Deductions (UpdateAccountInformationForm) -->
 
 <template>
+    <div v-if="netPayPolicyViolation"
+        class="p-4 sm:p-8 text-red-900 bg-red-300 shadow sm:rounded-lg">
+        Take home pay is less than 30% of salary.
+    </div>
     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Additions</h2>
         <AdditionSelector

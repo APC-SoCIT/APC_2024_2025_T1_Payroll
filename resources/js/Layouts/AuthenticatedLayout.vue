@@ -54,6 +54,18 @@ const showingNavigationDropdown = ref(false);
                                     Accounts
                                 </NavLink>
                             </div>
+                            <div v-if="($page.props.auth.isPayroll)"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('additions')" :active="route().current('additions')">
+                                    Additions
+                                </NavLink>
+                            </div>
+                            <div v-if="($page.props.auth.isPayroll)"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('deductions')" :active="route().current('deductions')">
+                                    Deductions
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="space-x-8 sm:flex sm:items-right sm:ms-6">

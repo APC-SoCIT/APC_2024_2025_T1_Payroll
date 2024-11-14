@@ -39,8 +39,9 @@ class CutoffController extends Controller
         // (only authorized can see)
         if ($user->active
             && (AuthHelper::isHr() || AuthHelper::isPayroll())) {
-            $involved->merge(
+            $involved = $involved->merge(
                 Cutoff::where('end_date', '>=', Carbon::now()->toDateString())
+                    ->get()
             );
         }
 
