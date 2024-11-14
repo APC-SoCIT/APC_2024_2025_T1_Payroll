@@ -74,7 +74,7 @@ const props = defineProps([
                     </div>
 
                     <div class="border flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                        <table class="  w-full text-start table-auto">
+                        <table class="w-full text-start table-auto">
                             <thead class="uppercase">
                                 <tr v-if="cutoff == null" class="bg-light">
                                     <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>

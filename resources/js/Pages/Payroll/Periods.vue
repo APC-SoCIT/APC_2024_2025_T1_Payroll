@@ -26,7 +26,7 @@ const props = defineProps([
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="pt-2 pb-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
                 <div v-if="account == null" class="text-end">
@@ -46,37 +46,40 @@ const props = defineProps([
 
                 <div class="border relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
                     <table class="w-full text-center table-auto min-w-max">
-                        <thead class="text-start">
+                        <thead class="uppercase">
                             <tr v-if="account == null" class="bg-light">
+                                <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Release/End</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Start</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Cutoff</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Status</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
-                                    Actions</th>
+                                    class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    Action</th>
                             </tr>
                             <tr v-else class="bg-light">
+                                <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Release/End</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Start</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="text-left p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Cutoff</th>
                                 <th scope="col"
-                                    class="text-center p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+                                    class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                     Status</th>
+                                <th scope="col" width="10%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                             </tr>
                         </thead>
                         <Period v-for="cutoff in cutoffs" :cutoff :account />

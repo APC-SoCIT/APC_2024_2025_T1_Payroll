@@ -12,7 +12,8 @@ const props = defineProps([
 
 <template>
     <tr>
-        <td class="p-4 border-b text-gray-500 border-blue-gray-50">
+        <td class="p-4 border-b text-gray-500 border-blue-gray-50"></td>
+        <td class="font-semibold text-left p-4 border-b text-gray-500 border-blue-gray-50">
             <p v-if="$page.props.date < cutoff.start_date">
                 {{ useFormat(cutoff.end_date) }}
             </p>
@@ -29,10 +30,10 @@ const props = defineProps([
                 {{ useFormat(cutoff.end_date) }}
             </Link>
         </td>
-        <td class="p-4 border-b border-blue-gray-50">
+        <td class="text-left p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.start_date) }}
         </td>
-        <td class="p-4 border-b border-blue-gray-50">
+        <td class="text-left p-4 border-b border-blue-gray-50">
             {{ useFormat(cutoff.cutoff_date) }}
         </td>
         <td v-if="cutoff.end_date < $page.props.date" class="p-4 border-b border-blue-gray-50 text-red-600">
