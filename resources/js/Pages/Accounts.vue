@@ -27,7 +27,7 @@ const props = defineProps([
             </h2>
         </template>
 
-        <div class="py-12">
+        <div class="py-2 pb-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <!-- <div class="flex">
                         <div class=" mr-4">

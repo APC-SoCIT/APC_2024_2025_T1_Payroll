@@ -30,7 +30,7 @@ console.log(props.targetAccount)
             <h2 class="relative left-32 font-semibold text-xl text-gray-800 leading-tight">{{ targetAccount.name }}'s Account Details</h2>
         </template>
 
-        <div class="pt-8">
+        <div class="pt-8 pb-12">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
                     class="text-end">
