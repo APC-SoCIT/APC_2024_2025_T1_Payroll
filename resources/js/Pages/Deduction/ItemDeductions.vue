@@ -53,7 +53,7 @@ const form = useForm({
                         Deduction
                     </h2>
 
-                    <div v-for="itemDeduction in itemDeductions">
+                    <div class="my-8 w-4/6" v-for="itemDeduction in itemDeductions">
                         <UpdateItemDeductionForm :itemDeduction :cutoff :deductionView="true"
                             :targetAccount="itemDeduction.payroll_item.user" />
                     </div>
