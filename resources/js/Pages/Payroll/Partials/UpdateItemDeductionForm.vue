@@ -74,27 +74,31 @@ const form = useForm({
                 </div>
 
                 <div>
-                    <InputLabel for="amount" value="Amount" />
+                    <div v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based">
+                        <InputLabel for="amount" value="Amount" />
 
-                    <TextInput v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based"
-                        id="amount"
-                        type="number"
-                        step="0.01"
-                        class="text-end mt-1 block w-60"
-                        v-model="form.amount"
-                        required
-                        autocomplete="amount"
-                        :disabled
-                    />
+                        <TextInput v-if="!itemDeduction.deduction.calculated && !itemDeduction.deduction.hour_based"
+                            id="amount"
+                            type="number"
+                            step="0.01"
+                            class="text-end mt-1 block w-60"
+                            v-model="form.amount"
+                            required
+                            autocomplete="amount"
+                            :disabled
+                        />
+                    </div>
                     <!-- TextInput doesn't update on partial reloads -->
-                    <p v-else
-                        type="number"
-                        step="0.01"
-                        class="mt-1 font-semibold"
-                        required
-                        disabled
-                    >₱ {{ itemDeduction.amount }}</p>
-                    <InputError class="mt-2" :message="form.errors.amount" />
+                    <div v-else
+                            type="number"
+                            step="0.01"
+                            class="mt-1 font-semibold"
+                            required
+                            disabled>
+                        <InputLabel class="text-end relative right-16" for="amount" value="Amount" />
+                        <p class="text-end relative right-16">₱ {{ itemDeduction.amount }}</p>
+                        <InputError class="mt-2" :message="form.errors.amount" />
+                    </div>
                 </div>
 
                 <div v-if="itemDeduction.deduction.has_deadline">
