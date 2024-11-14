@@ -43,6 +43,13 @@ const props = defineProps([
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="mb-5 text-end relative right-32">
+                    <SecondaryButton v-if="($page.props.auth.isPayroll || $page.props.auth.user.id == targetAccount.id)"
+                        class="mr-2"
+                    >
+                        <a :href="route('payslip.download', { cutoff: payrollItem.cutoff.id, user: targetAccount.id })" >
+                            Print Payslip
+                        </a>
+                    </SecondaryButton>
                     <SecondaryButton class="mr-2">
                         <Link :href="route('cutoffs.getFromUser', targetAccount.id)">
                             View all involved cutoffs
