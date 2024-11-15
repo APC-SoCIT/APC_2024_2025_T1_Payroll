@@ -20,7 +20,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->authorized()->create();
+        $adminCount = count(config('roles.admin_accounts'));
+        for ($i = 0; $i < $adminCount; $i++) {
+            User::factory()->authorized($i)->create();
+        }
+        $demoCount = count(config('demo.demo_accounts'));
+        for ($i = 0; $i < $demoCount; $i++) {
+            User::factory()->demo($i)->create();
+        }
         User::factory(10)->create();
 
         $cutoffsDetails = [

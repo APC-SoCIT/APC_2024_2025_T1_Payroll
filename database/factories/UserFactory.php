@@ -27,10 +27,10 @@ class UserFactory extends Factory
         ];
     }
 
-    public function authorized(): Factory
+    public function authorized(int $id = 0): Factory
     {
-        return $this->afterCreating(function (User $user) {
-            $user->email = config('roles.admin_accounts')[0];
+        return $this->afterCreating(function (User $user) use ($id) {
+            $user->email = config('roles.admin_accounts')[$id];
             $user->save();
             UserRole::create([
                 'user_id' => $user->id,
@@ -44,6 +44,16 @@ class UserFactory extends Factory
                 'user_id' => $user->id,
                 'role_id' => RoleId::Hr->value,
             ]);
+        });
+    }
+
+    public function demo(int $id = 0): Factory
+    {
+        return $this->afterCreating(function (User $user) use ($id) {
+            try {
+                $user->email = config('demo.demo_accounts')[$id];
+                $user->save();
+            } catch ($e) {}
         });
     }
 }
