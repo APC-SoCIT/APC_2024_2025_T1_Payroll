@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuthHelper;
 use App\Helpers\PayrollHelper;
 use App\Models\Addition;
 use App\Models\ItemAddition;
@@ -16,7 +17,13 @@ class AdditionController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Addition/Index', ['additions' => Addition::all()]);
+        $additions = [];
+        if (AuthHelper::isPayroll()) {
+            $additions = Addition::all();
+        } else {
+            $additions = Addition::whereHrAccess(true)->get();
+        }
+        return Inertia::render('Addition/Index', ['additions' => $additions]);
     }
 
     public function getRelatedEntries(Addition $addition): Response

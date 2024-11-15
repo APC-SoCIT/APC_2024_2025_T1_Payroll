@@ -113,6 +113,34 @@ Route::middleware(['auth', RoleMiddleware::class . ':hr,payroll'])->group(functi
         ->name('cutoff.update');
     Route::delete('/cutoff/{cutoff}', [CutoffController::class, 'delete'])
         ->name('cutoff.delete');
+
+    // addition type actions
+    Route::get('/additions', [AdditionController::class, 'index'])
+        ->name('additions');
+    Route::get('/addition/{addition}/entries', [AdditionController::class, 'getRelatedEntries'])
+        ->name('addition.getRelated');
+
+    // addition actions
+    Route::post('/cutoff/{cutoff}/account/{user}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
+        ->name('itemAddition.new');
+    Route::patch('/itemAddition/{itemAddition}', [PayrollController::class, 'updateItemAddition'])
+        ->name('itemAddition.update');
+    Route::delete('/itemAddition/{itemAddition}', [PayrollController::class, 'deleteItemAddition'])
+        ->name('itemAddition.delete');
+
+    // deduction type actions
+    Route::get('/deductions', [DeductionController::class, 'index'])
+        ->name('deductions');
+    Route::get('/deduction/{deduction}/entries', [DeductionController::class, 'getRelatedEntries'])
+        ->name('deduction.getRelated');
+
+    // deduction actions
+    Route::post('/cutoff/{cutoff}/account/{user}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
+        ->name('itemDeduction.new');
+    Route::patch('/itemDeduction/{itemDeduction}', [PayrollController::class, 'updateItemDeduction'])
+        ->name('itemDeduction.update');
+    Route::delete('/itemDeduction/{itemDeduction}', [PayrollController::class, 'deleteItemDeduction'])
+        ->name('itemDeduction.delete');
 });
 
 // PAYROLL ONLY
@@ -128,10 +156,6 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('cutoff.export');
 
     // addition type actions
-    Route::get('/additions', [AdditionController::class, 'index'])
-        ->name('additions');
-    Route::get('/addition/{addition}/entries', [AdditionController::class, 'getRelatedEntries'])
-        ->name('addition.getRelated');
     Route::get('/addition/new', [AdditionController::class, 'new'])
         ->name('addition.newForm');
     Route::post('/addition/new', [AdditionController::class, 'store'])
@@ -141,19 +165,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
     Route::patch('/addition/{addition}', [AdditionController::class, 'update'])
         ->name('addition.update');
 
-    // addition actions
-    Route::post('/cutoff/{cutoff}/account/{user}/addition/{addition}', [PayrollController::class, 'addItemAddition'])
-        ->name('itemAddition.new');
-    Route::patch('/itemAddition/{itemAddition}', [PayrollController::class, 'updateItemAddition'])
-        ->name('itemAddition.update');
-    Route::delete('/itemAddition/{itemAddition}', [PayrollController::class, 'deleteItemAddition'])
-        ->name('itemAddition.delete');
-
     // deduction type actions
-    Route::get('/deductions', [DeductionController::class, 'index'])
-        ->name('deductions');
-    Route::get('/deduction/{deduction}/entries', [DeductionController::class, 'getRelatedEntries'])
-        ->name('deduction.getRelated');
     Route::get('/deduction/new', [DeductionController::class, 'new'])
         ->name('deduction.newForm');
     Route::post('/deduction/new', [DeductionController::class, 'store'])
@@ -162,14 +174,6 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
         ->name('deduction.edit');
     Route::patch('/deduction/{deduction}', [DeductionController::class, 'update'])
         ->name('deduction.update');
-
-    // deduction actions
-    Route::post('/cutoff/{cutoff}/account/{user}/deduction/{deduction}', [PayrollController::class, 'addItemDeduction'])
-        ->name('itemDeduction.new');
-    Route::patch('/itemDeduction/{itemDeduction}', [PayrollController::class, 'updateItemDeduction'])
-        ->name('itemDeduction.update');
-    Route::delete('/itemDeduction/{itemDeduction}', [PayrollController::class, 'deleteItemDeduction'])
-        ->name('itemDeduction.delete');
 });
 
 require __DIR__.'/auth.php';

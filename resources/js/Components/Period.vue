@@ -15,7 +15,7 @@ const props = defineProps([
     <tr>
         <td class="p-4 border-b text-gray-500 border-blue-gray-50"></td>
         <td class="font-semibold text-left p-4 border-b text-gray-500 border-blue-gray-50">
-            <p v-if="$page.props.date < cutoff.start_date">
+            <p v-if="$page.props.date < cutoff.start_date || (! $page.props.auth.isPayroll)">
                 {{ useFormat(cutoff.end_date) }}
             </p>
             <Link v-else-if="account == null"

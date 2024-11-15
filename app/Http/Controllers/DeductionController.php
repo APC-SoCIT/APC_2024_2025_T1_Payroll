@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuthHelper;
 use App\Helpers\PayrollHelper;
 use App\Models\Deduction;
 use App\Models\ItemDeduction;
@@ -16,7 +17,13 @@ class DeductionController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Deduction/Index', ['deductions' => Deduction::all()]);
+        $deductions = [];
+        if (AuthHelper::isPayroll()) {
+            $deductions = Deduction::all();
+        } else {
+            $deductions = Deduction::whereHrAccess(true)->get();
+        }
+        return Inertia::render('Deduction/Index', ['deductions' => $deductions]);
     }
 
     public function getRelatedEntries(Deduction $deduction): Response

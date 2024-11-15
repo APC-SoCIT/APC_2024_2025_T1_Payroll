@@ -35,7 +35,7 @@ const props = defineProps([
 
         <div class="pt-3 pb-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="mb-4 text-end">
+                <div v-if="$page.props.auth.isPayroll" class="mb-4 text-end">
                     <PrimaryButton
                         class="mr-10 m-5 rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
                         type="button">
@@ -52,7 +52,9 @@ const props = defineProps([
                                 <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                                 <th scope="col" width="30%" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
                                 <th scope="col" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Description</th>
-                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
+                                <th v-if="($page.props.auth.isPayroll)"
+                                    scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                                >Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,7 +62,9 @@ const props = defineProps([
                                 <td class="p-4 border-b border-blue-gray-50"></td>
                                 <td class="p-4 border-b border-blue-gray-50"><Link class="font-semibold underline" :href="route('addition.getRelated', addition.id)">{{ addition.name }}</Link></td>
                                 <td class="p-4 border-b border-blue-gray-50"> {{ addition.description }}</td>
-                                <td class="p-4 border-b border-blue-gray-50 text-center">
+                                <td v-if="($page.props.auth.isPayroll)"
+                                    class="p-4 border-b border-blue-gray-50 text-center"
+                                >
                                     <PrimaryButton type="button">
                                         <Link :href="route('addition.edit', addition.id)">Edit</Link>
                                     </PrimaryButton>
