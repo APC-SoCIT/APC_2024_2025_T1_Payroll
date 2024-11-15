@@ -633,6 +633,7 @@ class PayrollHelper
         AdditionId::OvertimeRestNight->value => 1.3 * 1.3 * 1.1,
         AdditionId::OvertimeHoliday->value => 1,
         AdditionId::OvertimeHolidayExcess->value => 1 * 1.3,
+        AdditionId::OvertimeHolidayNight->value => 1 * 1.3 * 1.1,
     ];
 
     private static $taxBrackets = [
