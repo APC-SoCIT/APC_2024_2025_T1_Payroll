@@ -13,7 +13,7 @@ const form = useForm({
     name: '',
     description: '',
     taxable: true,
-    hr_access: props.deduction.hr_access == true,
+    hr_access: true,
 });
 </script>
 
