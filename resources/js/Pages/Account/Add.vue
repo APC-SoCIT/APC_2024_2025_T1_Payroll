@@ -4,6 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { useForm, Head } from '@inertiajs/vue3';
+import TextInput from '@/Components/TextInput.vue';
 
 
 const form = useForm({
@@ -35,20 +36,19 @@ const form = useForm({
                             <div>
                                 <InputLabel for="fullName" value="Employee's Full Name" />
                                 <InputError :message="form.errors.name" class="mt-2" />
-                                <input
+                                <TextInput
                                     v-model="form.name"
                                     placeholder="Full Name"
                                     class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-                                ></input>
+                                />
                             </div>
                             <div>
                                 <InputError :message="form.errors.email" class="mt-2" />
                                 <InputLabel for="email" value="Email Address" />
-                                <input
+                                <TextInput
                                     v-model="form.email"
                                     placeholder="Email"
-                                    class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-                                ></input>
+                                    class="mt-1 block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" />
                             </div>
                             <PrimaryButton class="mt-4">Add Account</PrimaryButton>
                         </form>
