@@ -62,7 +62,9 @@ const props = defineProps([
                                 <th scope="col" width="5%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                                 <th scope="col" width="30%" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Name</th>
                                 <th scope="col" class="text-start p-4 border-b border-blue-gray-100 bg-blue-gray-50">Description</th>
-                                <th scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Action</th>
+                                <th v-if="($page.props.auth.isPayroll)"
+                                    scope="col" width="30%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"
+                                >Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,7 +75,9 @@ const props = defineProps([
                                     deduction.name }}</Link>
                                 </td>
                                 <td class="p-4 border-b border-blue-gray-50">{{ deduction.description }}</td>
-                                <td class="p-4 border-b border-blue-gray-50 text-center">
+                                <td v-if="($page.props.auth.isPayroll)"
+                                    class="p-4 border-b border-blue-gray-50 text-center"
+                                >
                                     <PrimaryButton type="button">
                                         <Link :href="route('deduction.edit', deduction.id)">Edit</Link>
                                     </PrimaryButton>
