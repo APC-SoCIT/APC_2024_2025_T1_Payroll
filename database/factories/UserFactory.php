@@ -53,7 +53,7 @@ class UserFactory extends Factory
             try {
                 $user->email = config('demo.demo_accounts')[$id];
                 $user->save();
-            } catch ($e) {}
+            } catch (\Throwable $e) {}
         });
     }
 }
