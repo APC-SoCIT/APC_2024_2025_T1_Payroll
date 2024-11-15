@@ -213,7 +213,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeNight->value,
                 'name' => 'Overtime Pay (Night)',
@@ -222,7 +222,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeRest->value,
                 'name' => 'Overtime Pay (Rest Day/Special Holiday)',
@@ -231,7 +231,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeRestExcess->value,
                 'name' => 'Overtime Pay (Excess on Rest Day/Special Holiday)',
@@ -240,7 +240,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeRestNight->value,
                 'name' => 'Overtime Pay (Night on Rest Day/Special Holiday)',
@@ -249,7 +249,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeHoliday->value,
                 'name' => 'Overtime Pay (Regular Holiday)',
@@ -258,7 +258,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeHolidayExcess->value,
                 'name' => 'Overtime Pay (Excess on Regular Holiday)',
@@ -267,7 +267,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::OvertimeHolidayNight->value,
                 'name' => 'Overtime Pay (Night on Regular Holiday)',
@@ -276,7 +276,7 @@ return new class extends Migration
                 'calculated' => false,
                 'taxable' => true,
                 'hour_based' => true,
-                'hr_access' => false,
+                'hr_access' => true,
             ], [
                 'id' => AdditionId::SubstitutionPay->value,
                 'name' => 'Substitution Pay (College)',
