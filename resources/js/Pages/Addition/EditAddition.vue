@@ -15,6 +15,7 @@ const form = useForm({
     name: props.addition.name,
     description: props.addition.description,
     taxable: props.addition.taxable == true,
+    hr_access: false,
 });
 </script>
 
@@ -62,6 +63,12 @@ const form = useForm({
                             <label class="flex items-center">
                                 <Checkbox name="active" v-model:checked="form.taxable" />
                                 <span class="ms-2 text-sm text-gray-600">Taxable</span>
+                            </label>
+                        </div>
+                        <div class="block mt-4">
+                            <label class="flex items-center">
+                                <Checkbox name="active" v-model:checked="form.hr_access" />
+                                <span class="ms-2 text-sm text-gray-600">HR can set account values</span>
                             </label>
                         </div>
                         <div class="flex items-center gap-4 py-5">

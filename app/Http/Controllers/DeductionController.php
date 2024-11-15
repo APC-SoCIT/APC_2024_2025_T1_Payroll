@@ -67,7 +67,6 @@ class DeductionController extends Controller
         $validated['required'] = false;
         $validated['calculated'] = false;
         $validated['hour_based'] = false;
-        $validated['hr_access'] = true;
 
         Deduction::create($validated);
 
@@ -91,5 +90,6 @@ class DeductionController extends Controller
         'description' => ['required', 'string', 'min:1', 'max:255'],
         'taxable' => ['boolean'],
         'has_deadline' => ['boolean'],
+        'hr_access' => ['boolean'],
     ];
 }

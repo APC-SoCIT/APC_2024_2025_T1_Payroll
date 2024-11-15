@@ -16,6 +16,7 @@ const form = useForm({
     description: props.deduction.description,
     taxable: props.deduction.taxable == true,
     has_deadline: props.deduction.has_deadline == true,
+    hr_access: props.deduction.hr_access == true,
 });
 </script>
 
@@ -69,6 +70,12 @@ const form = useForm({
                             <label class="flex items-center">
                                 <Checkbox name="active" v-model:checked="form.has_deadline" />
                                 <span class="ms-2 text-sm text-gray-600">Has Deadline (Loan)</span>
+                            </label>
+                        </div>
+                        <div class="block mt-4">
+                            <label class="flex items-center">
+                                <Checkbox name="active" v-model:checked="form.hr_access" />
+                                <span class="ms-2 text-sm text-gray-600">HR can set account values</span>
                             </label>
                         </div>
                         <div class="flex items-center gap-4 py-5">

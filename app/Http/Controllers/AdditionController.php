@@ -67,7 +67,6 @@ class AdditionController extends Controller
         $validated['required'] = false;
         $validated['calculated'] = false;
         $validated['hour_based'] = false;
-        $validated['hr_access'] = true;
 
         Addition::create($validated);
 
@@ -90,5 +89,6 @@ class AdditionController extends Controller
         'name' => ['required', 'string', 'min:1', 'max:255'],
         'description' => ['required', 'string', 'min:1', 'max:255'],
         'taxable' => ['boolean'],
+        'hr_access' => ['boolean'],
     ];
 }
