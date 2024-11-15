@@ -46,10 +46,10 @@ const props = defineProps([
         <td v-else class="p-4 border-b border-blue-gray-50 text-green-600">
             In Progress
         </td>
-        <td v-if="account == null" class="p-4 border-b border-blue-gray-50">
-            <PrimaryButton
-                v-if="cutoff.end_date >= $page.props.date && !($page.props.auth.isPayroll)" 
-            ><Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link></PrimaryButton>
+        <td v-if="account == null && cutoff.end_date >= $page.props.date && ($page.props.auth.isHr)" class="p-4 border-b border-blue-gray-50">
+            <PrimaryButton>
+                <Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link>
+            </PrimaryButton>
         </td>
     </tr>
 </template>
