@@ -389,7 +389,7 @@ return new class extends Migration
                 'name' => 'PERAA',
                 'description' => 'PERAA',
                 'required' => false,
-                'calculated' => false,
+                'calculated' => true,
                 'has_deadline' => false,
                 'taxable' => true,
                 'hour_based' => false,
