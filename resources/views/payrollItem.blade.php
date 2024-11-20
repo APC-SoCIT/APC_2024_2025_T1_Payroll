@@ -46,7 +46,9 @@
     <p>3 Humabon Place, Magallanes, Makati City, Philippines 1232</p>
     <table>
         <tr class="section">
-            <td><h2 style="text-transform:uppercase;">{{ $item->user->name }}</h2></td>
+            <td>
+                <h2 style="text-transform:uppercase;">{{ $item->user->name }}</h2>
+            </td>
         </tr>
         <tr class="section">
             <td><b>Email: {{ $item->user->email }}</b></td>
@@ -62,6 +64,9 @@
         <tr class="section">
             <table>
                 @foreach ($item->itemAdditions as $addition)
+                    @if ($addition->addition->id == \App\Enums\AdditionId::PreviousTaxable->value)
+                        @continue
+                    @endif
                     <tr>
                         <td>{{ $addition->addition->name }}</td>
                         <td class="currency">&#x20B1;</td>
@@ -71,13 +76,18 @@
                 <tr style="font-weight: bold;">
                     <td>Gross Pay</td>
                     <td class="currency">&#x20B1;</td>
-                    <td class="amount">{{ number_format($item->itemAdditions->sum('amount'), 2) }}</td>
+                    <td class="amount">
+                        {{ number_format($item->itemAdditions->where('addition_id', '!=', \App\Enums\AdditionId::PreviousTaxable->value)->sum('amount'), 2) }}
+                    </td>
                 </tr>
             </table>
         </tr>
         <tr class="section">
             <table>
                 @foreach ($item->itemDeductions as $deduction)
+                    @if ($deduction->deduction->id == \App\Enums\DeductionId::PreviousTaxWithheld->value)
+                        @continue
+                    @endif
                     <tr>
                         <td>{{ $deduction->deduction->name }}</td>
                         <td class="currency">&#x20B1;</td>
@@ -87,7 +97,9 @@
                 <tr style="font-weight: bold;">
                     <td>Total Deductions</td>
                     <td class="currency">&#x20B1;</td>
-                    <td class="amount">{{ number_format($item->itemDeductions->sum('amount'), 2) }}</td>
+                    <td class="amount">
+                        {{ number_format($item->itemDeductions->where('deduction_id', '!=', \App\Enums\DeductionId::PreviousTaxWithheld->value)->sum('amount'), 2) }}
+                    </td>
                 </tr>
             </table>
         </tr>
@@ -97,7 +109,7 @@
                     Net Pay:
                 </td>
                 <td class="currency">
-                    <span >&#x20B1;</span>
+                    <span>&#x20B1;</span>
                 </td>
                 <td class="amount">
                     {{ number_format($item->amount, 2) }}
