@@ -116,6 +116,11 @@
                 </td>
             </table>
         </tr>
+        <tr class="section">
+            <td>
+                Account Number: {{ $item->user->bank_account_number }}
+            </td>
+        </tr>
     </table>
 </body>
 
