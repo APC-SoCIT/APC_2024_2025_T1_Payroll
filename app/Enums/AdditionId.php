@@ -31,4 +31,13 @@ enum AdditionId: int
     case OvertimeHoliday = 20;
     case OvertimeHolidayExcess = 21;
     case OvertimeHolidayNight = 22;
+
+    public static function toDictionary(): array
+    {
+        $cases = [];
+        foreach (self::cases() as $case) {
+            $cases[$case->name] = $case->value;
+        }
+        return $cases;
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AdditionId;
+use App\Enums\DeductionId;
 use App\Helpers\AuthHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,6 +41,8 @@ class HandleInertiaRequests extends Middleware
                 'isPayroll' => AuthHelper::isPayroll(),
                 'isAdmin' => AuthHelper::isAdmin(),
             ],
+            'additionIds' => AdditionId::toDictionary(),
+            'deductionIds' => DeductionId::toDictionary(),
             'date' => Carbon::now()->toDateString(),
         ];
     }

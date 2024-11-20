@@ -31,4 +31,13 @@ enum DeductionId: int
     case ArOthers = 20;
     case GradesPenalty = 21;
     case BikeLoan = 22;
+
+    public static function toDictionary(): array
+    {
+        $cases = [];
+        foreach (self::cases() as $case) {
+            $cases[$case->name] = $case->value;
+        }
+        return $cases;
+    }
 }
