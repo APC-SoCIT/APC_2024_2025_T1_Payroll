@@ -126,6 +126,19 @@ class PayrollHelper
 
         self::calculateSssFromItems($item, $previous, $thisPay, $lastPay);
         self::calculatePhilhealthFromItems($item, $previous, $thisPay, $lastPay);
+
+        $thisPay += $item->itemAdditions
+            ->where('addition_id', AdditionId::Allowance->value)
+            ->first()
+            ?->amount
+            ?? 0;
+
+        $lastPay += $previous->itemAdditions
+            ->where('addition_id', AdditionId::Allowance->value)
+            ->first()
+            ?->amount
+            ?? 0;
+
         self::calculatePeraaFromItems($item, $previous, $thisPay, $lastPay);
     }
 
