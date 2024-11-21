@@ -31,6 +31,7 @@ enum AdditionId: int
     case OvertimeHoliday = 20;
     case OvertimeHolidayExcess = 21;
     case OvertimeHolidayNight = 22;
+    case ThirteenthMonthPay = 23;
 
     public static function toDictionary(): array
     {

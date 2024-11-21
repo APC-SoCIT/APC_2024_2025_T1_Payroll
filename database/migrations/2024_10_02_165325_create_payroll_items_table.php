@@ -295,6 +295,15 @@ return new class extends Migration
                 'taxable' => true,
                 'hour_based' => true,
                 'hr_access' => false,
+            ], [
+                'id' => AdditionId::ThirteenthMonthPay->value,
+                'name' => '13th Month Pay',
+                'description' => '13th month pay',
+                'required' => false,
+                'calculated' => true,
+                'taxable' => false, // manually handle this exception during tax calculation
+                'hour_based' => false,
+                'hr_access' => false,
             ],
         ];
 

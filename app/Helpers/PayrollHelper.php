@@ -33,6 +33,7 @@ class PayrollHelper
         self::calculateSubstitutions($item);
         self::calculateAbsences($item);
         self::calculateOvertime($item);
+        self::calculateThirteenthMonthPay($item);
         self::calculateTax($item);
 
         $totalAdditions = $item->itemAdditions
@@ -77,6 +78,7 @@ class PayrollHelper
             $item->itemDeductions()->createMany($requiredDeductions);
         } else {
             $previous->itemAdditions
+                ->where('addition_id', '!=', AdditionId::ThirteenthMonthPay->value)
                 ->each(function (ItemAddition $previousItem) use ($item) {
                     $new_item = $previousItem->replicate();
                     $new_item->payroll_item_id = $item->id;
@@ -133,7 +135,7 @@ class PayrollHelper
             ?->amount
             ?? 0;
 
-        $lastPay += $previous->itemAdditions
+        $lastPay += $previous?->itemAdditions
             ->where('addition_id', AdditionId::Allowance->value)
             ->first()
             ?->amount
@@ -147,6 +149,7 @@ class PayrollHelper
      *
      * Takes into account variables that don't bump tax brackets and
      * total withheld taxes to provide a more accurate estimate.
+     *
      */
     private static function calculateTax(PayrollItem $payrollItem): void
     {
@@ -164,6 +167,7 @@ class PayrollHelper
             ?->amount
             ?? 0;
 
+        // let the database handle the more intensive searches
         // add the total taxable incomes
         $previousIncome += ItemAddition::where(function (Builder $query) {
                 $query->whereHas('addition', function (Builder $query) {
@@ -171,7 +175,8 @@ class PayrollHelper
                     })
                     // including retroactive variables
                     ->orWhere('addition_id', AdditionId::Merit->value)
-                    ->orWhere('addition_id', AdditionId::SalaryAdjustment->value);
+                    ->orWhere('addition_id', AdditionId::SalaryAdjustment->value)
+                    ->orWhere('addition_id', AdditionId::ThirteenthMonthPay->value);
             })
             // that belong to entries
             ->whereHas('payrollItem', function (Builder $query) use ($payrollItem) {
@@ -185,8 +190,16 @@ class PayrollHelper
                         );
                     });
             })
-            ->sum('amount');
+            ->get()
+            ->reduce(function (?float $carry, ?ItemAddition $item) {
+                if ($item?->additionId == AdditionId::ThirteenthMonthPay) {
+                    return $carry + max($item->amount - 90000, 0);
+                }
 
+                return $carry + $item->amount;
+            });
+
+        // let the database handle the more intensive searches
         // subtract the total non taxable deductions
         $previousIncome -= ItemDeduction::where(function (Builder $query) {
                 $query->whereHas('deduction', function (Builder $query) {
@@ -213,6 +226,7 @@ class PayrollHelper
             ?->amount
             ?? 0;
 
+        // let the database handle the more intensive searches
         // add the tax withheld
         $totalTaxWithheld += ItemDeduction::whereDeductionId(DeductionId::Tax->value)
             // that belong to entries
@@ -254,6 +268,15 @@ class PayrollHelper
                 AdditionId::SalaryAdjustment->value,
             ])
             ->sum('amount');
+
+        // taxable component of 13th month pay
+        $thirteenth = $payrollItem->itemAdditions
+            ->where('addition_id', AdditionId::ThirteenthMonthPay->value)
+            ->first()
+            ?->amount
+            ?? 0;
+
+        $excess += max($thirteenth - 90000, 0);
 
         $excessTax = $excess * $bracket['excessRate'];
         $tax = ($bracket['baseTax'] + $excessTax - $totalTaxWithheld)
@@ -549,6 +572,42 @@ class PayrollHelper
             $overtimeAddition->save();
         }
 
+        $item->load('itemAdditions');
+    }
+
+    private static function calculateThirteenthMonthPay(PayrollItem $item): void
+    {
+        $itemAddition = $item->itemAdditions
+            ->where('addition_id', AdditionId::ThirteenthMonthPay->value)
+            ->first();
+
+        if (is_null($itemAddition)) {
+            return;
+        }
+
+        // let the database handle the more intensive searches
+        // get total of basic pays of the year
+        $totalBasicPay = ItemAddition::where(function (Builder $query) {
+                $query->where('addition_id', AdditionId::Salary->value)
+                    ->orWhere('addition_id', AdditionId::Deminimis->value)
+                    ->orWhere('addition_id', AdditionId::Honorarium->value);
+            })
+            // that belong to entries
+            ->whereHas('payrollItem', function (Builder $query) use ($item) {
+                $query->where('user_id', $item->user_id)
+                    // of current and previous cutoffs within the year
+                    ->whereHas('cutoff', function (Builder $query) use ($item) {
+                        $query->where('end_date', '<=', $item->cutoff->end_date)
+                            ->where('cutoff_date', '>', Carbon::createFromFormat('Y-m-d', $item->cutoff->cutoff_date)
+                                ->startOfYear()
+                                ->toDateString()
+                        );
+                    });
+            })
+            ->sum('amount');
+
+        $itemAddition->amount = round($totalBasicPay / 12, 2);
+        $itemAddition->save();
         $item->load('itemAdditions');
     }
 
