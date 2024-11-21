@@ -197,9 +197,9 @@ return new class extends Migration
                 'hour_based' => false,
                 'hr_access' => false,
             ], [
-                'id' => AdditionId::SickLeave->value,
-                'name' => 'Sick Leave',
-                'description' => 'Sick leave',
+                'id' => AdditionId::SickLeaveConversion->value,
+                'name' => 'Sick Leave Conversion',
+                'description' => 'Sick leave conversion',
                 'required' => false,
                 'calculated' => false,
                 'taxable' => true,

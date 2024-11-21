@@ -34,6 +34,7 @@ class PayrollHelper
         self::calculateAbsences($item);
         self::calculateOvertime($item);
         self::calculateThirteenthMonthPay($item);
+        self::calculateSickLeaveConversion($item);
         self::calculateTax($item);
 
         $totalAdditions = $item->itemAdditions
@@ -609,6 +610,33 @@ class PayrollHelper
         $itemAddition->amount = round($totalBasicPay / 12, 2);
         $itemAddition->save();
         $item->load('itemAdditions');
+    }
+
+    private static function calculateSickLeaveConversion(PayrollItem $item): void
+    {
+        $slcAddition = $item->itemAdditions
+            ->where('addition_id', AdditionId::SickLeaveConversion->value)
+            ->first();
+
+        if (is_null($slcAddition)) {
+            return;
+        }
+
+        $grossPay = $item->itemAdditions
+            ->whereIn('addition_id', [
+                AdditionId::Salary->value,
+                AdditionId::Deminimis->value,
+                AdditionId::Allowance->value,
+                AdditionId::Honorarium->value,
+            ])
+            ->sum('amount');
+        $hourlyRate = ($grossPay * 2) * 12 / 52 / 44;
+
+        $hoursAbsent = $slcAddition->hours + ($slcAddition->minutes / 60);
+        $slcAddition->amount = $hoursAbsent * $hourlyRate;
+        $slcAddition->amount = round($slcAddition->amount, 2);
+        $slcAddition->save();
+        $item->load('itemDeductions');
     }
 
     private static function lastItem(PayrollItem $payrollItem): ?PayrollItem

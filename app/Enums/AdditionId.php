@@ -20,7 +20,7 @@ enum AdditionId: int
     case HonorariumOthers = 9;
     case ProfessionalFeeOthers = 10;
     case SalaryAdjustment = 11;
-    case SickLeave = 12;
+    case SickLeaveConversion = 12;
     case SubstitutionPay = 13;
     case SubstitutionPayShs = 14;
     case Overtime = 15;
