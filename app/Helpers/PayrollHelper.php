@@ -60,6 +60,10 @@ class PayrollHelper
                 });
 
             $item->itemAdditions()->createMany($requiredAdditions);
+            $item->itemAdditions()->create([
+                'addition_id' => AdditionId::Deminimis->value,
+                'amount' => 2633.38,
+            ]);
 
             $requiredDeductions = Deduction::whereRequired(true)
                 ->get()

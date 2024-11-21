@@ -147,6 +147,11 @@ class DatabaseSeeder extends Seeder
                 'addition_id' => AdditionId::Salary->value,
                 'amount' => 20000,
             ]);
+            ItemAddition::create([
+                'payroll_item_id' => $item->id,
+                'addition_id' => AdditionId::Deminimis->value,
+                'amount' => 2633.38,
+            ]);
             ItemDeduction::create([
                 'payroll_item_id' => $item->id,
                 'deduction_id' => DeductionId::Pagibig->value,
