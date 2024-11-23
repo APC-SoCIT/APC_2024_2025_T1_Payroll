@@ -51,7 +51,7 @@ const sortedCutoffs = computed(() =>
                     </PrimaryButton>
                 </div>
 
-                <div class="border relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+                <div class="mt-3 border relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
                     <table class="w-full text-center table-auto min-w-max">
                         <thead class="uppercase">
                             <tr v-if="account == null" class="bg-light">
