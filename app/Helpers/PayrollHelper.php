@@ -725,6 +725,8 @@ class PayrollHelper
             $previous = self::lastItem($item);
             $previous?->load('cutoff');
             self::duplicateOrCreate($item, $previous);
+            self::calculateAll($item);
+            $item->save();
         }
     }
 
