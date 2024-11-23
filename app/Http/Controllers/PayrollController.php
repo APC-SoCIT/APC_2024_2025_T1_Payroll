@@ -11,6 +11,7 @@ use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
 use App\Models\User;
+use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -62,6 +63,10 @@ class PayrollController extends Controller
                 ]);
             }
         } else {
+            if (! $user->id != Auth::id()) {
+                abort(403);
+            }
+
             if ($cutoff->end >= Carbon::now()->toDateString()) {
                 abort(403);
             }
