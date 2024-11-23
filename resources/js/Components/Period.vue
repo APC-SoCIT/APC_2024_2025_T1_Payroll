@@ -15,9 +15,12 @@ const props = defineProps([
     <tr>
         <td class="p-4 border-b text-gray-500 border-blue-gray-50"></td>
         <td class="font-semibold text-left p-4 border-b text-gray-500 border-blue-gray-50">
-            <p v-if="$page.props.date < cutoff.start_date || (! $page.props.auth.isPayroll)">
+            <Link v-if="$page.props.date < cutoff.start_date || (! $page.props.auth.isPayroll)"
+                class="underline hover:text-gray-700 hover:underline"
+                :href="route('payroll.get', { cutoff: cutoff.id, user: $page.props.auth.user.id })"
+            >
                 {{ useFormat(cutoff.end_date) }}
-            </p>
+            </Link>
             <Link v-else-if="account == null"
                 class="underline hover:text-gray-700 hover:underline"
                 :href="route('accounts.getFromCutoff', cutoff.id)"
