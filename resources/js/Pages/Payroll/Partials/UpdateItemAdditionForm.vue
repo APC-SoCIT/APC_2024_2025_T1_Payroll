@@ -92,7 +92,7 @@ const form = useForm({
                     >₱ {{ itemAddition.amount }}</p>
                     <InputError class="mt-2" :message="form.errors.amount" />
                 </div>
-                <div v-if="!disabled"
+                <div v-if="!disabled || deleteable"
                     class="flex items-center gap-2 relative left-20">
                     <Link
                         v-if="deleteable"
@@ -110,7 +110,7 @@ const form = useForm({
                     >
                         ---------
                     </div>
-                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                    <PrimaryButton v-if="!disabled" :disabled="form.processing">Save</PrimaryButton>
                 </div>
                 <Transition
                     enter-active-class="transition ease-in-out"
