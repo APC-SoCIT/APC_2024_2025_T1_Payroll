@@ -42,30 +42,41 @@ class PayrollController extends Controller
 
     public function getItem(Cutoff $cutoff, User $user): Response
     {
-        if ($cutoff->start_date > Carbon::now()->toDateString()) {
-            abort(403);
+        $payrollItem = null;
+        if (AuthHelper::isPayroll()) {
+            if ($cutoff->start_date > Carbon::now()->toDateString()) {
+                abort(403);
+            }
+
+            $payrollItem = PayrollItem::firstOrCreate([
+                'user_id' => $user->id,
+                'cutoff_id' => $cutoff->id,
+            ]);
+        } else {
+            if ($cutoff->end > Carbon::now()->toDateString()) {
+                abort(403);
+            }
+
+            $payrollItem = PayrollItem::first([
+                'user_id' => $user->id,
+                'cutoff_id' => $cutoff->id,
+            ]);
+
+            if (is_null($payrollItem)) {
+                abort(404);
+            }
         }
 
-        if (! AuthHelper::isPayroll()
-            && Auth::user()->id != $user->id) {
-            abort(403);
-        }
-
-        $payrollItem = PayrollItem::firstOrCreate([
-            'user_id' => $user->id,
-            'cutoff_id' => $cutoff->id,
-        ]);
-
-        if (! $payrollItem->cutoff->hasEnded()) {
-            PayrollHelper::calculateAll($payrollItem);
-        }
-
-        // upon first creation, it's not loaded
+        // load relationships
         $payrollItem->load([
             'cutoff',
             'itemAdditions.addition',
             'itemDeductions.deduction',
         ]);
+
+        if (! $payrollItem->cutoff->hasEnded()) {
+            PayrollHelper::calculateAll($payrollItem);
+        }
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,
