@@ -150,7 +150,7 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $rules = [ 'amount' => ['required', 'numeric' ] ];
+        $rules = [ 'amount' => ['required', 'numeric', 'min:0' ] ];
         if ($itemAddition->addition->hour_based) {
             $rules['hours'] = ['required', 'integer', 'min:0'];
             $rules['minutes'] = ['required', 'integer', 'min:0'];
@@ -212,7 +212,7 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $rules = [ 'amount' => ['required', 'numeric' ] ];
+        $rules = [ 'amount' => ['required', 'numeric', 'min:0' ] ];
         if ($itemDeduction->deduction->has_deadline) {
             $rules['remaining_payments'] = ['required', 'numeric', 'min:0'];
         }

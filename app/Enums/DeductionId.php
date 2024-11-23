@@ -31,6 +31,8 @@ enum DeductionId: int
     case ArOthers = 20;
     case GradesPenalty = 21;
     case BikeLoan = 22;
+    case ReconciliationTaxable = 23;
+    case ReconciliationNonTaxable = 24;
 
     public static function toDictionary(): array
     {

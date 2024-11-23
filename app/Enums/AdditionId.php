@@ -32,6 +32,8 @@ enum AdditionId: int
     case OvertimeHolidayExcess = 21;
     case OvertimeHolidayNight = 22;
     case ThirteenthMonthPay = 23;
+    case ReconciliationTaxable = 24;
+    case ReconciliationNonTaxable = 25;
 
     public static function toDictionary(): array
     {
