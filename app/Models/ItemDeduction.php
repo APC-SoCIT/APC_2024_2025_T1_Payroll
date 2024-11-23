@@ -17,7 +17,6 @@ class ItemDeduction extends Model
         'payroll_item_id',
         'deduction_id',
         'amount',
-        'total_payments',
         'remaining_payments',
         'hours',
         'minutes',

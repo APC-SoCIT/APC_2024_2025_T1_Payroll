@@ -166,7 +166,6 @@ class DatabaseSeeder extends Seeder
                 'payroll_item_id' => $item->id,
                 'deduction_id' => DeductionId::SssLoan->value,
                 'amount' => 250,
-                'total_payments' => 10,
                 'remaining_payments' => 10,
             ]);
             $item->load(['itemAdditions', 'itemDeductions']);

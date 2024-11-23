@@ -25,7 +25,6 @@ const form = useForm({
     amount: props.itemDeduction.amount,
     hours: props.itemDeduction.hours,
     minutes: props.itemDeduction.minutes,
-    total_payments: props.itemDeduction.total_payments,
     remaining_payments: props.itemDeduction.remaining_payments,
 });
 </script>
@@ -102,20 +101,6 @@ const form = useForm({
                 </div>
 
                 <div v-if="itemDeduction.deduction.has_deadline">
-                    <InputLabel class="text-end relative right-16" for="total_payments" value="Total Payments" />
-                    <TextInput
-                        id="total_payments"
-                        type="number"
-                        step="1"
-                        class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        v-model="form.total_payments"
-                        required
-                        min=1
-                        :disabled
-                    />
-                    <InputError class="mt-2" :message="form.errors.total_payments" />
-                    <p class="font-semibold text-end relative right-16">Total: ₱ {{ form.total_payments * form.amount }}</p>
-
                 <InputLabel class="text-end relative right-16" for="remaining_payments" value="Remaining Payments" />
                 <TextInput
                     id="remaining_payments"
@@ -125,12 +110,9 @@ const form = useForm({
                     v-model="form.remaining_payments"
                     required
                     min=0
-                    :max="form.total_payments - 1"
                     :disabled
                 />
                 <InputError class="mt-2" :message="form.errors.remaining_payments" />
-                <p class="text-sm font-semibold text-end relative right-16">Running Balance: ₱ {{ (form.total_payments - form.remaining_payments) * form.amount }}</p>
-                <p class="text-sm font-semibold text-end relative right-16">Remaining Balance: ₱ {{ form.remaining_payments * form.amount }}</p>
                 </div>
 
                 <div v-if="!disabled" class="flex items-center gap-2 relative left-20">
