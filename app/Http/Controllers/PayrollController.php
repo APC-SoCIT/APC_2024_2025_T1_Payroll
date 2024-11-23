@@ -63,7 +63,7 @@ class PayrollController extends Controller
                 ]);
             }
         } else {
-            if (! $user->id != Auth::id()) {
+            if ($user->id != Auth::id()) {
                 abort(403);
             }
 
