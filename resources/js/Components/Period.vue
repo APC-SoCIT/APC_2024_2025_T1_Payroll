@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useFormat } from '@/Utils/FormatDate.js';
 import { Link } from '@inertiajs/vue3';
 
+
 const props = defineProps([
     'cutoff',
     'account',
@@ -53,6 +54,8 @@ const props = defineProps([
             <PrimaryButton>
                 <Link :href="route('cutoff.get', cutoff.id)">Reschedule</Link>
             </PrimaryButton>
+        </td>
+        <td v-else class="p-4 border-b border-blue-gray-50 text-green-600">
         </td>
     </tr>
 </template>

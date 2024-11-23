@@ -93,7 +93,7 @@ const form = useForm({
                     <InputError class="mt-2" :message="form.errors.amount" />
                 </div>
                 <div v-if="!disabled || deleteable"
-                    class="flex items-center gap-2 relative left-20">
+                    class="flex items-center gap-2 float-right mr-12">
                     <Link
                         v-if="deleteable"
                         :href="route('itemAddition.delete', itemAddition.id)"
@@ -104,12 +104,6 @@ const form = useForm({
                     >
                         Remove
                     </Link>
-                    <div
-                        v-else
-                        class="inline-flex items-center px-4 py-2 transparent border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest"
-                    >
-                        ---------
-                    </div>
                     <PrimaryButton v-if="!disabled" :disabled="form.processing">Save</PrimaryButton>
                 </div>
                 <Transition
