@@ -57,10 +57,9 @@ class PayrollController extends Controller
                 abort(403);
             }
 
-            $payrollItem = PayrollItem::first([
-                'user_id' => $user->id,
-                'cutoff_id' => $cutoff->id,
-            ]);
+            $payrollItem = PayrollItem::where('user_id', $user->id)
+                ->where('cutoff_id', $cutoff->id)
+                ->first();
 
             if (is_null($payrollItem)) {
                 abort(404);
