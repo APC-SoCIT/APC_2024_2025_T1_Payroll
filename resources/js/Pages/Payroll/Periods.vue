@@ -3,11 +3,18 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Period from '@/Components/Period.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps([
     'cutoffs',
     'account',
 ]);
+
+const sortedCutoffs = computed(() =>
+    Object.values(props.cutoffs).sort(
+        (a, b) => a.end_date < b.end_date ? 1 : b.end_date < a.end_date ? -1 : 0
+    )
+);
 </script>
 
 <template>
@@ -83,7 +90,7 @@ const props = defineProps([
                                 <th scope="col" width="10%" class="p-4 border-b border-blue-gray-100 bg-blue-gray-50"></th>
                             </tr>
                         </thead>
-                        <Period v-for="cutoff in cutoffs" :cutoff :account />
+                        <Period v-for="cutoff in sortedCutoffs" :cutoff :account />
                     </table>
                 </div>
             </div>
