@@ -11,7 +11,6 @@ use App\Models\ItemAddition;
 use App\Models\ItemDeduction;
 use App\Models\PayrollItem;
 use App\Models\User;
-use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -44,16 +43,26 @@ class PayrollController extends Controller
     {
         $payrollItem = null;
         if (AuthHelper::isPayroll()) {
-            if ($cutoff->start_date > Carbon::now()->toDateString()) {
+            if (! $cutoff->hasStarted()) {
                 abort(403);
             }
 
-            $payrollItem = PayrollItem::firstOrCreate([
-                'user_id' => $user->id,
-                'cutoff_id' => $cutoff->id,
-            ]);
+            if ($cutoff->hasEnded()) {
+                $payrollItem = PayrollItem::whereUserId($user->id)
+                    ->whereCutoffId($cutoff->id)
+                    ->first();
+
+                if (is_null($payrollItem)) {
+                    abort(404);
+                }
+            } else {
+                $payrollItem = PayrollItem::firstOrCreate([
+                    'user_id' => $user->id,
+                    'cutoff_id' => $cutoff->id,
+                ]);
+            }
         } else {
-            if ($cutoff->end > Carbon::now()->toDateString()) {
+            if ($cutoff->end >= Carbon::now()->toDateString()) {
                 abort(403);
             }
 
@@ -66,16 +75,16 @@ class PayrollController extends Controller
             }
         }
 
+        if (! $payrollItem->cutoff->hasEnded()) {
+            PayrollHelper::calculateAll($payrollItem);
+        }
+
         // load relationships
         $payrollItem->load([
             'cutoff',
             'itemAdditions.addition',
             'itemDeductions.deduction',
         ]);
-
-        if (! $payrollItem->cutoff->hasEnded()) {
-            PayrollHelper::calculateAll($payrollItem);
-        }
 
         return Inertia::render('Payroll/Item', [
             'targetAccount' => $user,

@@ -131,6 +131,11 @@ class DatabaseSeeder extends Seeder
                 'cutoff_date' => '2024-10-25',
                 'end_date' => '2024-10-31',
                 'month_end' => true,
+            ], [
+                'start_date' => '2024-11-1',
+                'cutoff_date' => '2024-11-10',
+                'end_date' => '2024-11-15',
+                'month_end' => false,
             ]
         ];
 
