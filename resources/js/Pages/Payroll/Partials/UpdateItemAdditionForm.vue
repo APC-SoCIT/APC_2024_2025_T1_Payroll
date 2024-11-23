@@ -54,6 +54,7 @@ const form = useForm({
                         class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.hours"
                         required
+                        min="0"
                         :disabled
                     />
                     <InputError class="mt-2" :message="form.errors.hours" />
@@ -67,6 +68,7 @@ const form = useForm({
                         class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.minutes"
                         required
+                        min="0"
                         :disabled
                     />
                     <InputError class="mt-2" :message="form.errors.minutes" />
@@ -80,6 +82,7 @@ const form = useForm({
                         class="text-end mt-1 block w-60 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         v-model="form.amount"
                         required
+                        min="0"
                         :disabled
                     />
                     <!-- TextInput doesn't update on partial reloads -->
