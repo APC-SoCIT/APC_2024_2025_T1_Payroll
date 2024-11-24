@@ -546,7 +546,7 @@ return new class extends Migration
                 'description' => 'Bike loan',
                 'required' => false,
                 'calculated' => false,
-                'has_deadline' => false,
+                'has_deadline' => true,
                 'taxable' => true,
                 'hour_based' => false,
                 'hr_access' => false,
