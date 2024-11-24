@@ -705,6 +705,8 @@ class PayrollHelper
                 $currentPeriod->save();
                 self::duplicateOrCreateAll($currentPeriod);
             };
+        } elseif ($currentPeriod->payrollItems->count() == 0) {
+            self::duplicateOrCreateAll($currentPeriod);
         }
 
         return $currentPeriod;

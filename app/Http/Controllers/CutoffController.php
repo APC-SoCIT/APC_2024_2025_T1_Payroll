@@ -67,8 +67,7 @@ class CutoffController extends Controller
     {
         $validator = self::makeCutoffValidator($request);
 
-        $cutoff = Cutoff::create($validator->validate());
-        PayrollHelper::duplicateOrCreateAll($cutoff);
+        Cutoff::create($validator->validate());
 
         return redirect(route('cutoffs'));
     }
