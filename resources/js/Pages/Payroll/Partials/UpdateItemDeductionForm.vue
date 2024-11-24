@@ -88,6 +88,7 @@ const form = useForm({
                             v-model="form.amount"
                             required
                             autocomplete="amount"
+                            :min="itemDeduction.deduction.id == $page.props.deductionIds['Pagibig'] ? 100 : 0"
                             :disabled
                         />
                     </div>

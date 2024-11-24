@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DeductionId;
 use App\Helpers\AuthHelper;
 use App\Helpers\PayrollHelper;
 use App\Models\Addition;
@@ -212,7 +213,8 @@ class PayrollController extends Controller
             abort(403);
         }
 
-        $rules = [ 'amount' => ['required', 'numeric', 'min:0' ] ];
+        $min = $itemDeduction->deduction_id == DeductionId::Pagibig->value ? '100' : '0';
+        $rules = [ 'amount' => ['required', 'numeric', 'min:' .  $min] ];
         if ($itemDeduction->deduction->has_deadline) {
             $rules['remaining_payments'] = ['required', 'numeric', 'min:0'];
         }
