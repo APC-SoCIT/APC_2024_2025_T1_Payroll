@@ -32,14 +32,18 @@ const form = useForm({
 <template>
     <section class="grid grid-cols-2 py-4">
         <header v-if="! deductionView" class="col-span-1">
-            <h2 class="text-lg font-medium text-gray-900">{{ itemDeduction.deduction.name }}</h2>
+            <Link :href="route('deduction.getRelated', itemDeduction.deduction.id)"
+                class="text-lg font-medium underline hover:text-gray-700 hover:underline"
+            >{{ itemDeduction.deduction.name }}</Link>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ itemDeduction.deduction.description }}
             </p>
         </header>
         <header v-else class="col-span-1">
-            <h2 class="text-lg font-medium text-gray-900">{{ targetAccount.name }}</h2>
+            <Link :href="route('payroll.getCurrentFromUser', targetAccount.id)"
+                class="text-lg font-medium underline hover:text-gray-700 hover:underline"
+            >{{ targetAccount.name }}</Link>
         </header>
 
         <div class="relative left-80 bottom-7">

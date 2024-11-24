@@ -31,7 +31,9 @@ const form = useForm({
     <section class="grid grid-cols-2 py-4">
         <header v-if="! additionView"
             class="col-span-1">
-            <h2 class="text-lg font-medium text-gray-900">{{ itemAddition.addition.name }}</h2>
+            <Link :href="route('addition.getRelated', itemAddition.addition.id)"
+                class="text-lg font-medium underline hover:text-gray-700 hover:underline"
+            >{{ itemAddition.addition.name }}</Link>
 
             <p class="mt-1 text-sm text-gray-600">
                 {{ itemAddition.addition.description }}
@@ -39,7 +41,9 @@ const form = useForm({
         </header>
         <header v-else
             class="col-span-1">
-            <h2 class="text-lg font-medium text-gray-900">{{ targetAccount.name }}</h2>
+            <Link :href="route('payroll.getCurrentFromUser', targetAccount.id)"
+                class="text-lg font-medium underline hover:text-gray-700 hover:underline"
+            >{{ targetAccount.name }}</Link>
         </header>
 
         <div class="relative left-80 bottom-5">
