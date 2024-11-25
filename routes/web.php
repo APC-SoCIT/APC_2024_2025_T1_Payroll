@@ -148,6 +148,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':payroll'])->group(function 
     // current payroll entry actions
     Route::get('/account/{user}/current', [PayrollController::class, 'getCurrentItemFromUser'])
         ->name('payroll.getCurrentFromUser');
+    Route::get('/cutoff/{cutoff}/payslips', [PayrollController::class, 'exportPdfs'])
+        ->name('cutoff.payslips');
 
     // specific entry actions
     Route::delete('/cutoff/{cutoff}/account/{user}', [PayrollController::class, 'deleteItem'])

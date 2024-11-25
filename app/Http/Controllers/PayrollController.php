@@ -314,13 +314,33 @@ class PayrollController extends Controller
         }
 
         $pdf = Pdf::loadView('payrollItem', [
-            'item' => $item->load([
-                'user',
-                'cutoff',
-                'itemAdditions.addition',
-                'itemDeductions.deduction',
-            ]),
+            'items' =>  [
+                $item->load([
+                    'user',
+                    'cutoff',
+                    'itemAdditions.addition',
+                    'itemDeductions.deduction',
+                ]),
+            ],
         ]);
+        return $pdf->stream('payslip.pdf');
+    }
+
+    public function exportPdfs(Cutoff $cutoff): HttpResponse
+    {
+        $items = PayrollItem::with([
+            'user',
+            'cutoff',
+            'itemAdditions.addition',
+            'itemDeductions.deduction',
+        ])
+            ->whereCutoffId($cutoff->id)
+            ->get();
+
+        $pdf = Pdf::loadView('payrollItem', [
+            'items' => $items->sortBy('user.name')
+        ]);
+
         return $pdf->stream('payslip.pdf');
     }
 }
