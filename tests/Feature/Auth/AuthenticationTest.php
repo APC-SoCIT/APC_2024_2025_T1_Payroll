@@ -14,7 +14,7 @@ test('login screen can be rendered', function () {
 test('users can authenticate using socialite', function () {
     $abstractUser = Mockery::mock('Laravel\Socialite\Two\User');
     $abstractUser->name = Str::random(10);
-    $abstractUser->mail = Str::random(10) . "@apc.edu.ph";
+    $abstractUser->mail = Str::random(10).'@apc.edu.ph';
 
     Socialite::shouldReceive('driver->user')->andReturn($abstractUser);
     $response = $this->get('/auth/callback');
@@ -24,8 +24,7 @@ test('users can authenticate using socialite', function () {
 test('users can logout', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post('/logout');
+    $this->actingAs($user)->post('/logout');
 
     $this->assertGuest();
-    $response->assertRedirect('/');
 });

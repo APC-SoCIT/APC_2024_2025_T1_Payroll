@@ -2,20 +2,16 @@
 
 namespace Database\Factories;
 
+use App\Enums\RoleId;
+use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
     /**
      * Define the model's default state.
      *
@@ -26,19 +22,38 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'bank_account_number' => fake()->unique()->regexify('\d{10,12}'),
+            'active' => true,
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function authorized(int $id = 0): Factory
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) use ($id) {
+            $user->email = config('roles.admin_accounts')[$id];
+            $user->save();
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Admin->value,
+            ]);
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Payroll->value,
+            ]);
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => RoleId::Hr->value,
+            ]);
+        });
+    }
+
+    public function demo(int $id = 0): Factory
+    {
+        return $this->afterCreating(function (User $user) use ($id) {
+            try {
+                $user->email = config('demo.demo_accounts')[$id];
+                $user->save();
+            } catch (\Throwable $e) {}
+        });
     }
 }

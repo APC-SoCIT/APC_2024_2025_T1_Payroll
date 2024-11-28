@@ -2,6 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AdditionId;
+use App\Enums\DeductionId;
+use App\Helpers\AuthHelper;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -17,7 +21,7 @@ class HandleInertiaRequests extends Middleware
     /**
      * Determine the current asset version.
      */
-    public function version(Request $request): string|null
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
@@ -33,7 +37,13 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'isHr' => AuthHelper::isHr(),
+                'isPayroll' => AuthHelper::isPayroll(),
+                'isAdmin' => AuthHelper::isAdmin(),
             ],
+            'additionIds' => AdditionId::toDictionary(),
+            'deductionIds' => DeductionId::toDictionary(),
+            'date' => Carbon::now()->toDateString(),
         ];
     }
 }

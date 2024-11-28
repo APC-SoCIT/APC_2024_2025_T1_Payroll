@@ -1,10 +1,11 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { useFormat } from '@/Utils/FormatDate.js';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -13,7 +14,7 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+            <nav class="bg-gray-800 border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -33,6 +34,44 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                                    :href="route('cutoffs')"
+                                    :active="route().current('cutoffs')"
+                                >
+                                    Cutoffs
+                                </NavLink>
+                                <NavLink v-else
+                                    :href="route('cutoffs.me')"
+                                    :active="route().current('cutoffs.me')"
+                                >
+                                    Cutoffs
+                                </NavLink>
+                            </div>
+                            <div v-if="($page.props.auth.isHr || $page.props.auth.isPayroll || $page.props.auth.isAdmin)"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('accounts')" :active="route().current('accounts')">
+                                    Accounts
+                                </NavLink>
+                            </div>
+                            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('additions')" :active="route().current('additions')">
+                                    Additions
+                                </NavLink>
+                            </div>
+                            <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('deductions')" :active="route().current('deductions')">
+                                    Deductions
+                                </NavLink>
+                            </div>
+                        </div>
+
+                        <div class="space-x-8 sm:flex sm:items-right sm:ms-6">
+                            <p class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500">
+                                {{ useFormat($page.props.date) }}
+                            </p>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -41,10 +80,7 @@ const showingNavigationDropdown = ref(false);
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                            >
+                                            <button type="button" class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-md text-gray-400 hover:text-white focus:outline-none transition ease-in-out duration-150">
                                                 {{ $page.props.auth.user.name }}
 
                                                 <svg
@@ -64,7 +100,9 @@ const showingNavigationDropdown = ref(false);
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                        <DropdownLink :href="route('account.me')" method="get" as="button">
+                                            My Account
+                                        </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -116,6 +154,25 @@ const showingNavigationDropdown = ref(false);
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
+                    <div class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink v-if="($page.props.auth.isPayroll || $page.props.auth.isHr)"
+                            :href="route('cutoffs')"
+                            :active="route().current('cutoffs')"
+                        >
+                            Cutoffs
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink v-else
+                            :href="route('cutoffs.me')"
+                            :active="route().current('cutoffs.me')"
+                        >
+                            Cutoffs
+                        </ResponsiveNavLink>
+                    </div>
+                    <div v-if="($page.props.auth.isPayroll || $page.props.auth.isHr || $page.props.auth.isAdmin)" class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink :href="route('accounts')" :active="route().current('dashboard')">
+                            Accounts
+                        </ResponsiveNavLink>
+                    </div>
 
                     <!-- Responsive Settings Options -->
                     <div class="pt-4 pb-1 border-t border-gray-200">
@@ -127,7 +184,10 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
+                            <!-- <ResponsiveNavLink :href="route('account.get')"> Account </ResponsiveNavLink> -->
+                            <ResponsiveNavLink :href="route('account.me')" method="get" as="button">
+                                My Account
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

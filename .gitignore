@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
+_ide_helper*
 .env
 .env.backup
 .env.production

@@ -8,18 +8,17 @@ use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('guest')->group(function () {
-    Route::get('auth/redirect', function() {
+    Route::get('auth/redirect', function () {
         return Inertia::location(Socialite::driver('azure')->redirect());
     })->name('auth.redirect');
 
-    Route::get('auth/callback', function() {
+    Route::get('auth/callback', function () {
         $azureUser = Socialite::driver('azure')->user();
 
         $user = User::updateOrCreate([
             'email' => $azureUser->mail,
         ], [
             'name' => $azureUser->name,
-            'email' => $azureUser->mail,
         ]);
 
         Auth::login($user);
@@ -30,5 +29,5 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->name('logout');
+        ->name('logout');
 });
